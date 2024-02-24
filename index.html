@@ -60,8 +60,8 @@
 <div class="section level1">
 <div class="page-header"><h1 id="pubmedtk">pubmedtk<a class="anchor" aria-label="anchor" href="#pubmedtk"></a>
 </h1></div>
-<p>The package provides a single interface for accessing a range of NLM/PubMed online resources, including <a href="https://pubmed.ncbi.nlm.nih.gov/" class="external-link">PubMed</a> abstract records, <a href="https://icite.od.nih.gov/" class="external-link">iCite</a> bibliometric data, <a href="https://www.ncbi.nlm.nih.gov/research/pubtator/" class="external-link">PubTator</a> named entity annotations, and full-text entries from <a href="https://www.ncbi.nlm.nih.gov/pmc/" class="external-link">PubMed Central</a> (PMC). This unified interface simplifies the data retrieval process, allowing users to interact with multiple PubMed services/APIs/output formats through a single R function.</p>
-<p>The package also includes MeSH ontology resources as simple data frames, including Descriptor Terms, Descriptor Tree Structures, Supplementary Concept Terms, and Pharmacological Actions; it also includes descriptor-level word embeddings <a href="https://www.sciencedirect.com/science/article/pii/S1532046421001969" class="external-link">(Noh &amp; Kavuluru 2021)</a>. Via the <a href="https://github.com/jaytimm/mesh-resources" class="external-link">mesh-resources</a> Git project.</p>
+<p>The package provides a single interface for accessing a range of NLM/PubMed databases, including <a href="https://pubmed.ncbi.nlm.nih.gov/" class="external-link">PubMed</a> abstract records, <a href="https://icite.od.nih.gov/" class="external-link">iCite</a> bibliometric data, <a href="https://www.ncbi.nlm.nih.gov/research/pubtator/" class="external-link">PubTator</a> named entity annotations, and full-text entries from <a href="https://www.ncbi.nlm.nih.gov/pmc/" class="external-link">PubMed Central</a> (PMC). This unified interface simplifies the data retrieval process, allowing users to interact with multiple PubMed services/APIs/output formats through a single R function.</p>
+<p>The package also includes MeSH ontology resources as simple data frames, including Descriptor Terms, Descriptor Tree Structures, Supplementary Concept Terms, and Pharmacological Actions; it also includes descriptor-level word embeddings <a href="https://www.sciencedirect.com/science/article/pii/S1532046421001969" class="external-link">(Noh &amp; Kavuluru 2021)</a>. Via the <a href="https://github.com/jaytimm/mesh-resources" class="external-link">mesh-resources</a> library.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -79,36 +79,44 @@
 <p>The package has two basic functions: <code>search_pubmed</code> and <code>get_records</code>. The former fetches PMIDs from the PubMed API based on user search; the latter scrapes PMID records from a user-specified PubMed endpoint – <code>pubmed_abstracts</code>, <code>pubmed_affiliations</code>, <code>pubtations</code>, <code>icites</code>, or <code>pmc_fulltext</code>.</p>
 <p>Search syntax is the same as that implemented in standard <a href="https://pubmed.ncbi.nlm.nih.gov/advanced/" class="external-link">PubMed search</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">yrs</span> <span class="op">&lt;-</span> <span class="fl">2010</span><span class="op">:</span><span class="fl">2023</span></span>
-<span><span class="va">pubmed_query</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">'("political ideology"[TiAb]) AND ('</span>, </span>
-<span>                       <span class="va">yrs</span>, <span class="st">':'</span>, <span class="va">yrs</span>,  </span>
-<span>                       <span class="st">'[pdat])'</span><span class="op">)</span></span>
-<span><span class="co">## [MeSH Terms]</span></span>
+<code class="sourceCode R"><span><span class="va">pmids</span> <span class="op">&lt;-</span> <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/search_pubmed.html">search_pubmed</a></span><span class="op">(</span><span class="st">'("political ideology"[TiAb])'</span>,</span>
+<span>                                 use_pub_years <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">pmids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">pubmed_query</span>, <span class="fu">pubmedtk</span><span class="fu">::</span><span class="va"><a href="reference/search_pubmed.html">search_pubmed</a></span><span class="op">)</span></span>
-<span><span class="va">pmids</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># pmids &lt;- pubmedtk::search_pubmed('immunity', </span></span>
+<span><span class="co">#                                  use_pub_years = T,</span></span>
+<span><span class="co">#                                  start_year = 2022,</span></span>
+<span><span class="co">#                                  end_year = 2024) </span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get-record-level-data">Get record-level data<a class="anchor" aria-label="anchor" href="#get-record-level-data"></a>
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">recs_pubmed</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_abstracts'</span><span class="op">)</span> </span>
+<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_abstracts'</span>, </span>
+<span>                        cores <span class="op">=</span> <span class="fl">5</span>, </span>
+<span>                        sleep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="va">recs_affs</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_affiliations'</span><span class="op">)</span></span>
+<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_affiliations'</span>, </span>
+<span>                        cores <span class="op">=</span> <span class="fl">3</span>, </span>
+<span>                        sleep <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">recs_icites</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'icites'</span><span class="op">)</span></span>
+<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'icites'</span>,</span>
+<span>                        cores <span class="op">=</span> <span class="fl">1</span>, </span>
+<span>                        sleep <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">recs_pubtations</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubtations'</span><span class="op">)</span></span></code></pre></div>
+<blockquote>
+<p>When the endpoint is PMC, the `get_records() function takes a vector of filepaths (from the PMC Open Access list) instead of PMIDs.</p>
+</blockquote>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pmclist</span> <span class="op">&lt;-</span> <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/data_pmc_list.html">data_pmc_list</a></span><span class="op">(</span>force_install <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
 <span><span class="va">pmc_pmids</span> <span class="op">&lt;-</span> <span class="va">pmclist</span><span class="op">[</span><span class="va">PMID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">pmids</span><span class="op">]</span></span>
 <span></span>
-<span><span class="va">recs_pmc</span> <span class="op">&lt;-</span> <span class="va">pmc_pmids</span><span class="op">$</span><span class="va">fpath</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pmc_fulltext'</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">recs_pmc</span> <span class="op">&lt;-</span> <span class="va">pmc_pmids</span><span class="op">$</span><span class="va">fpath</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pmc_fulltext'</span>, cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="pubmed_abstracts">
 <code>pubmed_abstracts</code><a class="anchor" aria-label="anchor" href="#pubmed_abstracts"></a>
@@ -284,15 +292,15 @@
 </tr>
 <tr class="even">
 <td align="left">citations_per_year</td>
-<td align="left">0.5555556</td>
+<td align="left">0.5</td>
 </tr>
 <tr class="odd">
 <td align="left">expected_citations_per_year</td>
-<td align="left">2.113739</td>
+<td align="left">1.905748</td>
 </tr>
 <tr class="even">
 <td align="left">field_citation_rate</td>
-<td align="left">3.840726</td>
+<td align="left">3.839488</td>
 </tr>
 <tr class="odd">
 <td align="left">provisional</td>
@@ -316,7 +324,7 @@
 </tr>
 <tr class="even">
 <td align="left">last_modified</td>
-<td align="left">11/25/2023, 16:54:50</td>
+<td align="left">01/28/2024, 12:30:27</td>
 </tr>
 <tr class="odd">
 <td align="left">ref_count</td>
@@ -504,8 +512,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://app.travis-ci.com/github/jaytimm/pubmedtk" class="external-link"><img src="https://app.travis-ci.com/jaytimm/pubmedtk.svg?branch=main" alt="Travis build status"></a></li>
-<li><a href="https://github.com/jaytimm/pubmedtk/actions" class="external-link"><img src="https://github.com/jaytimm/pubmedtk/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/jaytimm/pubmedtk/actions" class="external-link"><img src="https://github.com/jaytimm/pubmedtk/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>
 </div>
 
