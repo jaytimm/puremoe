@@ -448,30 +448,30 @@
 <code class="sourceCode R"><span><span class="va">samp</span> <span class="op">&lt;-</span> <span class="va">recs_pmc</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pmid</span> <span class="op">==</span> <span class="va">pmid_eg</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">samp</span><span class="op">$</span><span class="va">text</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/strwrap.html" class="external-link">strwrap</a></span><span class="op">(</span><span class="va">x</span>, width <span class="op">=</span> <span class="fl">60</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## [[1]]</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "Introduction People can be quite accurate at extracting a"</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="do">## [2] "number of seemingly concealable social identities from"   </span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [3] "facial information alone. Unlike categorizations based on"</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [[2]]</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "Study 1a The present study aimed to expand on previous work"</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [2] "showing that individuals are able to accurately perceive"   </span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [3] "others' political affiliation [3], [4], [5], [6], [7], [8]."</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [[3]]</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "Study 1b Study 1b was designed to replicate Study 1a while" </span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [2] "addressing a few possible shortcomings. First, the"         </span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [3] "relationship between conservatism and response bias did not"</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [[4]]</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "Study 2The results of Studies 1a and 1b showed that"        </span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [2] "perceivers' method of categorizing targets as Democrats and"</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [3] "Republicans was influenced by their personal political"     </span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="do">## [[5]]</span></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "General Discussion Perceptions of political group"     </span></span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="do">## [2] "membership appear to be influenced by perceivers' own" </span></span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="do">## [3] "political leanings. First, we replicated past research"</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="do">## [[1]]</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="do">## [1] "Introduction People can be quite accurate at extracting a"</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="do">## [2] "number of seemingly concealable social identities from"   </span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="do">## [3] "facial information alone. Unlike categorizations based on"</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="do">## [[2]]</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="do">## [1] "Study 1a The present study aimed to expand on previous work"</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="do">## [2] "showing that individuals are able to accurately perceive"   </span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="do">## [3] "others' political affiliation [3], [4], [5], [6], [7], [8]."</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="do">## [[3]]</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="do">## [1] "Study 1b Study 1b was designed to replicate Study 1a while" </span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="do">## [2] "addressing a few possible shortcomings. First, the"         </span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="do">## [3] "relationship between conservatism and response bias did not"</span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a><span class="do">## [[4]]</span></span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="do">## [1] "Study 2The results of Studies 1a and 1b showed that"        </span></span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a><span class="do">## [2] "perceivers' method of categorizing targets as Democrats and"</span></span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="do">## [3] "Republicans was influenced by their personal political"     </span></span>
+<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a><span class="do">## [[5]]</span></span>
+<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a><span class="do">## [1] "General Discussion Perceptions of political group"     </span></span>
+<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a><span class="do">## [2] "membership appear to be influenced by perceivers' own" </span></span>
+<span id="cb13-24"><a href="#cb13-24" tabindex="-1"></a><span class="do">## [3] "political leanings. First, we replicated past research"</span></span></code></pre></div>
 </div>
 </div>
 </div>
