@@ -55,8 +55,6 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
-
 <div class="section level1">
 <div class="page-header"><h1 id="pubmedtk">pubmedtk<a class="anchor" aria-label="anchor" href="#pubmedtk"></a>
 </h1></div>
@@ -93,17 +91,17 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pubmed</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_abstracts'</span>, </span>
-<span>                        cores <span class="op">=</span> <span class="fl">3</span>, </span>
+<span>                        cores <span class="op">=</span> <span class="fl">1</span>, </span>
 <span>                        sleep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span>
 <span></span>
-<span><span class="va">affiliationss</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">affiliations</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_affiliations'</span>, </span>
 <span>                        cores <span class="op">=</span> <span class="fl">3</span>, </span>
 <span>                        sleep <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">icites</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">icites</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'icites'</span>,</span>
-<span>                        cores <span class="op">=</span> <span class="fl">4</span>, </span>
+<span>                        cores <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>                        sleep <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">pubtations</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
@@ -115,11 +113,10 @@
 <code class="sourceCode R"><span><span class="va">pmclist</span> <span class="op">&lt;-</span> <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/data_pmc_list.html">data_pmc_list</a></span><span class="op">(</span>force_install <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
 <span><span class="va">pmc_pmids</span> <span class="op">&lt;-</span> <span class="va">pmclist</span><span class="op">[</span><span class="va">PMID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">pmids</span><span class="op">]</span></span>
 <span></span>
-<span><span class="va">pmc_fulltext</span> <span class="op">&lt;-</span> <span class="va">pmc_pmids</span><span class="op">$</span><span class="va">fpath</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">pmc_fulltext</span> <span class="op">&lt;-</span> <span class="va">pmc_pmids</span><span class="op">$</span><span class="va">fpath</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pmc_fulltext'</span>, cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -153,12 +150,7 @@
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://github.com/jaytimm/pubmedtk/actions" class="external-link"><img src="https://github.com/jaytimm/pubmedtk/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-</ul>
-</div>
+
 
   </div>
 </div>
