@@ -80,10 +80,10 @@
 <p>The package has two basic functions: <code>search_pubmed</code> and <code>get_records</code>. The former fetches PMIDs from the PubMed API based on user search; the latter scrapes PMID records from a user-specified PubMed endpoint – <code>pubmed_abstracts</code>, <code>pubmed_affiliations</code>, <code>pubtations</code>, <code>icites</code>, or <code>pmc_fulltext</code>.</p>
 <p>Search syntax is the same as that implemented in standard <a href="https://pubmed.ncbi.nlm.nih.gov/advanced/" class="external-link">PubMed search</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pmids</span> <span class="op">&lt;-</span> <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pubmedtk/man/search_pubmed.html" class="external-link">search_pubmed</a></span><span class="op">(</span><span class="st">'("political ideology"[TiAb])'</span>,</span>
+<code class="sourceCode R"><span><span class="va">pmids</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/search_pubmed.html">search_pubmed</a></span><span class="op">(</span><span class="st">'("political ideology"[TiAb])'</span>,</span>
 <span>                                 use_pub_years <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># pmids &lt;- pubmedtk::search_pubmed('immunity', </span></span>
+<span><span class="co"># pmids &lt;- puremoe::search_pubmed('immunity', </span></span>
 <span><span class="co">#                                  use_pub_years = T,</span></span>
 <span><span class="co">#                                  start_year = 2022,</span></span>
 <span><span class="co">#                                  end_year = 2024) </span></span></code></pre></div>
@@ -93,31 +93,31 @@
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pubmed</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pubmedtk/man/get_records.html" class="external-link">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_abstracts'</span>, </span>
-<span>                        cores <span class="op">=</span> <span class="fl">1</span>, </span>
-<span>                        sleep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span>
+<span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_abstracts'</span>, </span>
+<span>                       cores <span class="op">=</span> <span class="fl">1</span>, </span>
+<span>                       sleep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="va">affiliations</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pubmedtk/man/get_records.html" class="external-link">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_affiliations'</span>, </span>
-<span>                        cores <span class="op">=</span> <span class="fl">3</span>, </span>
-<span>                        sleep <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_affiliations'</span>, </span>
+<span>                       cores <span class="op">=</span> <span class="fl">3</span>, </span>
+<span>                       sleep <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">icites</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pubmedtk/man/get_records.html" class="external-link">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'icites'</span>,</span>
-<span>                        cores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>                        sleep <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
+<span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'icites'</span>,</span>
+<span>                       cores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>                       sleep <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">pubtations</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pubmedtk/man/get_records.html" class="external-link">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubtations'</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubtations'</span><span class="op">)</span></span></code></pre></div>
 <blockquote>
 <p>When the endpoint is PMC, the `get_records() function takes a vector of filepaths (from the PMC Open Access list) instead of PMIDs.</p>
 </blockquote>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pmclist</span> <span class="op">&lt;-</span> <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pubmedtk/man/data_pmc_list.html" class="external-link">data_pmc_list</a></span><span class="op">(</span>force_install <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">pmclist</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/data_pmc_list.html">data_pmc_list</a></span><span class="op">(</span>force_install <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
 <span><span class="va">pmc_pmids</span> <span class="op">&lt;-</span> <span class="va">pmclist</span><span class="op">[</span><span class="va">PMID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">pmids</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">pmc_fulltext</span> <span class="op">&lt;-</span> <span class="va">pmc_pmids</span><span class="op">$</span><span class="va">fpath</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">pubmedtk</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pubmedtk/man/get_records.html" class="external-link">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pmc_fulltext'</span>, cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pmc_fulltext'</span>, cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 
@@ -150,7 +150,7 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/jaytimm/pubmedtk/actions" class="external-link"><img src="https://github.com/jaytimm/pubmedtk/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://github.com/jaytimm/puremoe/actions" class="external-link"><img src="https://github.com/jaytimm/puremoe/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>
 </div>
 
