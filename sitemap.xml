@@ -31,34 +31,7 @@
     <loc>/reference/data_pmc_list.html</loc>
   </url>
   <url>
-    <loc>/reference/dot-clean_nas.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-extract_annotations.html</loc>
-  </url>
-  <url>
     <loc>/reference/dot-extract_basic.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-fetch_icites.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-fetch_records.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-get_affiliations.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-get_icites.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-get_pmc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-get_pubtations.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dot-get_records.html</loc>
   </url>
   <url>
     <loc>/reference/get_records.html</loc>
