@@ -34,6 +34,10 @@ persistent storage by setting `use_persistent_storage` to TRUE and optionally
 specifying a path.
 }
 \examples{
-data <- data_mesh_thesaurus()
+\donttest{
+if (interactive()) {
+  data <- data_mesh_thesaurus()
+}
+}
 
 }

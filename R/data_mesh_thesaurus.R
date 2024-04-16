@@ -21,7 +21,11 @@
 #' @importFrom data.table rbindlist
 #' @export
 #' @examples
-#' data <- data_mesh_thesaurus()
+#' \donttest{
+#' if (interactive()) {
+#'   data <- data_mesh_thesaurus()
+#' }
+#' }
 #' 
 data_mesh_thesaurus <- function(path = NULL, 
                                 use_persistent_storage = FALSE, 
