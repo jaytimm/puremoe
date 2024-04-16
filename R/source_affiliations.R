@@ -1,8 +1,8 @@
-#' Internal: Extract Author Affiliations from PubMed Records
+#' Internal: Extract Author Affiliations from 'PubMed' Records
 #'
 #' Function queries PubMed to extract author affiliations from the fetched records. It processes XML records to obtain detailed information about authors, including their names and affiliations.
-#' @param x A character vector with search terms or IDs for fetching records from PubMed.
-#' @return A data.table consisting of PubMed IDs, author names, and their affiliations.
+#' @param x A character vector with search terms or IDs for fetching records from 'PubMed'.
+#' @return A data.table consisting of 'PubMed' IDs, author names, and their affiliations.
 #' @importFrom xml2 xml_find_all xml_text
 #' @importFrom data.table rbindlist
 #' @noRd

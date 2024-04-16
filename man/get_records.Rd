@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_records.R
 \name{get_records}
 \alias{get_records}
-\title{Retrieve Data from NLM/PubMed databases Based on PMIDs}
+\title{Retrieve Data from 'NLM'/'PubMed' databases Based on PMIDs}
 \usage{
 get_records(
   pmids,
@@ -27,14 +27,10 @@ get_records(
 A data.table containing combined results from the specified endpoint.
 }
 \description{
-This function retrieves different types of data (like PubMed records, affiliations, iCites data, etc.) from PubMed based on provided PMIDs. It supports parallel processing for efficiency.
+This function retrieves different types of data (like 'PubMed' records, affiliations, 'iCites 'data, etc.) from 'PubMed' based on provided PMIDs. It supports parallel processing for efficiency.
 }
 \examples{
-\donttest{
-if (interactive()) {
 pmids <- c("38136652", "31345328", "32496629")
 results <- get_records(pmids, endpoint = "pubmed_abstracts", cores = 1)
-}
-}
 
 }

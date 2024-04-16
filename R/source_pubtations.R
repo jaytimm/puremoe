@@ -1,8 +1,8 @@
-#' Extract Named Entities from PubMed's PubTator3 Tool
+#' Extract Named Entities from 'PubMed''s 'PubTator3' Tool
 #'
-#' This function retrieves named entity annotations from PubMed's PubTator3 tool. It fetches data using PubMed IDs and processes the JSON response into a structured format.
-#' @param x A vector of PubMed IDs for which annotations are to be retrieved from PubTator.
-#' @return A data.table, or NA if no data is available, with columns for PubMed ID, title or abstract location, annotation text, start and end positions of annotations, and annotation types.
+#' This function retrieves named entity annotations from 'PubMed''s 'PubTator3' tool. It fetches data using 'PubMed' IDs and processes the JSON response into a structured format.
+#' @param x A vector of 'PubMed' IDs for which annotations are to be retrieved from 'PubTator'.
+#' @return A data.table, or NA if no data is available, with columns for 'PubMed' ID, title or abstract location, annotation text, start and end positions of annotations, and annotation types.
 #' @importFrom jsonlite stream_in
 #' @importFrom data.table rbindlist
 #' @noRd

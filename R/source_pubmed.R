@@ -1,8 +1,8 @@
-#' Get PubMed Records
+#' Get 'PubMed' Records
 #'
-#' Processes XML records obtained from PubMed. It extracts basic bibliographic information and annotations for each record.
-#' @param x A character vector with search terms or IDs for fetching records from PubMed.
-#' @return A data.table with columns for PubMed IDs, publication year, journal name, article title, abstract, and annotations.
+#' Processes XML records obtained from 'PubMed'. It extracts basic bibliographic information and annotations for each record.
+#' @param x A character vector with search terms or IDs for fetching records from 'PubMed'.
+#' @return A data.table with columns for 'PubMed' IDs, publication year, journal name, article title, abstract, and annotations.
 #' @noRd
 .get_records <- function (x, sleep) { 
   
@@ -59,10 +59,8 @@
 #'
 #' An internal function that parses XML records from PubMed. It extracts essential bibliographic information such as PubMed ID, journal title, article title, publication year, and abstract.
 #' @param g An XML node set representing a single PubMed record.
-#' @return A named vector with basic bibliographic information from a PubMed record.
-#' @noRd
-
-
+#' @return A named vector with basic bibliographic information from a PubMed record
+#' @keywords internal
 .extract_basic <- function(g){
 
   # Extract the PubMed ID (PMID) from the XML

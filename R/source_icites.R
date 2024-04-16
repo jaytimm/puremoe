@@ -1,7 +1,7 @@
-#' Internal: Fetch Data from iCite Database
+#' Internal: Fetch Data from 'iCite' Database
 #'
-#' This internal function is designed to scrape data from the iCite database, a bibliometric tool provided by the NIH. It constructs a URL to query iCite with specified PubMed IDs and retrieves citation metrics and other related data.
-#' @param x A vector of PubMed IDs for which data is to be fetched from the iCite database.
+#' This internal function is designed to scrape data from the 'iCite' database, a bibliometric tool provided by the 'NIH'. It constructs a URL to query 'iCite' with specified 'PubMed' IDs and retrieves citation metrics and other related data.
+#' @param x A vector of 'PubMed' IDs for which data is to be fetched from the 'iCite' database.
 #' @return A data.frame consisting of the data retrieved from iCite, formatted as CSV.
 #' @importFrom httr GET content
 #' @importFrom utils read.csv

@@ -2,27 +2,39 @@
 % Please edit documentation in R/data_mesh_trees.R
 \name{data_mesh_trees}
 \alias{data_mesh_trees}
-\title{Download and Load MeSH Trees Data}
+\title{Download and Load 'MeSH' Trees Data}
 \usage{
-data_mesh_trees(force_download = FALSE)
+data_mesh_trees(
+  path = NULL,
+  use_persistent_storage = FALSE,
+  force_install = FALSE
+)
 }
 \arguments{
-\item{force_download}{A logical value indicating whether to force re-downloading 
+\item{path}{A character string specifying the directory path where data should 
+be stored. If not provided and persistent storage is requested, it defaults to 
+a system-appropriate persistent location managed by `rappdirs`.}
+
+\item{use_persistent_storage}{A logical value indicating whether to use persistent
+storage. If TRUE and no path is provided, data will be stored in a system-appropriate 
+location. Defaults to FALSE, using a temporary directory.}
+
+\item{force_install}{A logical value indicating whether to force re-downloading 
 of the data even if it already exists locally.}
 }
 \value{
 A data frame containing the MeSH Trees data.
 }
 \description{
-This function downloads and loads the MeSH (Medical Subject Headings) Trees data
-from a specified URL. The data is stored locally for future use. If the data already 
-exists locally, the download can be skipped unless `force_download` is set to `TRUE`.
+This function downloads and loads the 'MeSH' (Medical Subject Headings) Trees data.
+}
+\details{
+The data is sourced from specified URLs and stored locally for subsequent use.
+By default, the data is stored in a temporary directory. Users can opt into 
+persistent storage by setting `use_persistent_storage` to TRUE and optionally 
+specifying a path.
 }
 \examples{
-\donttest{
-if (interactive()) {
-  # Code that downloads data or performs other interactive-only operations
-  data <- data_mesh_trees()
-}
-}
+data <- data_mesh_trees()
+
 }

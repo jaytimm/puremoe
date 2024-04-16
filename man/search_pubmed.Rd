@@ -2,7 +2,7 @@
 % Please edit documentation in R/search_pubmed.R
 \name{search_pubmed}
 \alias{search_pubmed}
-\title{Search PubMed Records}
+\title{Search 'PubMed' Records}
 \usage{
 search_pubmed(
   x,
@@ -27,15 +27,11 @@ search_pubmed(
 Numeric vector of unique PubMed IDs.
 }
 \description{
-Performs a PubMed search based on a query, optionally filtered by publication years. 
-Returns a unique set of PubMed IDs matching the query.
+Performs a 'PubMed' search based on a query, optionally filtered by publication years. 
+Returns a unique set of 'PubMed' IDs matching the query.
 }
 \examples{
-\donttest{
-if (interactive()) {
 ethnob1 <- search_pubmed("ethnobotany", 2010, 2012)
-ethnob2 <- search_pubmed("ethnobotany", use_pub_years = FALSE)
-}
-}
+
 
 }

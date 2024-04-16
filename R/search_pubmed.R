@@ -1,7 +1,7 @@
-#' Search PubMed Records
+#' Search 'PubMed' Records
 #'
-#' Performs a PubMed search based on a query, optionally filtered by publication years. 
-#' Returns a unique set of PubMed IDs matching the query.
+#' Performs a 'PubMed' search based on a query, optionally filtered by publication years. 
+#' Returns a unique set of 'PubMed' IDs matching the query.
 #'
 #' @param x Character string, the search query.
 #' @param start_year Integer, the start year of publication date range (used if `use_pub_years` is TRUE).
@@ -12,12 +12,8 @@
 #' @importFrom rentrez entrez_search
 #' @export
 #' @examples
-#' \donttest{
-#' if (interactive()) {
 #' ethnob1 <- search_pubmed("ethnobotany", 2010, 2012)
-#' ethnob2 <- search_pubmed("ethnobotany", use_pub_years = FALSE)
-#' }
-#' }
+#' 
 #' 
 search_pubmed <- function(x, 
                           start_year = NULL, 

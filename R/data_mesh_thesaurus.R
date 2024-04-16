@@ -1,9 +1,19 @@
-#' Download and Combine MeSH and Supplemental Thesauruses
+#' Download and Combine 'MeSH' and Supplemental Thesauruses
 #'
-#' This function downloads and combines the MeSH (Medical Subject Headings) Thesaurus 
-#' and a supplemental concept thesaurus for use in biomedical research and analysis.
+#' This function downloads and combines the 'MeSH' (Medical Subject Headings) Thesaurus 
+#' and a supplemental concept thesaurus.
 #' The data is sourced from specified URLs and stored locally for subsequent use.
-#' @param force_download A logical value indicating whether to force re-downloading 
+#' By default, the data is stored in a temporary directory. Users can opt into 
+#' persistent storage by setting `use_persistent_storage` to TRUE and optionally 
+#' specifying a path.
+#'
+#' @param path A character string specifying the directory path where data should 
+#' be stored. If not provided and persistent storage is requested, it defaults to 
+#' a system-appropriate persistent location managed by `rappdirs`.
+#' @param use_persistent_storage A logical value indicating whether to use persistent
+#' storage. If TRUE and no path is provided, data will be stored in a system-appropriate 
+#' location. Defaults to FALSE, using a temporary directory.
+#' @param force_install A logical value indicating whether to force re-downloading 
 #' of the data even if it already exists locally.
 #' @return A data.table containing the combined MeSH and supplemental thesaurus data.
 #' @importFrom rappdirs user_data_dir
@@ -11,40 +21,50 @@
 #' @importFrom data.table rbindlist
 #' @export
 #' @examples
-#' \donttest{
-#' if (interactive()) {
-#'   # Code that downloads data or performs other interactive-only operations
-#'   data <- data_mesh_thesaurus()
-#' }
-#' }
-
-
-data_mesh_thesuarus <- function(force_download = FALSE) {
+#' data <- data_mesh_thesaurus()
+#' 
+data_mesh_thesaurus <- function(path = NULL, 
+                                use_persistent_storage = FALSE, 
+                                force_install = FALSE) {
   
-  # URLs for the MeSH thesaurus and supplemental thesaurus data
+  # Define the URLs for the MeSH thesaurus and supplemental thesaurus data
   sf <- 'https://github.com/jaytimm/mesh-builds/blob/main/data/data_mesh_thesaurus.rds?raw=true'
   sf2 <- 'https://github.com/jaytimm/mesh-builds/blob/main/data/data_scr_thesaurus.rds?raw=true'
   
-  # Local file paths for storing the downloaded data
-  df <- file.path(rappdirs::user_data_dir('puremoe'), 'data_mesh_thesuarus.rds')
-  df2 <- file.path(rappdirs::user_data_dir('puremoe'), 'data_scr_thesuarus.rds')
-  
-  # Check for the existence of the files or force download
-  if (!file.exists(df) | force_download) {
-    # Create the directory if it doesn't exist
-    if (!dir.exists(rappdirs::user_data_dir('puremoe'))) {
-      dir.create(rappdirs::user_data_dir('puremoe'), recursive = TRUE)
+  # Determine the directory path based on user preference for persistent storage
+  if (use_persistent_storage && is.null(path)) {
+    path <- file.path(rappdirs::user_data_dir("puremoe"), "Data")
+    if (!dir.exists(path)) {
+      dir.create(path, recursive = TRUE)
+      message(sprintf("Created persistent directory at: %s", path))
+    } else {
+      message(sprintf("Directory already exists at: %s", path))
     }
-    
-    # Download the MeSH thesaurus data
-    message('Downloading the mesh thesaurus ...')
-    utils::download.file(sf, df, mode = "wb")
+  } else if (is.null(path)) {
+    path <- tempdir()
+    message("No path provided and persistent storage not requested. Using temporary directory for this session.")
+  } else {
+    if (!dir.exists(path)) {
+      dir.create(path, recursive = TRUE)
+      message(sprintf("Created directory at specified path: %s", path))
+    } else {
+      message(sprintf("Directory already exists at: %s", path))
+    }
   }
   
-  # Repeat the process for the supplemental concept thesaurus
-  if (!file.exists(df2) | force_download) {
-    message('Downloading the supplemental concept thesaurus ...')
-    utils::download.file(sf2, df2, mode = "wb")
+  # Define local file paths for storing the downloaded data
+  df <- file.path(path, 'data_mesh_thesaurus.rds')
+  df2 <- file.path(path, 'data_scr_thesaurus.rds')
+  
+  # Check for the existence of the files or force download
+  if (!file.exists(df) || force_install) {
+    message('Downloading the MeSH thesaurus...')
+    download.file(sf, df, mode = "wb")
+  }
+  
+  if (!file.exists(df2) || force_install) {
+    message('Downloading the supplemental concept thesaurus...')
+    download.file(sf2, df2, mode = "wb")
   }
   
   # Read the downloaded RDS files
@@ -55,5 +75,7 @@ data_mesh_thesuarus <- function(force_download = FALSE) {
   colnames(a2) <- colnames(a1)
   
   # Combine the data using data.table's rbindlist
-  data.table::rbindlist(list(a1, a2))
+  combined_data <- rbindlist(list(a1, a2))
+  
+  return(combined_data)
 }

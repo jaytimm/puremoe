@@ -1,6 +1,6 @@
-#' Retrieve Data from NLM/PubMed databases Based on PMIDs
+#' Retrieve Data from 'NLM'/'PubMed' databases Based on PMIDs
 #'
-#' This function retrieves different types of data (like PubMed records, affiliations, iCites data, etc.) from PubMed based on provided PMIDs. It supports parallel processing for efficiency.
+#' This function retrieves different types of data (like 'PubMed' records, affiliations, 'iCites 'data, etc.) from 'PubMed' based on provided PMIDs. It supports parallel processing for efficiency.
 #' @param pmids A vector of PMIDs for which data is to be retrieved.
 #' @param endpoint A character vector specifying the type of data to retrieve ('pubtations', 'icites', 'affiliations', 'pubmed', 'pmc').
 #' @param cores Number of cores to use for parallel processing (default is 3).
@@ -12,12 +12,8 @@
 #' @importFrom data.table rbindlist
 #' @export
 #' @examples
-#' \donttest{
-#' if (interactive()) {
 #' pmids <- c("38136652", "31345328", "32496629")
 #' results <- get_records(pmids, endpoint = "pubmed_abstracts", cores = 1)
-#' }
-#' }
 #' 
 get_records <- function(pmids, 
                         endpoint = c('pubtations', 

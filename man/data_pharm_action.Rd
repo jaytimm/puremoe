@@ -4,26 +4,36 @@
 \alias{data_pharm_action}
 \title{Download and Load Pharmacological Actions Data}
 \usage{
-data_pharm_action(force_download = FALSE)
+data_pharm_action(
+  path = NULL,
+  use_persistent_storage = FALSE,
+  force_install = FALSE
+)
 }
 \arguments{
-\item{force_download}{A logical value indicating whether to force re-downloading 
-of the data even if it already exists locally. Default is FALSE.}
+\item{path}{A character string specifying the directory path where data should 
+be stored. If not provided and persistent storage is requested, it defaults to 
+a system-appropriate persistent location managed by `rappdirs`.}
+
+\item{use_persistent_storage}{A logical value indicating whether to use persistent
+storage. If TRUE and no path is provided, data will be stored in a system-appropriate 
+location. Defaults to FALSE, using a temporary directory.}
+
+\item{force_install}{A logical value indicating whether to force re-downloading 
+of the data even if it already exists locally.}
 }
 \value{
 A data frame containing pharmacological actions data.
 }
 \description{
 This function downloads and loads pharmacological actions data from a specified URL.
-The data is stored locally in the user's data directory. If the data file does not 
-exist locally or if `force_download` is TRUE, it will be downloaded. The function 
-returns the data as a data frame.
+}
+\details{
+The data is sourced from specified URLs and stored locally for subsequent use.
+By default, the data is stored in a temporary directory. Users can opt into 
+persistent storage by setting `use_persistent_storage` to TRUE and optionally 
+specifying a path.
 }
 \examples{
-\donttest{
-if (interactive()) {
-  # Code that downloads data or performs other interactive-only operations
-  data <- data_mesh_embeddings()
-}
-}
+data <- data_pharm_action()
 }

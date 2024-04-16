@@ -10,8 +10,12 @@
 \item{g}{An XML node set representing a single PubMed record.}
 }
 \value{
-A named vector with basic bibliographic information from a PubMed record.
+A named vector with basic bibliographic information from a PubMed record
 }
 \description{
 An internal function that parses XML records from PubMed. It extracts essential bibliographic information such as PubMed ID, journal title, article title, publication year, and abstract.
 }
+\keyword{=}
+\keyword{internal}
+\keyword{pub_type,}
+\keyword{pubtype'}

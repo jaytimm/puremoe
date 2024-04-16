@@ -2,21 +2,44 @@
 % Please edit documentation in R/data_mesh_embeddings.R
 \name{data_mesh_embeddings}
 \alias{data_mesh_embeddings}
-\title{Download and Process Mesh and SCR Embeddings}
+\title{Download and Process 'MeSH' and 'SCR' Embeddings}
 \usage{
-data_mesh_embeddings()
+data_mesh_embeddings(
+  path = NULL,
+  use_persistent_storage = FALSE,
+  force_install = FALSE
+)
+}
+\arguments{
+\item{path}{A character string specifying the directory path where data should 
+be stored. If not provided and persistent storage is requested, it defaults to 
+a system-appropriate persistent location managed by `rappdirs`.}
+
+\item{use_persistent_storage}{A logical value indicating whether to use persistent
+storage. If TRUE and no path is provided, data will be stored in a system-appropriate 
+location. Defaults to FALSE, using a temporary directory.}
+
+\item{force_install}{A logical value indicating whether to force re-downloading 
+of the data even if it already exists locally.}
 }
 \value{
 A data frame containing the processed Mesh and SCR embeddings data.
 }
 \description{
-This function downloads Mesh and SCR embeddings data from the specified URLs and processes it for use.
+This function downloads 'MeSH' and 'SCR' embeddings data from the specified URLs and processes it for use.
 The data is saved locally in RDS format. If the files do not exist, they will be downloaded and processed.
+}
+\details{
+This dataset is not viewable until it has been downloaded.
+
+Citation
+
+Noh, J., & Kavuluru, R. (2021). Improved biomedical word embeddings in the transformer era. 
+Journal of biomedical informatics, 120, 103867.
 }
 \examples{
 \donttest{
 if (interactive()) {
-  # Code that downloads data or performs other interactive-only operations
   data <- data_mesh_embeddings()
 }
 }

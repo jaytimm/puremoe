@@ -1,8 +1,8 @@
-#' Fetch Batch of PubMed Records as XML
+#' Fetch Batch of 'PubMed' Records as XML
 #'
-#' This function attempts to fetch batches of PubMed records in XML format. It retries multiple times in case of failures.
-#' @param x A vector of PubMed record identifiers to be fetched.
-#' @return A character string with XML content of PubMed records, or an error object in case of failure.
+#' This function attempts to fetch batches of 'PubMed' records in XML format. It retries multiple times in case of failures.
+#' @param x A vector of 'PubMed' record identifiers to be fetched.
+#' @return A character string with XML content of 'PubMed' records, or an error object in case of failure.
 #' @importFrom rentrez entrez_fetch
 #' @noRd
 #' 

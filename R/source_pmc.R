@@ -1,8 +1,8 @@
-#' Scrape Full Text Entries from PubMed Central (PMC)
+#' Scrape Full Text Entries from 'PubMed Central' (PMC)
 #'
-#' This function retrieves full-text articles from PMC using provided PMC identifiers. It downloads and parses XML files to extract article sections and their corresponding text.
-#' @param x A vector of PMC identifiers for which full-text articles are to be retrieved.
-#' @return A data.table with columns for document ID, PMC identifier, section titles, and text content of each section.
+#' This function retrieves full-text articles from 'PMC' using provided 'PMC' identifiers. It downloads and parses XML files to extract article sections and their corresponding text.
+#' @param x A vector of 'PMC' identifiers for which full-text articles are to be retrieved.
+#' @return A data.table with columns for document ID, 'PMC' identifier, section titles, and text content of each section.
 #' @importFrom xml2 read_xml xml_children xml_find_first xml_text
 #' @importFrom utils untar
 #' @noRd
