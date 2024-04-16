@@ -1,0 +1,25 @@
+Package: puremoe
+Type: Package
+Title: Pubmed Unified REtrieval for Multi-Output Exploration
+Version: 1.0.0
+Author: Jason Timm [aut, cre]
+Maintainer: Jason Timm <JaTimm@salud.unm.edu>
+Description: An R package for accessing a variety of PubMed data, including abstracts, bibliometrics, pubtations, and full-text records, through a single, user-friendly interface.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: false
+Depends: 
+    R (>= 3.5)
+Imports: 
+    rentrez,
+    textshape,
+    xml2,
+    data.table,
+    httr,
+    pbapply,
+    jsonlite,
+    rappdirs
+Suggests: 
+    knitr,
+    rmarkdown
+RoxygenNote: 7.3.1
