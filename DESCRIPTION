@@ -1,6 +1,6 @@
 Package: puremoe
 Type: Package
-Title: "Pubmed Unified REtrieval for Multi-Output Exploration"
+Title: Pubmed Unified REtrieval for Multi-Output Exploration
 Version: 1.0.0
 Authors@R: c(
   person("Jason", "Timm", role = c("aut", "cre"), 

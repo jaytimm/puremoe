@@ -55,12 +55,16 @@
 
 
 
+
+
 #' Extract Basic Information from PubMed Records
 #'
 #' An internal function that parses XML records from PubMed. It extracts essential bibliographic information such as PubMed ID, journal title, article title, publication year, and abstract.
 #' @param g An XML node set representing a single PubMed record.
-#' @return A named vector with basic bibliographic information from a PubMed record
+#' @return A named vector with basic bibliographic information from a PubMed record 
+#' @noRd
 #' @keywords internal
+#' 
 .extract_basic <- function(g){
 
   # Extract the PubMed ID (PMID) from the XML
