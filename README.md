@@ -1,5 +1,7 @@
-[![R build
-status](https://github.com/jaytimm/puremoe/workflows/R-CMD-check/badge.svg)](https://github.com/jaytimm/puremoe/actions)
+[![](https://www.r-pkg.org/badges/version/badger?color=orange)](https://cran.r-project.org/package=badger)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/badger?color=blue)](https://cran.r-project.org/package=badger)
+[![CRAN
+checks](https://badges.cranchecks.info/summary/badger.svg)](https://cran.r-project.org/web/checks/check_results_badger.html)
 
 # puremoe
 
