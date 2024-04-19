@@ -1,7 +1,7 @@
-[![](https://www.r-pkg.org/badges/version/badger?color=orange)](https://cran.r-project.org/package=badger)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/badger?color=blue)](https://cran.r-project.org/package=badger)
+[![](https://www.r-pkg.org/badges/version/jaytimm/puremoe?color=orange)](https://cran.r-project.org/package=jaytimm/puremoe)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/jaytimm/puremoe?color=blue)](https://cran.r-project.org/package=jaytimm/puremoe)
 [![CRAN
-checks](https://badges.cranchecks.info/summary/badger.svg)](https://cran.r-project.org/web/checks/check_results_badger.html)
+checks](https://badges.cranchecks.info/summary/jaytimm/puremoe.svg)](https://cran.r-project.org/web/checks/check_results_jaytimm/puremoe.html)
 
 # puremoe
 
