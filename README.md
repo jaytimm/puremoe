@@ -1,9 +1,6 @@
-[![](https://www.r-pkg.org/badges/version/puremoe)](https://cran.r-project.org/package=puremoe)
-
-[![](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
-
-[![CRAN
-checks](https://badges.cranchecks.info/summary/puremoe.svg)](https://cran.r-project.org/web/checks/check_results_puremoe.html)
+[![](https://www.r-pkg.org/badges/version/puremoe)](https://cran.r-project.org/package=puremoe)[![](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
+[![R build
+status](https://github.com/jaytimm/puremoe/workflows/R-CMD-check/badge.svg)](https://github.com/jaytimm/puremoe/actions)
 
 # puremoe
 
@@ -31,7 +28,16 @@ library.
 
 ## Installation
 
-You can download the development version from GitHub with:
+Get the released version from CRAN:
+
+``` r
+install.packages('puremoe')
+```
+
+    ## Installing package into '/home/jtimm/R/x86_64-pc-linux-gnu-library/4.3'
+    ## (as 'lib' is unspecified)
+
+Or the development version from GitHub with:
 
 ``` r
 devtools::install_github("jaytimm/puremoe")
