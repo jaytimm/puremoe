@@ -1,5 +1,5 @@
-[![](https://www.r-pkg.org/badges/version/jaytimm/puremoe?color=orange)](https://cran.r-project.org/package=jaytimm/puremoe)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/jaytimm/puremoe?color=blue)](https://cran.r-project.org/package=jaytimm/puremoe)
+[![](https://www.r-pkg.org/badges/version/jaytimm/puremoe)](https://cran.r-project.org/package=jaytimm/puremoe)
+[![](http://cranlogs.r-pkg.org/badges/last-month/jaytimm/puremoe)](https://cran.r-project.org/package=jaytimm/puremoe)
 [![CRAN
 checks](https://badges.cranchecks.info/summary/jaytimm/puremoe.svg)](https://cran.r-project.org/web/checks/check_results_jaytimm/puremoe.html)
 
