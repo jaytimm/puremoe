@@ -27,3 +27,4 @@ Suggests:
 RoxygenNote: 7.3.1
 URL: https://github.com/jaytimm/puremoe, https://jaytimm.github.io/puremoe/
 BugReports: https://github.com/jaytimm/puremoe/issues
+VignetteBuilder: knitr

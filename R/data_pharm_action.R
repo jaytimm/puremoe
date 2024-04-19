@@ -31,7 +31,7 @@ data_pharm_action <- function(path = NULL,
   
   # Determine the directory path based on user preference for persistent storage
   if (use_persistent_storage && is.null(path)) {
-    path <- file.path(user_data_dir("MyRPackage"), "Data")
+    path <- file.path(user_data_dir("puremoe"), "Data")
     if (!dir.exists(path)) {
       dir.create(path, recursive = TRUE)
       message(sprintf("Created persistent directory at: %s", path))
