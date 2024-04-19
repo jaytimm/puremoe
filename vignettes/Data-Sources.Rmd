@@ -8,18 +8,11 @@ vignette: >
 ---
 
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
-library(dplyr)
-```
-
-
 `puremoe` includes several MeSH-/PMC-based tables. These resources are too large for a CRAN package.  Instead, the functions below download data from a simple GitHub library at [mesh-resources](https://github.com/jaytimm/mesh-resources).  Data sets can be cached in the package data folder by setting the `use_persistent_storage` to TRUE.  Otherwise you can just re-download to a temp directory each time functions are called.
 
 
 
 ## MeSH Resources
-
-
 
 
 ### MeSH thesaurus
@@ -30,7 +23,7 @@ thesaurus <- puremoe::data_mesh_thesaurus(use_persistent_storage = T)
 
 
 ```{r}
-thesaurus |> select(DescriptorUI: TermName) |> head() |> 
+thesaurus |> head() |> 
   DT::datatable(rownames = F, options = list(scrollX = TRUE))
 ```
 
