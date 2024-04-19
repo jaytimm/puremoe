@@ -1,4 +1,6 @@
-[![](https://www.r-pkg.org/badges/version/puremoe)](https://cran.r-project.org/package=puremoe)[![](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
+[![](https://www.r-pkg.org/badges/version/puremoe)](https://cran.r-project.org/package=puremoe)
+[![](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
+
 [![R build
 status](https://github.com/jaytimm/puremoe/workflows/R-CMD-check/badge.svg)](https://github.com/jaytimm/puremoe/actions)
 
