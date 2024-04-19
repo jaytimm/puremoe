@@ -33,9 +33,6 @@ Get the released version from CRAN:
 install.packages('puremoe')
 ```
 
-    ## Installing package into '/home/jtimm/R/x86_64-pc-linux-gnu-library/4.3'
-    ## (as 'lib' is unspecified)
-
 Or the development version from GitHub with:
 
 ``` r
