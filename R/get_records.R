@@ -20,7 +20,7 @@ get_records <- function(pmids,
                                      'icites', 
                                      'pubmed_affiliations', 
                                      'pubmed_abstracts', 
-                                     'pmc'), 
+                                     'pmc_fulltext'), 
                         cores = 3, 
                         sleep = 1,
                         ncbi_key = NULL) {
@@ -31,8 +31,12 @@ get_records <- function(pmids,
   }
   
   if (!is.character(endpoint) || length(endpoint) != 1 || 
-      !endpoint %in% c('pubtations', 'icites', 'pubmed_affiliations', 'pubmed_abstracts', 'pmc')) {
-    stop("Invalid endpoint. Must be one of 'pubtations', 'icites', 'pubmed_affiliations', 'pubmed_abstracts', 'pmc'")
+      !endpoint %in% c('pubtations', 
+                       'icites', 
+                       'pubmed_affiliations', 
+                       'pubmed_abstracts', 
+                       'pmc_fulltext')) {
+    stop("Invalid endpoint. Must be one of 'pubtations', 'icites', 'pubmed_affiliations', 'pubmed_abstracts', 'pmc_fulltext'")
   }
   
   if (!is.numeric(cores)) {
@@ -44,13 +48,13 @@ get_records <- function(pmids,
   
   
   # Define batch size and the specific task function based on the chosen endpoint
-  batch_size <- if (endpoint == "pmc") {5} else if (endpoint == "pubtations") {99} else {199}
+  batch_size <- if (endpoint == "pmc_fulltext") {5} else if (endpoint == "pubtations") {99} else {199}
   task_function <- switch(endpoint,
                           "icites" = .get_icites,
                           "pubtations" = .get_pubtations,
                           "pubmed_affiliations" = .get_affiliations,
                           "pubmed_abstracts" = .get_records,
-                          "pmc" = .get_pmc,
+                          "pmc_fulltext" = .get_pmc,
                           ##
                           stop("Invalid endpoint"))
   

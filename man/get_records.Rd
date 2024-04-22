@@ -6,7 +6,8 @@
 \usage{
 get_records(
   pmids,
-  endpoint = c("pubtations", "icites", "pubmed_affiliations", "pubmed_abstracts", "pmc"),
+  endpoint = c("pubtations", "icites", "pubmed_affiliations", "pubmed_abstracts",
+    "pmc_fulltext"),
   cores = 3,
   sleep = 1,
   ncbi_key = NULL
