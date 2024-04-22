@@ -1,16 +1,11 @@
 ---
 title: "puremoe data sets"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Data-Sources}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
-
 
 `puremoe` includes several MeSH-/PMC-based tables. These resources are too large for a CRAN package.  Instead, the functions below download data from a simple GitHub library at [mesh-resources](https://github.com/jaytimm/mesh-resources).  Data sets can be cached in the package data folder by setting the `use_persistent_storage` to TRUE.  Otherwise you can just re-download to a temp directory each time functions are called.
 
 
+https://r-pkgs.org/vignettes.html
 
 ## MeSH Resources
 

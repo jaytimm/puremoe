@@ -50,7 +50,7 @@ get_records <- function(pmids,
                           "pubtations" = .get_pubtations,
                           "pubmed_affiliations" = .get_affiliations,
                           "pubmed_abstracts" = .get_records,
-                          "pmc_fulltext" = .get_pmc,
+                          "pmc" = .get_pmc,
                           ##
                           stop("Invalid endpoint"))
   
