@@ -36,7 +36,7 @@ install.packages('puremoe')
 Or the development version from GitHub with:
 
 ``` r
-devtools::install_github("jaytimm/puremoe")
+remotes::install_github("jaytimm/puremoe")
 ```
 
 ## Usage
@@ -47,7 +47,7 @@ The package has two basic functions: `search_pubmed` and `get_records`.
 The former fetches PMIDs from the PubMed API based on user search; the
 latter scrapes PMID records from a user-specified PubMed endpoint –
 `pubmed_abstracts`, `pubmed_affiliations`, `pubtations`, `icites`, or
-`pmc`.
+`pmc_fulltext`.
 
 Search syntax is the same as that implemented in standard [PubMed
 search](https://pubmed.ncbi.nlm.nih.gov/advanced/).
@@ -85,7 +85,7 @@ pubtations <- pmids |>
                        cores = 2)
 ```
 
-> When the endpoint is PMC, the \`get_records() function takes a vector
+> When the endpoint is PMC, the `get_records()` function takes a vector
 > of filepaths (from the PMC Open Access list) instead of PMIDs.
 
 ``` r
@@ -93,7 +93,7 @@ pmclist <- puremoe::data_pmc_list(force_install = F)
 pmc_pmids <- pmclist[PMID %in% pmids]
 
 pmc_fulltext <- pmc_pmids$fpath[1:5] |> 
-  puremoe::get_records(endpoint = 'pmc', cores = 2)
+  puremoe::get_records(endpoint = 'pmc_fulltext', cores = 2)
 ```
 
 ## Summary
