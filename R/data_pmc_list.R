@@ -19,6 +19,7 @@
 #' @return A data frame containing the processed PMC open access file list.
 #' @importFrom rappdirs user_data_dir
 #' @importFrom data.table fread
+#' @importFrom curl curl_download
 #' @export
 #' @examples
 #' \donttest{
@@ -32,11 +33,11 @@ data_pmc_list <- function(path = NULL,
                           force_install = FALSE) {
   
   # URL for the PMC open access file list
-  sf <- 'https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_file_list.txt'
+  url <- 'https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_file_list.txt'
   
   # Determine the directory path based on user preference for persistent storage
   if (use_persistent_storage && is.null(path)) {
-    path <- file.path(rappdirs::user_data_dir("puremoe"), "Data")
+    path <- file.path(rappdirs::user_data_dir("yourAppName"), "Data")
     if (!dir.exists(path)) {
       dir.create(path, recursive = TRUE)
       message(sprintf("Created persistent directory at: %s", path))
@@ -45,7 +46,7 @@ data_pmc_list <- function(path = NULL,
     }
   } else if (is.null(path)) {
     path <- tempdir()
-    message("No path provided and persistent storage not requested. Using temporary directory for this session.")
+    message("Using temporary directory for this session.")
   } else {
     if (!dir.exists(path)) {
       dir.create(path, recursive = TRUE)
@@ -56,34 +57,26 @@ data_pmc_list <- function(path = NULL,
   }
   
   # Define local file path for storing the downloaded data
-  df <- file.path(path, 'oa_file_list.rds')
+  local_file_path <- file.path(path, 'oa_file_list.txt')
   
-  # Check if the file exists, and download and process it if it doesn't or if forced
-  if (!file.exists(df) || force_install) {
-    message('Downloading "pub/pmc/oa_file_list.txt" ...')
-    suppressWarnings({
-      # Read the file using data.table's fread
-      pmc <- fread(sf, sep = '\t')
-      
-      # Set column names
-      colnames(pmc) <- c('fpath', 'journal', 'PMCID', 'PMID', 'license_type')
-      
-      PMID <- NULL
-      PMCID <- NULL
-      
-      # Process PMCID and PMID columns
-      pmc[, PMID := gsub('^PMID:', '', PMID)]
-      pmc[, PMCID := gsub('^PMC', '', PMCID)]
-      
-      # Replace empty strings with NA
-      pmc[pmc == ''] <- NA
-      
-      # Save the processed data as an RDS file
-      saveRDS(pmc, df)
-    })
+  # Check if the file exists and download it if it doesn't or if force_install is TRUE
+  if (!file.exists(local_file_path) || force_install) {
+    message('Downloading "pub/pmc/oa_file_list.txt"...')
+    curl::curl_download(url, destfile = local_file_path, mode = "wb")
   }
   
-  # Read and return the processed RDS file
-  pmc <- readRDS(df)
+  
+  # Read the file using data.table's fread
+  column_names <- c('fpath', 'journal', 'PMCID', 'PMID', 'license_type')
+  pmc <- data.table::fread(local_file_path, sep = "\t", header = FALSE, col.names = column_names)
+  
+  PMID <- NULL
+  PMCID <- NULL
+  pmc[, `:=` (PMID = gsub('^PMID:', '', PMID), PMCID = gsub('^PMC', '', PMCID))]
+  pmc[pmc == ''] <- NA  # Replace empty strings with NA
+  
+  # Save the processed data as an RDS file
+  saveRDS(pmc, file.path(path, 'oa_file_list.rds'))
+  
   return(pmc)
 }
