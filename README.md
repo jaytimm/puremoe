@@ -89,11 +89,11 @@ pubtations <- pmids |>
 > of filepaths (from the PMC Open Access list) instead of PMIDs.
 
 ``` r
-pmclist <- puremoe::data_pmc_list(force_install = F)
+pmclist <- puremoe::data_pmc_list(use_persistent_storage = T)
 pmc_pmids <- pmclist[PMID %in% pmids]
 
 pmc_fulltext <- pmc_pmids$fpath[1:5] |> 
-  puremoe::get_records(endpoint = 'pmc_fulltext', cores = 2)
+  puremoe::get_records(endpoint = 'pmc_fulltext', cores = 1)
 ```
 
 ## Summary
