@@ -7,7 +7,8 @@
 data_pmc_list(
   path = NULL,
   use_persistent_storage = FALSE,
-  force_install = FALSE
+  force_install = FALSE,
+  timeout = 300
 )
 }
 \arguments{
@@ -21,6 +22,9 @@ location. Defaults to FALSE, using a temporary directory.}
 
 \item{force_install}{A logical value indicating whether to force re-downloading 
 of the data even if it already exists locally.}
+
+\item{timeout}{An integer indicating the timeout in seconds for the download.
+Defaults to 300 seconds.}
 }
 \value{
 A data frame containing the processed PMC open access file list.
@@ -30,7 +34,7 @@ This function downloads the 'PubMed Central' (PMC) open access file list from th
 'National Center for Biotechnology Information' (NCBI) and processes it for use.
 }
 \details{
-The data is sourced from specified URL and stored locally for subsequent use.
+The data is sourced from the specified URL and stored locally for subsequent use.
 By default, the data is stored in a temporary directory. Users can opt into 
 persistent storage by setting `use_persistent_storage` to TRUE and optionally 
 specifying a path.

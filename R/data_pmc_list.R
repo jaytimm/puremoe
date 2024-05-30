@@ -3,7 +3,7 @@
 #' This function downloads the 'PubMed Central' (PMC) open access file list from the
 #' 'National Center for Biotechnology Information' (NCBI) and processes it for use.
 #' 
-#' The data is sourced from specified URL and stored locally for subsequent use.
+#' The data is sourced from the specified URL and stored locally for subsequent use.
 #' By default, the data is stored in a temporary directory. Users can opt into 
 #' persistent storage by setting `use_persistent_storage` to TRUE and optionally 
 #' specifying a path.
@@ -16,10 +16,12 @@
 #' location. Defaults to FALSE, using a temporary directory.
 #' @param force_install A logical value indicating whether to force re-downloading 
 #' of the data even if it already exists locally.
+#' @param timeout An integer indicating the timeout in seconds for the download.
+#' Defaults to 300 seconds.
 #' @return A data frame containing the processed PMC open access file list.
 #' @importFrom rappdirs user_data_dir
 #' @importFrom data.table fread
-#' @importFrom curl curl_download
+#' @importFrom httr GET write_disk timeout
 #' @export
 #' @examples
 #' \donttest{
@@ -30,7 +32,8 @@
 #' 
 data_pmc_list <- function(path = NULL, 
                           use_persistent_storage = FALSE, 
-                          force_install = FALSE) {
+                          force_install = FALSE, 
+                          timeout = 300) {
   
   # URL for the PMC open access file list
   url <- 'https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_file_list.txt'
@@ -62,9 +65,12 @@ data_pmc_list <- function(path = NULL,
   # Check if the file exists and download it if it doesn't or if force_install is TRUE
   if (!file.exists(local_file_path) || force_install) {
     message('Downloading "pub/pmc/oa_file_list.txt"...')
-    curl::curl_download(url, destfile = local_file_path, mode = "wb")
+    tryCatch({
+      httr::GET(url, httr::write_disk(local_file_path, overwrite = TRUE), httr::timeout(timeout))
+    }, error = function(e) {
+      stop("Failed to download the file: ", e$message)
+    })
   }
-  
   
   # Read the file using data.table's fread
   column_names <- c('fpath', 'journal', 'PMCID', 'PMID', 'license_type')

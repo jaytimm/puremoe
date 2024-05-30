@@ -67,8 +67,8 @@ embeddings <- puremoe::data_mesh_embeddings(use_persistent_storage = T)
 
 
 ```{r}
-textpress::sem_nearest_neighbors(x = 'Aripiprazole', matrix = embeddings) |>
-  DT::datatable(rownames = F, options = list(scrollX = TRUE))
+# textpress::sem_nearest_neighbors(x = 'Aripiprazole', matrix = embeddings) |>
+#   DT::datatable(rownames = F, options = list(scrollX = TRUE))
 ```
 
 
