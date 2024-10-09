@@ -3,11 +3,9 @@
 
 # puremoe
 
-> **P**ubMed **U**nified **RE**trieval for **M**ulti-**O**utput
-> **E**xploration
-
-An R package that provides a single interface for accessing a range of
-NLM/PubMed databases, including:
+**P**ubMed **U**nified **RE**trieval for **M**ulti-**O**utput
+**E**xploration. An R package that provides a single interface for
+accessing a range of **NLM/PubMed databases**, including:
 
 -   [PubMed](https://pubmed.ncbi.nlm.nih.gov/) abstract records,
 
