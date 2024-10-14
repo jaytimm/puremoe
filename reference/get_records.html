@@ -3,7 +3,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">puremoe</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
       </span>
     </div>
 
@@ -31,20 +31,20 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/jaytimm/puremoe/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Retrieve Data from 'NLM'/'PubMed' databases Based on PMIDs</h1>
-    <small class="dont-index">Source: <a href="https://github.com/jaytimm/puremoe/blob/HEAD/R/get_records.R" class="external-link"><code>R/get_records.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/jaytimm/puremoe/blob/main/R/get_records.R" class="external-link"><code>R/get_records.R</code></a></small>
     <div class="hidden name"><code>get_records.Rd</code></div>
     </div>
 
@@ -65,31 +65,31 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>pmids</dt>
+
+
+<dl><dt id="arg-pmids">pmids<a class="anchor" aria-label="anchor" href="#arg-pmids"></a></dt>
 <dd><p>A vector of PMIDs for which data is to be retrieved.</p></dd>
 
 
-<dt>endpoint</dt>
+<dt id="arg-endpoint">endpoint<a class="anchor" aria-label="anchor" href="#arg-endpoint"></a></dt>
 <dd><p>A character vector specifying the type of data to retrieve ('pubtations', 'icites', 'affiliations', 'pubmed', 'pmc').</p></dd>
 
 
-<dt>cores</dt>
+<dt id="arg-cores">cores<a class="anchor" aria-label="anchor" href="#arg-cores"></a></dt>
 <dd><p>Number of cores to use for parallel processing (default is 3).</p></dd>
 
 
-<dt>sleep</dt>
+<dt id="arg-sleep">sleep<a class="anchor" aria-label="anchor" href="#arg-sleep"></a></dt>
 <dd><p>Duration (in seconds) to pause after each batch</p></dd>
 
 
-<dt>ncbi_key</dt>
+<dt id="arg-ncbi-key">ncbi_key<a class="anchor" aria-label="anchor" href="#arg-ncbi-key"></a></dt>
 <dd><p>(Optional) NCBI API key for authenticated access.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A data.table containing combined results from the specified endpoint.</p>
+    <p>A data.table containing combined results from the specified endpoint.</p>
     </div>
 
     <div id="ref-examples">
@@ -111,15 +111,15 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

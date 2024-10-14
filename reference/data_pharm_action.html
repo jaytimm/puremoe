@@ -3,7 +3,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">puremoe</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
       </span>
     </div>
 
@@ -31,20 +31,20 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/jaytimm/puremoe/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Download and Load Pharmacological Actions Data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/jaytimm/puremoe/blob/HEAD/R/data_pharm_action.R" class="external-link"><code>R/data_pharm_action.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/jaytimm/puremoe/blob/main/R/data_pharm_action.R" class="external-link"><code>R/data_pharm_action.R</code></a></small>
     <div class="hidden name"><code>data_pharm_action.Rd</code></div>
     </div>
 
@@ -62,34 +62,34 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>path</dt>
-<dd><p>A character string specifying the directory path where data should 
-be stored. If not provided and persistent storage is requested, it defaults to 
+
+
+<dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
+<dd><p>A character string specifying the directory path where data should
+be stored. If not provided and persistent storage is requested, it defaults to
 a system-appropriate persistent location managed by `rappdirs`.</p></dd>
 
 
-<dt>use_persistent_storage</dt>
+<dt id="arg-use-persistent-storage">use_persistent_storage<a class="anchor" aria-label="anchor" href="#arg-use-persistent-storage"></a></dt>
 <dd><p>A logical value indicating whether to use persistent
-storage. If TRUE and no path is provided, data will be stored in a system-appropriate 
+storage. If TRUE and no path is provided, data will be stored in a system-appropriate
 location. Defaults to FALSE, using a temporary directory.</p></dd>
 
 
-<dt>force_install</dt>
-<dd><p>A logical value indicating whether to force re-downloading 
+<dt id="arg-force-install">force_install<a class="anchor" aria-label="anchor" href="#arg-force-install"></a></dt>
+<dd><p>A logical value indicating whether to force re-downloading
 of the data even if it already exists locally.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A data frame containing pharmacological actions data.</p>
+    <p>A data frame containing pharmacological actions data.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>The data is sourced from specified URLs and stored locally for subsequent use.
-By default, the data is stored in a temporary directory. Users can opt into 
-persistent storage by setting `use_persistent_storage` to TRUE and optionally 
+By default, the data is stored in a temporary directory. Users can opt into
+persistent storage by setting `use_persistent_storage` to TRUE and optionally
 specifying a path.</p>
     </div>
 
@@ -112,15 +112,15 @@ specifying a path.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 
