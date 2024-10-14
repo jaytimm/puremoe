@@ -12,7 +12,7 @@
 #' @importFrom data.table rbindlist
 #' @export
 #' @examples
-#' pmids <- c("38136652", "31345328", "32496629")
+#' pmids <- c("38136652")
 #' results <- get_records(pmids, endpoint = "pubmed_abstracts", cores = 1)
 #' 
 get_records <- function(pmids, 

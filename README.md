@@ -24,10 +24,8 @@ through a single R function.
 The package also includes MeSH thesaurus resources as simple data
 frames, including Descriptor Terms, Descriptor Tree Structures,
 Supplementary Concept Terms, and Pharmacological Actions; it also
-includes descriptor-level word embeddings [(Noh & Kavuluru
-2021)](https://www.sciencedirect.com/science/article/pii/S1532046421001969).
-Via the [mesh-resources](https://github.com/jaytimm/mesh-resources)
-library.
+includes descriptor-level word embeddings (Noh & Kavuluru
+2021). Via the [mesh-resources](https://github.com/jaytimm/mesh-resources) library.
 
 ## Installation
 
