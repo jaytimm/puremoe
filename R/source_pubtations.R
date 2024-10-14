@@ -23,10 +23,12 @@
     jsonlite::stream_in(con), 
     error = function(e) NA)  
 
+  mydata <- mydata$PubTator3[[1]]
   
   # Process the data if valid, else return NA
   # i = 1
   if(length(mydata) == 1){jj0 <- NA} else{
+    
     jj <- list()
     
     # Iterate over each record to extract and format annotations
