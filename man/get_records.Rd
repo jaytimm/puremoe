@@ -31,7 +31,7 @@ A data.table containing combined results from the specified endpoint.
 This function retrieves different types of data (like 'PubMed' records, affiliations, 'iCites 'data, etc.) from 'PubMed' based on provided PMIDs. It supports parallel processing for efficiency.
 }
 \examples{
-pmids <- c("38136652", "31345328", "32496629")
+pmids <- c("38136652")
 results <- get_records(pmids, endpoint = "pubmed_abstracts", cores = 1)
 
 }
