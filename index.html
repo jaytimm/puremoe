@@ -78,7 +78,7 @@
 <li><p>full-text entries from <a href="https://www.ncbi.nlm.nih.gov/pmc/" class="external-link">PubMed Central</a> (PMC).</p></li>
 </ul>
 <p>This unified interface simplifies the data retrieval process, allowing users to interact with multiple PubMed services/APIs/output formats through a single R function.</p>
-<p>The package also includes MeSH thesaurus resources as simple data frames, including Descriptor Terms, Descriptor Tree Structures, Supplementary Concept Terms, and Pharmacological Actions; it also includes descriptor-level word embeddings (Noh &amp; Kavuluru 2021). Via the <a href="https://github.com/jaytimm/mesh-resources" class="external-link">mesh-resources</a> library.</p>
+<p>The package also includes MeSH thesaurus resources as simple data frames, including Descriptor Terms, Descriptor Tree Structures, Supplementary Concept Terms, and Pharmacological Actions; it also includes descriptor-level word embeddings <a href="https://www.sciencedirect.com/science/article/pii/S1532046421001969" class="external-link">(Noh &amp; Kavuluru 2021)</a>. Via the <a href="https://github.com/jaytimm/mesh-resources" class="external-link">mesh-resources</a> library.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -142,6 +142,180 @@
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  Output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pubmed_abstracts"</span>, <span class="st">"pubmed_abstracts"</span>, <span class="st">"pubmed_abstracts"</span>, </span>
+<span>             <span class="st">"pubmed_abstracts"</span>, <span class="st">"pubmed_abstracts"</span>, <span class="st">"pubmed_abstracts"</span>, </span>
+<span>             <span class="st">"pubmed_affiliations"</span>, <span class="st">"pubmed_affiliations"</span>, <span class="st">"pubtations"</span>, </span>
+<span>             <span class="st">"pubtations"</span>, <span class="st">"pubtations"</span>, <span class="st">"pubtations"</span>, <span class="st">"pubtations"</span>, </span>
+<span>             <span class="st">"pubtations"</span>, <span class="st">"pubtations"</span>, <span class="st">"pubtations"</span>, <span class="st">"pmc_fulltext"</span>, </span>
+<span>             <span class="st">"pmc_fulltext"</span>, <span class="st">"pmc_fulltext"</span>, <span class="st">"icites"</span>, <span class="st">"icites"</span>, </span>
+<span>             <span class="st">"icites"</span>, <span class="st">"icites"</span>, <span class="st">"icites"</span>, <span class="st">"icites"</span>, <span class="st">"icites"</span><span class="op">)</span>,  <span class="co"># added one more "icites"</span></span>
+<span>  </span>
+<span>  Colname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pmid"</span>, <span class="st">"year"</span>, <span class="st">"journal"</span>, <span class="st">"articletitle"</span>, <span class="st">"abstract"</span>, <span class="st">"annotations"</span>, </span>
+<span>              <span class="st">"Author"</span>, <span class="st">"affiliation"</span>, <span class="st">"pmid"</span>, <span class="st">"tiab"</span>, <span class="st">"id"</span>, <span class="st">"text"</span>, </span>
+<span>              <span class="st">"identifier"</span>, <span class="st">"type"</span>, <span class="st">"start"</span>, <span class="st">"end"</span>, <span class="st">"pmid"</span>, <span class="st">"section"</span>, </span>
+<span>              <span class="st">"text"</span>, <span class="st">"pmid"</span>, <span class="st">"is_research_article"</span>, <span class="st">"nih_percentile"</span>, </span>
+<span>              <span class="st">"is_clinical"</span>, <span class="st">"citation_count"</span>, <span class="st">"ref_count"</span>, <span class="st">"citation_net"</span><span class="op">)</span>,</span>
+<span>  </span>
+<span>  Description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PMID"</span>, <span class="st">"Publication year"</span>, <span class="st">"Journal name"</span>, <span class="st">"Article title"</span>, </span>
+<span>                  <span class="st">"Article abstract"</span>, <span class="st">"Mesh/Chem/Keywords annotations"</span>, </span>
+<span>                  <span class="st">"Author name"</span>, <span class="st">"Author affiliation"</span>, <span class="st">"PMID"</span>, </span>
+<span>                  <span class="st">"Title or abstract"</span>, <span class="st">"Entity ID"</span>, <span class="st">"Extracted entity"</span>, </span>
+<span>                  <span class="st">"Knowledge base link (KB link)"</span>, <span class="st">"Entity type"</span>, </span>
+<span>                  <span class="st">"Start position (char)"</span>, <span class="st">"End position (char)"</span>, </span>
+<span>                  <span class="st">"PMID"</span>, <span class="st">"Full text section"</span>, <span class="st">"Full text content"</span>, </span>
+<span>                  <span class="st">"PMID"</span>, <span class="st">"Research article indicator"</span>, </span>
+<span>                  <span class="st">"NIH percentile rank"</span>, <span class="st">"Clinical article indicator"</span>, </span>
+<span>                  <span class="st">"Citation count"</span>, <span class="st">"Reference count"</span>, </span>
+<span>                  <span class="st">"Citation network (to/from edgelist)"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">metadata</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="26%">
+<col width="26%">
+<col width="47%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Output</th>
+<th align="left">Colname</th>
+<th align="left">Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">pubmed_abstracts</td>
+<td align="left">pmid</td>
+<td align="left">PMID</td>
+</tr>
+<tr class="even">
+<td align="left">pubmed_abstracts</td>
+<td align="left">year</td>
+<td align="left">Publication year</td>
+</tr>
+<tr class="odd">
+<td align="left">pubmed_abstracts</td>
+<td align="left">journal</td>
+<td align="left">Journal name</td>
+</tr>
+<tr class="even">
+<td align="left">pubmed_abstracts</td>
+<td align="left">articletitle</td>
+<td align="left">Article title</td>
+</tr>
+<tr class="odd">
+<td align="left">pubmed_abstracts</td>
+<td align="left">abstract</td>
+<td align="left">Article abstract</td>
+</tr>
+<tr class="even">
+<td align="left">pubmed_abstracts</td>
+<td align="left">annotations</td>
+<td align="left">Mesh/Chem/Keywords annotations</td>
+</tr>
+<tr class="odd">
+<td align="left">pubmed_affiliations</td>
+<td align="left">Author</td>
+<td align="left">Author name</td>
+</tr>
+<tr class="even">
+<td align="left">pubmed_affiliations</td>
+<td align="left">affiliation</td>
+<td align="left">Author affiliation</td>
+</tr>
+<tr class="odd">
+<td align="left">pubtations</td>
+<td align="left">pmid</td>
+<td align="left">PMID</td>
+</tr>
+<tr class="even">
+<td align="left">pubtations</td>
+<td align="left">tiab</td>
+<td align="left">Title or abstract</td>
+</tr>
+<tr class="odd">
+<td align="left">pubtations</td>
+<td align="left">id</td>
+<td align="left">Entity ID</td>
+</tr>
+<tr class="even">
+<td align="left">pubtations</td>
+<td align="left">text</td>
+<td align="left">Extracted entity</td>
+</tr>
+<tr class="odd">
+<td align="left">pubtations</td>
+<td align="left">identifier</td>
+<td align="left">Knowledge base link (KB link)</td>
+</tr>
+<tr class="even">
+<td align="left">pubtations</td>
+<td align="left">type</td>
+<td align="left">Entity type</td>
+</tr>
+<tr class="odd">
+<td align="left">pubtations</td>
+<td align="left">start</td>
+<td align="left">Start position (char)</td>
+</tr>
+<tr class="even">
+<td align="left">pubtations</td>
+<td align="left">end</td>
+<td align="left">End position (char)</td>
+</tr>
+<tr class="odd">
+<td align="left">pmc_fulltext</td>
+<td align="left">pmid</td>
+<td align="left">PMID</td>
+</tr>
+<tr class="even">
+<td align="left">pmc_fulltext</td>
+<td align="left">section</td>
+<td align="left">Full text section</td>
+</tr>
+<tr class="odd">
+<td align="left">pmc_fulltext</td>
+<td align="left">text</td>
+<td align="left">Full text content</td>
+</tr>
+<tr class="even">
+<td align="left">icites</td>
+<td align="left">pmid</td>
+<td align="left">PMID</td>
+</tr>
+<tr class="odd">
+<td align="left">icites</td>
+<td align="left">is_research_article</td>
+<td align="left">Research article indicator</td>
+</tr>
+<tr class="even">
+<td align="left">icites</td>
+<td align="left">nih_percentile</td>
+<td align="left">NIH percentile rank</td>
+</tr>
+<tr class="odd">
+<td align="left">icites</td>
+<td align="left">is_clinical</td>
+<td align="left">Clinical article indicator</td>
+</tr>
+<tr class="even">
+<td align="left">icites</td>
+<td align="left">citation_count</td>
+<td align="left">Citation count</td>
+</tr>
+<tr class="odd">
+<td align="left">icites</td>
+<td align="left">ref_count</td>
+<td align="left">Reference count</td>
+</tr>
+<tr class="even">
+<td align="left">icites</td>
+<td align="left">citation_net</td>
+<td align="left">Citation network (to/from edgelist)</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 
