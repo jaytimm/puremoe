@@ -142,36 +142,6 @@
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  Output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pubmed_abstracts"</span>, <span class="st">"pubmed_abstracts"</span>, <span class="st">"pubmed_abstracts"</span>, </span>
-<span>             <span class="st">"pubmed_abstracts"</span>, <span class="st">"pubmed_abstracts"</span>, <span class="st">"pubmed_abstracts"</span>, </span>
-<span>             <span class="st">"pubmed_affiliations"</span>, <span class="st">"pubmed_affiliations"</span>, <span class="st">"pubtations"</span>, </span>
-<span>             <span class="st">"pubtations"</span>, <span class="st">"pubtations"</span>, <span class="st">"pubtations"</span>, <span class="st">"pubtations"</span>, </span>
-<span>             <span class="st">"pubtations"</span>, <span class="st">"pubtations"</span>, <span class="st">"pubtations"</span>, <span class="st">"pmc_fulltext"</span>, </span>
-<span>             <span class="st">"pmc_fulltext"</span>, <span class="st">"pmc_fulltext"</span>, <span class="st">"icites"</span>, <span class="st">"icites"</span>, </span>
-<span>             <span class="st">"icites"</span>, <span class="st">"icites"</span>, <span class="st">"icites"</span>, <span class="st">"icites"</span>, <span class="st">"icites"</span><span class="op">)</span>,  <span class="co"># added one more "icites"</span></span>
-<span>  </span>
-<span>  Colname <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pmid"</span>, <span class="st">"year"</span>, <span class="st">"journal"</span>, <span class="st">"articletitle"</span>, <span class="st">"abstract"</span>, <span class="st">"annotations"</span>, </span>
-<span>              <span class="st">"Author"</span>, <span class="st">"affiliation"</span>, <span class="st">"pmid"</span>, <span class="st">"tiab"</span>, <span class="st">"id"</span>, <span class="st">"text"</span>, </span>
-<span>              <span class="st">"identifier"</span>, <span class="st">"type"</span>, <span class="st">"start"</span>, <span class="st">"end"</span>, <span class="st">"pmid"</span>, <span class="st">"section"</span>, </span>
-<span>              <span class="st">"text"</span>, <span class="st">"pmid"</span>, <span class="st">"is_research_article"</span>, <span class="st">"nih_percentile"</span>, </span>
-<span>              <span class="st">"is_clinical"</span>, <span class="st">"citation_count"</span>, <span class="st">"ref_count"</span>, <span class="st">"citation_net"</span><span class="op">)</span>,</span>
-<span>  </span>
-<span>  Description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PMID"</span>, <span class="st">"Publication year"</span>, <span class="st">"Journal name"</span>, <span class="st">"Article title"</span>, </span>
-<span>                  <span class="st">"Article abstract"</span>, <span class="st">"Mesh/Chem/Keywords annotations"</span>, </span>
-<span>                  <span class="st">"Author name"</span>, <span class="st">"Author affiliation"</span>, <span class="st">"PMID"</span>, </span>
-<span>                  <span class="st">"Title or abstract"</span>, <span class="st">"Entity ID"</span>, <span class="st">"Extracted entity"</span>, </span>
-<span>                  <span class="st">"Knowledge base link (KB link)"</span>, <span class="st">"Entity type"</span>, </span>
-<span>                  <span class="st">"Start position (char)"</span>, <span class="st">"End position (char)"</span>, </span>
-<span>                  <span class="st">"PMID"</span>, <span class="st">"Full text section"</span>, <span class="st">"Full text content"</span>, </span>
-<span>                  <span class="st">"PMID"</span>, <span class="st">"Research article indicator"</span>, </span>
-<span>                  <span class="st">"NIH percentile rank"</span>, <span class="st">"Clinical article indicator"</span>, </span>
-<span>                  <span class="st">"Citation count"</span>, <span class="st">"Reference count"</span>, </span>
-<span>                  <span class="st">"Citation network (to/from edgelist)"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">metadata</span> <span class="op">|&gt;</span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="26%">
