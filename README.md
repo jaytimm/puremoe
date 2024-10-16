@@ -110,12 +110,13 @@ pmc_fulltext <- pmc_pmids$fpath[1:5] |>
 | pubmed_abstracts    | articletitle        | Article title                       |
 | pubmed_abstracts    | abstract            | Article abstract                    |
 | pubmed_abstracts    | annotations         | Mesh/Chem/Keywords annotations      |
+| pubmed_affiliations | pmid                | PMID                                |
 | pubmed_affiliations | Author              | Author name                         |
 | pubmed_affiliations | affiliation         | Author affiliation                  |
 | pubtations          | pmid                | PMID                                |
 | pubtations          | tiab                | Title or abstract                   |
 | pubtations          | id                  | Entity ID                           |
-| pubtations          | text                | Extracted entity                    |
+| pubtations          | entity              | Extracted entity                    |
 | pubtations          | identifier          | Knowledge base link (KB link)       |
 | pubtations          | type                | Entity type                         |
 | pubtations          | start               | Start position (char)               |
