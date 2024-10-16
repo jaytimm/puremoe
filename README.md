@@ -24,8 +24,10 @@ through a single R function.
 The package also includes MeSH thesaurus resources as simple data
 frames, including Descriptor Terms, Descriptor Tree Structures,
 Supplementary Concept Terms, and Pharmacological Actions; it also
-includes descriptor-level word embeddings (Noh & Kavuluru
-2021). Via the [mesh-resources](https://github.com/jaytimm/mesh-resources) library.
+includes descriptor-level word embeddings [(Noh & Kavuluru
+2021)](https://www.sciencedirect.com/science/article/pii/S1532046421001969).
+Via the [mesh-resources](https://github.com/jaytimm/mesh-resources)
+library.
 
 ## Installation
 
@@ -99,3 +101,64 @@ pmc_fulltext <- pmc_pmids$fpath[1:5] |>
 ```
 
 ## Summary
+
+``` r
+metadata <- data.frame(
+  Output = c("pubmed_abstracts", "pubmed_abstracts", "pubmed_abstracts", 
+             "pubmed_abstracts", "pubmed_abstracts", "pubmed_abstracts", 
+             "pubmed_affiliations", "pubmed_affiliations", "pubtations", 
+             "pubtations", "pubtations", "pubtations", "pubtations", 
+             "pubtations", "pubtations", "pubtations", "pmc_fulltext", 
+             "pmc_fulltext", "pmc_fulltext", "icites", "icites", 
+             "icites", "icites", "icites", "icites", "icites"),  # added one more "icites"
+  
+  Colname = c("pmid", "year", "journal", "articletitle", "abstract", "annotations", 
+              "Author", "affiliation", "pmid", "tiab", "id", "text", 
+              "identifier", "type", "start", "end", "pmid", "section", 
+              "text", "pmid", "is_research_article", "nih_percentile", 
+              "is_clinical", "citation_count", "ref_count", "citation_net"),
+  
+  Description = c("PMID", "Publication year", "Journal name", "Article title", 
+                  "Article abstract", "Mesh/Chem/Keywords annotations", 
+                  "Author name", "Author affiliation", "PMID", 
+                  "Title or abstract", "Entity ID", "Extracted entity", 
+                  "Knowledge base link (KB link)", "Entity type", 
+                  "Start position (char)", "End position (char)", 
+                  "PMID", "Full text section", "Full text content", 
+                  "PMID", "Research article indicator", 
+                  "NIH percentile rank", "Clinical article indicator", 
+                  "Citation count", "Reference count", 
+                  "Citation network (to/from edgelist)")
+)
+
+metadata |> knitr::kable()
+```
+
+| Output              | Colname             | Description                         |
+|:------------------|:------------------|:---------------------------------|
+| pubmed_abstracts    | pmid                | PMID                                |
+| pubmed_abstracts    | year                | Publication year                    |
+| pubmed_abstracts    | journal             | Journal name                        |
+| pubmed_abstracts    | articletitle        | Article title                       |
+| pubmed_abstracts    | abstract            | Article abstract                    |
+| pubmed_abstracts    | annotations         | Mesh/Chem/Keywords annotations      |
+| pubmed_affiliations | Author              | Author name                         |
+| pubmed_affiliations | affiliation         | Author affiliation                  |
+| pubtations          | pmid                | PMID                                |
+| pubtations          | tiab                | Title or abstract                   |
+| pubtations          | id                  | Entity ID                           |
+| pubtations          | text                | Extracted entity                    |
+| pubtations          | identifier          | Knowledge base link (KB link)       |
+| pubtations          | type                | Entity type                         |
+| pubtations          | start               | Start position (char)               |
+| pubtations          | end                 | End position (char)                 |
+| pmc_fulltext        | pmid                | PMID                                |
+| pmc_fulltext        | section             | Full text section                   |
+| pmc_fulltext        | text                | Full text content                   |
+| icites              | pmid                | PMID                                |
+| icites              | is_research_article | Research article indicator          |
+| icites              | nih_percentile      | NIH percentile rank                 |
+| icites              | is_clinical         | Clinical article indicator          |
+| icites              | citation_count      | Citation count                      |
+| icites              | ref_count           | Reference count                     |
+| icites              | citation_net        | Citation network (to/from edgelist) |
