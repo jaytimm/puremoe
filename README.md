@@ -102,38 +102,6 @@ pmc_fulltext <- pmc_pmids$fpath[1:5] |>
 
 ## Summary
 
-``` r
-metadata <- data.frame(
-  Output = c("pubmed_abstracts", "pubmed_abstracts", "pubmed_abstracts", 
-             "pubmed_abstracts", "pubmed_abstracts", "pubmed_abstracts", 
-             "pubmed_affiliations", "pubmed_affiliations", "pubtations", 
-             "pubtations", "pubtations", "pubtations", "pubtations", 
-             "pubtations", "pubtations", "pubtations", "pmc_fulltext", 
-             "pmc_fulltext", "pmc_fulltext", "icites", "icites", 
-             "icites", "icites", "icites", "icites", "icites"),  # added one more "icites"
-  
-  Colname = c("pmid", "year", "journal", "articletitle", "abstract", "annotations", 
-              "Author", "affiliation", "pmid", "tiab", "id", "text", 
-              "identifier", "type", "start", "end", "pmid", "section", 
-              "text", "pmid", "is_research_article", "nih_percentile", 
-              "is_clinical", "citation_count", "ref_count", "citation_net"),
-  
-  Description = c("PMID", "Publication year", "Journal name", "Article title", 
-                  "Article abstract", "Mesh/Chem/Keywords annotations", 
-                  "Author name", "Author affiliation", "PMID", 
-                  "Title or abstract", "Entity ID", "Extracted entity", 
-                  "Knowledge base link (KB link)", "Entity type", 
-                  "Start position (char)", "End position (char)", 
-                  "PMID", "Full text section", "Full text content", 
-                  "PMID", "Research article indicator", 
-                  "NIH percentile rank", "Clinical article indicator", 
-                  "Citation count", "Reference count", 
-                  "Citation network (to/from edgelist)")
-)
-
-metadata |> knitr::kable()
-```
-
 | Output              | Colname             | Description                         |
 |:------------------|:------------------|:---------------------------------|
 | pubmed_abstracts    | pmid                | PMID                                |
