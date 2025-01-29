@@ -19,7 +19,7 @@ search_pubmed <- function(x,
                           start_year = NULL, 
                           end_year = NULL, 
                           retmax = 9999, 
-                          use_pub_years = TRUE) {
+                          use_pub_years = FALSE) {
   
   if(!is.character(x) || length(x) != 1) {
     stop("x must be a single character string.")

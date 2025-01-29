@@ -40,7 +40,7 @@ data_pmc_list <- function(path = NULL,
   
   # Determine the directory path based on user preference for persistent storage
   if (use_persistent_storage && is.null(path)) {
-    path <- file.path(rappdirs::user_data_dir("yourAppName"), "Data")
+    path <- file.path(rappdirs::user_data_dir("puremoe"), "Data")
     if (!dir.exists(path)) {
       dir.create(path, recursive = TRUE)
       message(sprintf("Created persistent directory at: %s", path))

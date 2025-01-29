@@ -9,7 +9,7 @@ search_pubmed(
   start_year = NULL,
   end_year = NULL,
   retmax = 9999,
-  use_pub_years = TRUE
+  use_pub_years = FALSE
 )
 }
 \arguments{

@@ -35,7 +35,12 @@
   sum1 <- sum1[order(as.numeric(id))]
   
   # Select and reorder columns for the final output
-  sum1 <- sum1[, c('pmid', 'year', 'journal', 'articletitle', 'abstract')]
+  sum1 <- sum1[, c('pmid', 
+                   'year', 
+                   'pubtype', 
+                   'journal', 
+                   'articletitle', 
+                   'abstract')]
   
   # Add annotations to the data table
   annotations <- NULL
@@ -77,8 +82,11 @@
   # Extract the article title
   a2 <- xml2::xml_find_all(g, ".//ArticleTitle") |> xml2::xml_text()
   
-  # Extract publication type 
-  #pub_type <- xml2::xml_find_all(g, ".//PublicationType") |> xml2::xml_text()
+  # Extract publication type
+  pub_type <- xml2::xml_find_all(g, ".//PublicationType") |> xml2::xml_text()
+  # pub_type <- pub_type[1]
+  pub_type <- if(length(pub_type) > 1) { paste(pub_type, collapse = " | ") } else 
+    if(length(pub_type) == 1) { pub_type } else { NA }
 
   # Extract the publication year. If 'Year' is not available, use 'MedlineDate' as a fallback
   year <- xml2::xml_find_all(g, ".//PubDate/Year") |> xml2::xml_text()
@@ -100,7 +108,7 @@
   # Construct the output with the extracted information
   out <- c('pmid' = pm,
            'journal' = a1a,
-           #'pubtype' = pub_type,
+           'pubtype' = pub_type,
            'articletitle' = a2,
            'year' = year,
            'abstract' = abstract)
@@ -116,13 +124,14 @@
 #' @param g An XML node set representing a single PubMed record.
 #' @return A data frame with annotations extracted from a PubMed record.
 #' @noRd
-.extract_annotations <- function(g){
-  
+.extract_annotations <- function(g){  
   # Extract the PubMed ID (PMID) from the XML record
   pm <- xml2::xml_find_all(g, ".//MedlineCitation/PMID") |> xml2::xml_text()
   
-  # Extract MeSH terms (Medical Subject Headings)
-  meshes <- xml2::xml_find_all(g, ".//DescriptorName") |> xml2::xml_text()
+  # Extract MeSH terms (Medical Subject Headings) and their Descriptor UI
+  mesh_nodes <- xml2::xml_find_all(g, ".//DescriptorName")
+  meshes <- xml2::xml_text(mesh_nodes)
+  mesh_ui <- xml2::xml_attr(mesh_nodes, "UI")
   
   # Extract chemical substances names
   chems <- xml2::xml_find_all(g, ".//NameOfSubstance") |> xml2::xml_text()
@@ -131,11 +140,13 @@
   keys <- xml2::xml_find_all(g, ".//Keyword") |> xml2::xml_text()
   
   # Combine the extracted data into a single data frame
-  # Create separate data frames for MeSH terms, chemical substances, and keywords, and then bind them together
   df0 <- rbind(
-    data.frame(pmid = pm, type = 'MeSH', form = if(length(meshes) > 0){meshes} else{NA}),
-    data.frame(pmid = pm, type = 'Chemistry', form = if(length(chems) > 0){chems} else{NA}),
-    data.frame(pmid = pm, type = 'Keyword', form = if(length(keys) > 0){keys} else{NA})
+    data.frame(pmid = pm, type = 'MeSH', 
+               DescriptorName = if(length(meshes) > 0) {meshes} else {NA}, DescriptorUI = if(length(mesh_ui) > 0) {mesh_ui} else {NA}),
+    data.frame(pmid = pm, type = 'Chemistry', 
+               DescriptorName = if(length(chems) > 0) {chems} else {NA}, DescriptorUI = NA),
+    data.frame(pmid = pm, type = 'Keyword', 
+               DescriptorName = if(length(keys) > 0) {keys} else {NA}, DescriptorUI = NA)
   )
   
   # Return the combined annotations data frame

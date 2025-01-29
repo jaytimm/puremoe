@@ -19,6 +19,7 @@ get_records <- function(pmids,
                         endpoint = c('pubtations', 
                                      'icites', 
                                      'pubmed_affiliations', 
+                                     'pubmed_references', 
                                      'pubmed_abstracts', 
                                      'pmc_fulltext'), 
                         cores = 3, 
@@ -33,10 +34,11 @@ get_records <- function(pmids,
   if (!is.character(endpoint) || length(endpoint) != 1 || 
       !endpoint %in% c('pubtations', 
                        'icites', 
+                       'pubmed_references',
                        'pubmed_affiliations', 
                        'pubmed_abstracts', 
                        'pmc_fulltext')) {
-    stop("Invalid endpoint. Must be one of 'pubtations', 'icites', 'pubmed_affiliations', 'pubmed_abstracts', 'pmc_fulltext'")
+    stop("Invalid endpoint. Must be one of 'pubtations', 'icites', 'pubmed_affiliations', 'pubmed_references', 'pubmed_abstracts', 'pmc_fulltext'")
   }
   
   if (!is.numeric(cores)) {
@@ -53,6 +55,7 @@ get_records <- function(pmids,
                           "icites" = .get_icites,
                           "pubtations" = .get_pubtations,
                           "pubmed_affiliations" = .get_affiliations,
+                          'pubmed_references' = .get_references,
                           "pubmed_abstracts" = .get_records,
                           "pmc_fulltext" = .get_pmc,
                           ##
