@@ -36,6 +36,7 @@
   
   # Select and reorder columns for the final output
   sum1 <- sum1[, c('pmid', 
+                   'doi',
                    'year', 
                    'pubtype', 
                    'journal', 
@@ -73,32 +74,40 @@
 .extract_basic <- function(g){
 
   # Extract the PubMed ID (PMID) from the XML
-  pm <- xml2::xml_find_all(g, ".//MedlineCitation/PMID") |> xml2::xml_text()
+  pm <- xml2::xml_text(xml2::xml_find_all(g, ".//MedlineCitation/PMID"))
+
+  # Extract DOI
+  doi <- xml2::xml_text(xml2::xml_find_all(g, ".//ArticleId[@IdType='doi']"))
+  if(length(doi) == 0){
+    # Try alternative location for DOI
+    doi <- xml2::xml_text(xml2::xml_find_all(g, ".//ELocationID[@EIdType='doi']"))
+  }
+  if(length(doi) == 0){doi <- NA} else {doi <- doi[1]}  # Use first DOI if multiple
 
   # Extract the journal title
-  a1 <- xml2::xml_find_all(g, ".//Title") |> xml2::xml_text()
+  a1 <- xml2::xml_text(xml2::xml_find_all(g, ".//Title"))
   a1a <- a1[1]  # In case there are multiple titles, use the first one
 
   # Extract the article title
-  a2 <- xml2::xml_find_all(g, ".//ArticleTitle") |> xml2::xml_text()
+  a2 <- xml2::xml_text(xml2::xml_find_all(g, ".//ArticleTitle"))
   
   # Extract publication type
-  pub_type <- xml2::xml_find_all(g, ".//PublicationType") |> xml2::xml_text()
+  pub_type <- xml2::xml_text(xml2::xml_find_all(g, ".//PublicationType"))
   # pub_type <- pub_type[1]
   pub_type <- if(length(pub_type) > 1) { paste(pub_type, collapse = " | ") } else 
     if(length(pub_type) == 1) { pub_type } else { NA }
 
   # Extract the publication year. If 'Year' is not available, use 'MedlineDate' as a fallback
-  year <- xml2::xml_find_all(g, ".//PubDate/Year") |> xml2::xml_text()
+  year <- xml2::xml_text(xml2::xml_find_all(g, ".//PubDate/Year"))
   if(length(year) == 0){
-    year <- xml2::xml_find_all(g, ".//PubDate/MedlineDate") |> xml2::xml_text()
+    year <- xml2::xml_text(xml2::xml_find_all(g, ".//PubDate/MedlineDate"))
   }
   # Clean up the year to remove any extra characters or ranges
   year <- gsub(" .+", "", year)
   year <- gsub("-.+", "", year)
 
   # Extract the abstract text, combining multiple parts if necessary
-  abstract <- xml2::xml_find_all(g, ".//Abstract/AbstractText") |> xml2::xml_text()
+  abstract <- xml2::xml_text(xml2::xml_find_all(g, ".//Abstract/AbstractText"))
   
   if(length(abstract) > 1){
     abstract <- paste(abstract, collapse = ' ')}
@@ -107,6 +116,7 @@
   abstract <- .reformat_abstract(abstract)
   # Construct the output with the extracted information
   out <- c('pmid' = pm,
+           'doi' = doi,
            'journal' = a1a,
            'pubtype' = pub_type,
            'articletitle' = a2,
@@ -126,7 +136,7 @@
 #' @noRd
 .extract_annotations <- function(g){  
   # Extract the PubMed ID (PMID) from the XML record
-  pm <- xml2::xml_find_all(g, ".//MedlineCitation/PMID") |> xml2::xml_text()
+  pm <- xml2::xml_text(xml2::xml_find_all(g, ".//MedlineCitation/PMID"))
   
   # Extract MeSH terms (Medical Subject Headings) and their Descriptor UI
   mesh_nodes <- xml2::xml_find_all(g, ".//DescriptorName")
@@ -134,10 +144,10 @@
   mesh_ui <- xml2::xml_attr(mesh_nodes, "UI")
   
   # Extract chemical substances names
-  chems <- xml2::xml_find_all(g, ".//NameOfSubstance") |> xml2::xml_text()
+  chems <- xml2::xml_text(xml2::xml_find_all(g, ".//NameOfSubstance"))
   
   # Extract keywords from the record
-  keys <- xml2::xml_find_all(g, ".//Keyword") |> xml2::xml_text()
+  keys <- xml2::xml_text(xml2::xml_find_all(g, ".//Keyword"))
   
   # Combine the extracted data into a single data frame
   df0 <- rbind(

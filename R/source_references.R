@@ -8,9 +8,7 @@
 #' @return A data.table consisting of 'PubMed' IDs, citation text, and available article identifiers (PubMed ID, PMC ID, DOI, ISBN).
 #' @importFrom xml2 xml_find_all xml_text xml_attr
 #' @importFrom data.table rbindlist
-#' @noRd\
-#' 
-#' 
+#' @noRd
 .get_references <- function(x, sleep) {
   
   # Fetch records from PubMed based on the input x

@@ -10,3 +10,12 @@
 #
 #' @import data.table
 NULL
+
+# Declare global variables for data.table column references to avoid R CMD check NOTES
+utils::globalVariables(c(
+  ".", ".SD", ".N",  # data.table special symbols
+  "pmid", "X_id", "ref_count", "references", "cited_by",
+  "citation_net", "doc_id", "from", "to",
+  "locations", "start", "end", "tiab",
+  "file_path", "pmcid", "i.url", "url"  # data.table column references
+))

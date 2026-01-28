@@ -2,13 +2,12 @@
 % Please edit documentation in R/data_pmc_list.R
 \name{data_pmc_list}
 \alias{data_pmc_list}
-\title{Download and Process 'PMC Open Access' File List}
+\title{Download and Load 'PMC' Open Access File List}
 \usage{
 data_pmc_list(
   path = NULL,
   use_persistent_storage = FALSE,
-  force_install = FALSE,
-  timeout = 300
+  force_install = FALSE
 )
 }
 \arguments{
@@ -22,19 +21,18 @@ location. Defaults to FALSE, using a temporary directory.}
 
 \item{force_install}{A logical value indicating whether to force re-downloading 
 of the data even if it already exists locally.}
-
-\item{timeout}{An integer indicating the timeout in seconds for the download.
-Defaults to 300 seconds.}
 }
 \value{
-A data frame containing the processed PMC open access file list.
+A data.table containing the PMC file list with columns: file_path, 
+citation, pmcid, pmid, and license_code.
 }
 \description{
-This function downloads the 'PubMed Central' (PMC) open access file list from the
-'National Center for Biotechnology Information' (NCBI) and processes it for use.
+This function downloads and loads the 'PMC' (PubMed Central) Open Access file list.
+The file list contains mappings between PMC IDs, PMIDs, and file paths for 
+open access articles available for download.
 }
 \details{
-The data is sourced from the specified URL and stored locally for subsequent use.
+The data is sourced from NCBI's FTP server and stored locally for subsequent use.
 By default, the data is stored in a temporary directory. Users can opt into 
 persistent storage by setting `use_persistent_storage` to TRUE and optionally 
 specifying a path.

@@ -20,7 +20,11 @@
 #' @importFrom utils download.file
 #' @export
 #' @examples
-#' data <- data_mesh_trees()
+#' \donttest{
+#' if (interactive()) {
+#'   data <- data_mesh_trees()
+#' }
+#' }
 #' 
 data_mesh_trees <- function(path = NULL, 
                             use_persistent_storage = FALSE, 
@@ -55,7 +59,20 @@ data_mesh_trees <- function(path = NULL,
   if (!file.exists(df) || force_install) {
     # Download the MeSH trees data
     message('Downloading MeSH trees...')
-    utils::download.file(sf, df, mode = "wb")
+    download_result <- .safe_download(sf, df, mode = "wb")
+    
+    # If download failed and no cached file exists, return NULL
+    if (is.null(download_result) && !file.exists(df)) {
+      message("Unable to download MeSH trees data. The resource may be temporarily unavailable.")
+      message("No cached file available. Please check your internet connection and try again.")
+      return(NULL)
+    }
+  }
+  
+  # If file doesn't exist at this point, return NULL
+  if (!file.exists(df)) {
+    message("MeSH trees data is not available.")
+    return(NULL)
   }
   
   # Read and return the downloaded RDS file

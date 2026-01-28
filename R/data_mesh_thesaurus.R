@@ -63,12 +63,30 @@ data_mesh_thesaurus <- function(path = NULL,
   # Check for the existence of the files or force download
   if (!file.exists(df) || force_install) {
     message('Downloading the MeSH thesaurus...')
-    download.file(sf, df, mode = "wb")
+    download_result <- .safe_download(sf, df, mode = "wb")
+    
+    # If download failed and no cached file exists
+    if (is.null(download_result) && !file.exists(df)) {
+      message("Unable to download MeSH thesaurus. The resource may be temporarily unavailable.")
+      message("No cached MeSH thesaurus file available. Please check your internet connection and try again.")
+    }
   }
   
   if (!file.exists(df2) || force_install) {
     message('Downloading the supplemental concept thesaurus...')
-    download.file(sf2, df2, mode = "wb")
+    download_result2 <- .safe_download(sf2, df2, mode = "wb")
+    
+    # If download failed and no cached file exists
+    if (is.null(download_result2) && !file.exists(df2)) {
+      message("Unable to download supplemental concept thesaurus. The resource may be temporarily unavailable.")
+      message("No cached supplemental thesaurus file available. Please check your internet connection and try again.")
+    }
+  }
+  
+  # If either file doesn't exist, return NULL
+  if (!file.exists(df) || !file.exists(df2)) {
+    message("One or both thesaurus files are not available.")
+    return(NULL)
   }
   
   # Read the downloaded RDS files

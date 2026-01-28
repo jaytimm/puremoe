@@ -1,9 +1,10 @@
-#' Download and Process 'PMC Open Access' File List
+#' Download and Load 'PMC' Open Access File List
 #'
-#' This function downloads the 'PubMed Central' (PMC) open access file list from the
-#' 'National Center for Biotechnology Information' (NCBI) and processes it for use.
+#' This function downloads and loads the 'PMC' (PubMed Central) Open Access file list.
+#' The file list contains mappings between PMC IDs, PMIDs, and file paths for 
+#' open access articles available for download.
 #' 
-#' The data is sourced from the specified URL and stored locally for subsequent use.
+#' The data is sourced from NCBI's FTP server and stored locally for subsequent use.
 #' By default, the data is stored in a temporary directory. Users can opt into 
 #' persistent storage by setting `use_persistent_storage` to TRUE and optionally 
 #' specifying a path.
@@ -16,12 +17,11 @@
 #' location. Defaults to FALSE, using a temporary directory.
 #' @param force_install A logical value indicating whether to force re-downloading 
 #' of the data even if it already exists locally.
-#' @param timeout An integer indicating the timeout in seconds for the download.
-#' Defaults to 300 seconds.
-#' @return A data frame containing the processed PMC open access file list.
+#' @return A data.table containing the PMC file list with columns: file_path, 
+#' citation, pmcid, pmid, and license_code.
 #' @importFrom rappdirs user_data_dir
+#' @importFrom utils download.file
 #' @importFrom data.table fread
-#' @importFrom httr GET write_disk timeout
 #' @export
 #' @examples
 #' \donttest{
@@ -31,12 +31,11 @@
 #' }
 #' 
 data_pmc_list <- function(path = NULL, 
-                          use_persistent_storage = FALSE, 
-                          force_install = FALSE, 
-                          timeout = 300) {
+                         use_persistent_storage = FALSE, 
+                         force_install = FALSE) {
   
-  # URL for the PMC open access file list
-  url <- 'https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_file_list.txt'
+  # Define the URL for the PMC file list
+  sf <- 'https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_file_list.txt'
   
   # Determine the directory path based on user preference for persistent storage
   if (use_persistent_storage && is.null(path)) {
@@ -49,7 +48,7 @@ data_pmc_list <- function(path = NULL,
     }
   } else if (is.null(path)) {
     path <- tempdir()
-    message("Using temporary directory for this session.")
+    message("No path provided and persistent storage not requested. Using temporary directory for this session.")
   } else {
     if (!dir.exists(path)) {
       dir.create(path, recursive = TRUE)
@@ -60,29 +59,47 @@ data_pmc_list <- function(path = NULL,
   }
   
   # Define local file path for storing the downloaded data
-  local_file_path <- file.path(path, 'oa_file_list.txt')
+  df <- file.path(path, 'oa_file_list.txt')
   
-  # Check if the file exists and download it if it doesn't or if force_install is TRUE
-  if (!file.exists(local_file_path) || force_install) {
-    message('Downloading "pub/pmc/oa_file_list.txt"...')
-    tryCatch({
-      httr::GET(url, httr::write_disk(local_file_path, overwrite = TRUE), httr::timeout(timeout))
-    }, error = function(e) {
-      stop("Failed to download the file: ", e$message)
-    })
+  # Check for the existence of the file or force download
+  if (!file.exists(df) || force_install) {
+    message('Downloading the PMC Open Access file list...')
+    download_result <- .safe_download(sf, df, mode = "wb")
+    
+    # If download failed and no cached file exists
+    if (is.null(download_result) && !file.exists(df)) {
+      message("Unable to download PMC file list. The resource may be temporarily unavailable.")
+      message("No cached PMC file list available. Please check your internet connection and try again.")
+      return(NULL)
+    }
   }
   
-  # Read the file using data.table's fread
-  column_names <- c('fpath', 'journal', 'PMCID', 'PMID', 'license_type')
-  pmc <- data.table::fread(local_file_path, sep = "\t", header = FALSE, col.names = column_names)
+  # If file doesn't exist, return NULL
+  if (!file.exists(df)) {
+    message("PMC file list is not available.")
+    return(NULL)
+  }
   
-  PMID <- NULL
-  PMCID <- NULL
-  pmc[, `:=` (PMID = gsub('^PMID:', '', PMID), PMCID = gsub('^PMC', '', PMCID))]
-  pmc[pmc == ''] <- NA  # Replace empty strings with NA
+  # Read the file as a tab-separated file
+  # The file format is: file_path \t citation \t pmcid \t pmid \t license_code
+  dt <- tryCatch({
+    data.table::fread(df, sep = "\t", header = FALSE, 
+                      col.names = c("file_path", "citation", "pmcid", "pmid", "license_code"),
+                      na.strings = c("", "NA"))
+  }, error = function(e) {
+    message("Unable to parse PMC file list. The file may be corrupted.")
+    return(NULL)
+  })
   
-  # Save the processed data as an RDS file
-  saveRDS(pmc, file.path(path, 'oa_file_list.rds'))
+  # Clean up PMID column (remove "PMID:" prefix if present)
+  if (!is.null(dt) && "pmid" %in% names(dt)) {
+    dt[, pmid := gsub("^PMID:", "", pmid)]
+  }
   
-  return(pmc)
+  # Construct full URLs from file paths
+  if (!is.null(dt) && "file_path" %in% names(dt)) {
+    dt[, url := paste0("https://ftp.ncbi.nlm.nih.gov/pub/pmc/", file_path)]
+  }
+  
+  return(dt)
 }

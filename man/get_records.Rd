@@ -14,9 +14,11 @@ get_records(
 )
 }
 \arguments{
-\item{pmids}{A vector of PMIDs for which data is to be retrieved.}
+\item{pmids}{A vector of PMIDs for which data is to be retrieved. For 'pmc_fulltext' endpoint, 
+provide full URLs instead (e.g., from \code{pmid_to_pmc()$url}).}
 
-\item{endpoint}{A character vector specifying the type of data to retrieve ('pubtations', 'icites', 'affiliations', 'pubmed', 'pmc').}
+\item{endpoint}{A character vector specifying the type of data to retrieve ('pubtations', 'icites', 
+'pubmed_affiliations', 'pubmed_references', 'pubmed_abstracts', 'pmc_fulltext').}
 
 \item{cores}{Number of cores to use for parallel processing (default is 3).}
 
@@ -29,6 +31,10 @@ A data.table containing combined results from the specified endpoint.
 }
 \description{
 This function retrieves different types of data (like 'PubMed' records, affiliations, 'iCites 'data, etc.) from 'PubMed' based on provided PMIDs. It supports parallel processing for efficiency.
+}
+\details{
+For the 'pmc_fulltext' endpoint, provide full URLs to PMC tar.gz files. 
+Use \code{\link{pmid_to_pmc}} to convert PMIDs to PMC IDs and full URLs first.
 }
 \examples{
 pmids <- c("38136652")

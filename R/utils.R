@@ -9,6 +9,7 @@
 #' 
 .fetch_records <- function(x, sleep) {
   # Loop to retry fetching records, with a maximum of 15 attempts
+  x1 <- NULL
   for (i in 1:15) {
     # Display the current attempt number
     #message(i)
@@ -21,9 +22,9 @@
         rettype = "xml",
         parsed = FALSE
       )
-    })
+    }, silent = TRUE)
     
-    # Wait for 5 seconds before the next attempt
+    # Wait before the next attempt
     Sys.sleep(sleep)
     
     # Check if the fetch was successful using inherits(), and if so, break the loop
@@ -32,9 +33,20 @@
     }
   }
   
-  # Return the fetched XML content or an error object
-  doc <- xml2::read_xml(x1)
-  xml2::xml_find_all(doc, "//PubmedArticle")
+  # If all attempts failed, fail gracefully with informative message
+  if (inherits(x1, "try-error") || is.null(x1)) {
+    message("Unable to fetch records from PubMed. The resource may be temporarily unavailable.")
+    return(list())
+  }
+  
+  # Return the fetched XML content
+  tryCatch({
+    doc <- xml2::read_xml(x1)
+    xml2::xml_find_all(doc, "//PubmedArticle")
+  }, error = function(e) {
+    message("Unable to parse records from PubMed. The resource may have returned invalid data.")
+    return(list())
+  })
 }
 
 
@@ -51,4 +63,39 @@
   
   # Replace specific character representations of missing data with NA
   ifelse(x %in% c(' ', 'NA', 'n/a', 'n/a.') | is.na(x), NA, x) 
+}
+
+
+#' Safe Download Helper Function
+#'
+#' Downloads a file from a URL with comprehensive error handling.
+#' Returns 0 on success, NULL on failure. Never throws errors or warnings.
+#'
+#' @param url Character string with the URL to download from.
+#' @param destfile Character string with the destination file path.
+#' @param mode Character string specifying the download mode (default "wb").
+#' @return Integer 0 on success, NULL on failure.
+#' @noRd
+.safe_download <- function(url, destfile, mode = "wb") {
+  
+  # Suppress all warnings and catch all errors
+  result <- tryCatch({
+    suppressWarnings({
+      utils::download.file(url, destfile, mode = mode, quiet = TRUE)
+    })
+  }, error = function(e) {
+    return(NULL)
+  })
+  
+  # Check if download was successful (returns 0 on success)
+  if (is.null(result) || result != 0) {
+    return(NULL)
+  }
+  
+  # Verify file was actually created and has content
+  if (!file.exists(destfile) || file.size(destfile) == 0) {
+    return(NULL)
+  }
+  
+  return(0L)
 }

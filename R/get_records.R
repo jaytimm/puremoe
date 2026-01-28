@@ -1,8 +1,14 @@
 #' Retrieve Data from 'NLM'/'PubMed' databases Based on PMIDs
 #'
 #' This function retrieves different types of data (like 'PubMed' records, affiliations, 'iCites 'data, etc.) from 'PubMed' based on provided PMIDs. It supports parallel processing for efficiency.
-#' @param pmids A vector of PMIDs for which data is to be retrieved.
-#' @param endpoint A character vector specifying the type of data to retrieve ('pubtations', 'icites', 'affiliations', 'pubmed', 'pmc').
+#' 
+#' For the 'pmc_fulltext' endpoint, provide full URLs to PMC tar.gz files. 
+#' Use \code{\link{pmid_to_pmc}} to convert PMIDs to PMC IDs and full URLs first.
+#' 
+#' @param pmids A vector of PMIDs for which data is to be retrieved. For 'pmc_fulltext' endpoint, 
+#'   provide full URLs instead (e.g., from \code{pmid_to_pmc()$url}).
+#' @param endpoint A character vector specifying the type of data to retrieve ('pubtations', 'icites', 
+#'   'pubmed_affiliations', 'pubmed_references', 'pubmed_abstracts', 'pmc_fulltext').
 #' @param cores Number of cores to use for parallel processing (default is 3).
 #' @param ncbi_key (Optional) NCBI API key for authenticated access.
 #' @param sleep Duration (in seconds) to pause after each batch 
@@ -48,7 +54,6 @@ get_records <- function(pmids,
   # Set the NCBI API key for authenticated access if provided
   if (!is.null(ncbi_key)) rentrez::set_entrez_key(ncbi_key)
   
-  
   # Define batch size and the specific task function based on the chosen endpoint
   batch_size <- if (endpoint == "pmc_fulltext") {5} else if (endpoint == "pubtations") {99} else {199}
   task_function <- switch(endpoint,
@@ -61,7 +66,7 @@ get_records <- function(pmids,
                           ##
                           stop("Invalid endpoint"))
   
-  # Split the PMIDs into batches for parallel processing
+  # Split the PMIDs (or PMC IDs/file paths for pmc_fulltext) into batches for parallel processing
   batches <- split(pmids, ceiling(seq_along(pmids) / batch_size))
   
   if (cores > 1) {
@@ -85,6 +90,7 @@ get_records <- function(pmids,
   
   df_only_list <- results[sapply(results, is.data.frame)]
   # Combine results from all batches into a single data.table
-  combined_results <- data.table::rbindlist(df_only_list)
+  # Use fill=TRUE to handle cases where batches have different columns
+  combined_results <- data.table::rbindlist(df_only_list, fill = TRUE)
   return(combined_results)
 }
