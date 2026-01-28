@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">puremoe</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3</span>
       </span>
     </div>
 
@@ -48,6 +48,25 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.0.3" id="puremoe-103-2026-01-17">puremoe 1.0.3 (2026-01-17)<small>2026-01-26</small><a class="anchor" aria-label="anchor" href="#puremoe-103-2026-01-17"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-1-0-3">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-3"></a></h3>
+<ul><li>Fixed iCite API integration to handle changes in API response structure.</li>
+<li>Removed modern pipe operators to maintain compatibility with R &gt;= 3.5.</li>
+<li>Improved error handling for Internet resource functions to comply with CRAN policy.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-1-0-3">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-0-3"></a></h3>
+<ul><li>Added <code><a href="../reference/pmid_to_pmc.html">pmid_to_pmc()</a></code> function to convert PubMed IDs (PMIDs) to PubMed Central (PMC) IDs and DOIs using the NCBI ID Converter API.</li>
+<li>Added <code><a href="../reference/pmid_to_ftp.html">pmid_to_ftp()</a></code> function to convert PMIDs to PMC IDs and full-text URLs, enabling access to open access PMC articles without downloading the PMC file list.</li>
+<li>Added <code><a href="../reference/endpoint_info.html">endpoint_info()</a></code> function to provide detailed information about available endpoints.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="removed-features-1-0-3">Removed Features<a class="anchor" aria-label="anchor" href="#removed-features-1-0-3"></a></h3>
+<ul><li>Removed mesh descriptor embeddings functionality (<code>data_mesh_embeddings()</code> function).</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.2" id="puremoe-102-2024-10-14">puremoe 1.0.2 (2024-10-14)<small>2024-10-15</small><a class="anchor" aria-label="anchor" href="#puremoe-102-2024-10-14"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-1-0-2">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-2"></a></h3>
@@ -76,7 +95,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">puremoe</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3</span>
       </span>
     </div>
 
@@ -68,11 +68,13 @@
 
 
 <dl><dt id="arg-pmids">pmids<a class="anchor" aria-label="anchor" href="#arg-pmids"></a></dt>
-<dd><p>A vector of PMIDs for which data is to be retrieved.</p></dd>
+<dd><p>A vector of PMIDs for which data is to be retrieved. For 'pmc_fulltext' endpoint,
+provide full URLs instead (e.g., from <code>pmid_to_pmc()$url</code>).</p></dd>
 
 
 <dt id="arg-endpoint">endpoint<a class="anchor" aria-label="anchor" href="#arg-endpoint"></a></dt>
-<dd><p>A character vector specifying the type of data to retrieve ('pubtations', 'icites', 'affiliations', 'pubmed', 'pmc').</p></dd>
+<dd><p>A character vector specifying the type of data to retrieve ('pubtations', 'icites',
+'pubmed_affiliations', 'pubmed_references', 'pubmed_abstracts', 'pmc_fulltext').</p></dd>
 
 
 <dt id="arg-cores">cores<a class="anchor" aria-label="anchor" href="#arg-cores"></a></dt>
@@ -90,6 +92,11 @@
     <div id="value">
     <h2>Value</h2>
     <p>A data.table containing combined results from the specified endpoint.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>For the 'pmc_fulltext' endpoint, provide full URLs to PMC tar.gz files.
+Use <code><a href="pmid_to_pmc.html">pmid_to_pmc</a></code> to convert PMIDs to PMC IDs and full URLs first.</p>
     </div>
 
     <div id="ref-examples">
@@ -111,7 +118,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Pubmed Unified REtrieval for Multi-Output Exploration">
-<meta property="og:description" content="Access a variety of PubMed data through a single, user-friendly interface, including abstracts &lt;https://pubmed.ncbi.nlm.nih.gov/&gt;, bibliometrics from iCite &lt;https://icite.od.nih.gov/&gt;, pubtations from PubTator3 &lt;https://www.ncbi.nlm.nih.gov/research/pubtator3/&gt;, and full-text records from PMC &lt;https://www.ncbi.nlm.nih.gov/pmc/&gt;.">
+<meta property="og:description" content="Access a variety of PubMed data through a single, user-friendly interface, including abstracts, bibliometrics from iCite, pubtations from PubTator3, and full-text records from PMC.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">puremoe</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3</span>
       </span>
     </div>
 
@@ -75,10 +75,10 @@
 <li><p><a href="https://pubmed.ncbi.nlm.nih.gov/" class="external-link">PubMed</a> abstract records,</p></li>
 <li><p><a href="https://icite.od.nih.gov/" class="external-link">iCite</a> bibliometric data,</p></li>
 <li><p><a href="https://www.ncbi.nlm.nih.gov/research/pubtator3/" class="external-link">PubTator3</a> named entity annotations, and</p></li>
-<li><p>full-text entries from <a href="https://www.ncbi.nlm.nih.gov/pmc/" class="external-link">PubMed Central</a> (PMC).</p></li>
+<li><p>full-text entries from <a href="https://pmc.ncbi.nlm.nih.gov/" class="external-link">PubMed Central</a> (PMC).</p></li>
 </ul>
 <p>This unified interface simplifies the data retrieval process, allowing users to interact with multiple PubMed services/APIs/output formats through a single R function.</p>
-<p>The package also includes MeSH thesaurus resources as simple data frames, including Descriptor Terms, Descriptor Tree Structures, Supplementary Concept Terms, and Pharmacological Actions; it also includes descriptor-level word embeddings <a href="https://www.sciencedirect.com/science/article/pii/S1532046421001969" class="external-link">(Noh &amp; Kavuluru 2021)</a>. Via the <a href="https://github.com/jaytimm/mesh-resources" class="external-link">mesh-resources</a> library.</p>
+<p>The package also includes MeSH thesaurus resources as simple data frames, including Descriptor Terms, Descriptor Tree Structures, and Supplementary Concept Terms. Via the <a href="https://github.com/jaytimm/mesh-resources" class="external-link">mesh-resources</a> library.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -99,13 +99,7 @@
 <p>The package has two basic functions: <code>search_pubmed</code> and <code>get_records</code>. The former fetches PMIDs from the PubMed API based on user search; the latter scrapes PMID records from a user-specified PubMed endpoint – <code>pubmed_abstracts</code>, <code>pubmed_affiliations</code>, <code>pubtations</code>, <code>icites</code>, or <code>pmc_fulltext</code>.</p>
 <p>Search syntax is the same as that implemented in standard <a href="https://pubmed.ncbi.nlm.nih.gov/advanced/" class="external-link">PubMed search</a>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pmids</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/search_pubmed.html">search_pubmed</a></span><span class="op">(</span><span class="st">'("political ideology"[TiAb])'</span>,</span>
-<span>                                 use_pub_years <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># pmids &lt;- puremoe::search_pubmed('immunity', </span></span>
-<span><span class="co">#                                  use_pub_years = T,</span></span>
-<span><span class="co">#                                  start_year = 2022,</span></span>
-<span><span class="co">#                                  end_year = 2024) </span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">pmids</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/search_pubmed.html">search_pubmed</a></span><span class="op">(</span><span class="st">'("political ideology"[TiAb])'</span><span class="op">)</span> </span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get-record-level-data">Get record-level data<a class="anchor" aria-label="anchor" href="#get-record-level-data"></a>
@@ -114,7 +108,8 @@
 <code class="sourceCode R"><span><span class="va">pubmed</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_abstracts'</span>, </span>
 <span>                       cores <span class="op">=</span> <span class="fl">3</span>, </span>
-<span>                       sleep <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> </span>
+<span>                       sleep <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                       ncbi_key <span class="op">=</span> <span class="va">ncbi_key</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="va">affiliations</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_affiliations'</span>, </span>
@@ -129,168 +124,63 @@
 <span><span class="va">pubtations</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubtations'</span>,</span>
 <span>                       cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<blockquote>
-<p>When the endpoint is PMC, the <code><a href="reference/get_records.html">get_records()</a></code> function takes a vector of filepaths (from the PMC Open Access list) instead of PMIDs.</p>
-</blockquote>
+</div>
+<div class="section level2">
+<h2 id="pmc-full-text">PMC full text<a class="anchor" aria-label="anchor" href="#pmc-full-text"></a>
+</h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pmclist</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/data_pmc_list.html">data_pmc_list</a></span><span class="op">(</span>use_persistent_storage <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span><span class="va">pmc_pmids</span> <span class="op">&lt;-</span> <span class="va">pmclist</span><span class="op">[</span><span class="va">PMID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">pmids</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">pmcs</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/pmid_to_ftp.html">pmid_to_ftp</a></span><span class="op">(</span>pmids <span class="op">=</span> <span class="va">pmids</span>, ncbi_key <span class="op">=</span> <span class="va">ncbi_key</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">pmc_fulltext</span> <span class="op">&lt;-</span> <span class="va">pmc_pmids</span><span class="op">$</span><span class="va">fpath</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">pmc_fulltext</span> <span class="op">&lt;-</span> <span class="va">pmcs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">$</span><span class="va">url</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pmc_fulltext'</span>, cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+<h2 id="endpoint-information">Endpoint information<a class="anchor" aria-label="anchor" href="#endpoint-information"></a>
 </h2>
-<table class="table">
-<colgroup>
-<col width="26%">
-<col width="26%">
-<col width="47%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">Output</th>
-<th align="left">Colname</th>
-<th align="left">Description</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">pubmed_abstracts</td>
-<td align="left">pmid</td>
-<td align="left">PMID</td>
-</tr>
-<tr class="even">
-<td align="left">pubmed_abstracts</td>
-<td align="left">year</td>
-<td align="left">Publication year</td>
-</tr>
-<tr class="odd">
-<td align="left">pubmed_abstracts</td>
-<td align="left">journal</td>
-<td align="left">Journal name</td>
-</tr>
-<tr class="even">
-<td align="left">pubmed_abstracts</td>
-<td align="left">articletitle</td>
-<td align="left">Article title</td>
-</tr>
-<tr class="odd">
-<td align="left">pubmed_abstracts</td>
-<td align="left">abstract</td>
-<td align="left">Article abstract</td>
-</tr>
-<tr class="even">
-<td align="left">pubmed_abstracts</td>
-<td align="left">annotations</td>
-<td align="left">Mesh/Chem/Keywords annotations</td>
-</tr>
-<tr class="odd">
-<td align="left">pubmed_affiliations</td>
-<td align="left">pmid</td>
-<td align="left">PMID</td>
-</tr>
-<tr class="even">
-<td align="left">pubmed_affiliations</td>
-<td align="left">Author</td>
-<td align="left">Author name</td>
-</tr>
-<tr class="odd">
-<td align="left">pubmed_affiliations</td>
-<td align="left">affiliation</td>
-<td align="left">Author affiliation</td>
-</tr>
-<tr class="even">
-<td align="left">pubtations</td>
-<td align="left">pmid</td>
-<td align="left">PMID</td>
-</tr>
-<tr class="odd">
-<td align="left">pubtations</td>
-<td align="left">tiab</td>
-<td align="left">Title or abstract</td>
-</tr>
-<tr class="even">
-<td align="left">pubtations</td>
-<td align="left">id</td>
-<td align="left">Entity ID</td>
-</tr>
-<tr class="odd">
-<td align="left">pubtations</td>
-<td align="left">entity</td>
-<td align="left">Extracted entity</td>
-</tr>
-<tr class="even">
-<td align="left">pubtations</td>
-<td align="left">identifier</td>
-<td align="left">Knowledge base link (KB link)</td>
-</tr>
-<tr class="odd">
-<td align="left">pubtations</td>
-<td align="left">type</td>
-<td align="left">Entity type</td>
-</tr>
-<tr class="even">
-<td align="left">pubtations</td>
-<td align="left">start</td>
-<td align="left">Start position (char)</td>
-</tr>
-<tr class="odd">
-<td align="left">pubtations</td>
-<td align="left">end</td>
-<td align="left">End position (char)</td>
-</tr>
-<tr class="even">
-<td align="left">pmc_fulltext</td>
-<td align="left">pmid</td>
-<td align="left">PMID</td>
-</tr>
-<tr class="odd">
-<td align="left">pmc_fulltext</td>
-<td align="left">section</td>
-<td align="left">Full text section</td>
-</tr>
-<tr class="even">
-<td align="left">pmc_fulltext</td>
-<td align="left">text</td>
-<td align="left">Full text content</td>
-</tr>
-<tr class="odd">
-<td align="left">icites</td>
-<td align="left">pmid</td>
-<td align="left">PMID</td>
-</tr>
-<tr class="even">
-<td align="left">icites</td>
-<td align="left">is_research_article</td>
-<td align="left">Research article indicator</td>
-</tr>
-<tr class="odd">
-<td align="left">icites</td>
-<td align="left">nih_percentile</td>
-<td align="left">NIH percentile rank</td>
-</tr>
-<tr class="even">
-<td align="left">icites</td>
-<td align="left">is_clinical</td>
-<td align="left">Clinical article indicator</td>
-</tr>
-<tr class="odd">
-<td align="left">icites</td>
-<td align="left">citation_count</td>
-<td align="left">Citation count</td>
-</tr>
-<tr class="even">
-<td align="left">icites</td>
-<td align="left">ref_count</td>
-<td align="left">Reference count</td>
-</tr>
-<tr class="odd">
-<td align="left">icites</td>
-<td align="left">citation_net</td>
-<td align="left">Citation network (to/from edgelist)</td>
-</tr>
-</tbody>
-</table>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/endpoint_info.html">endpoint_info</a></span><span class="op">(</span><span class="st">'pubtations'</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="do">## $description</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="do">## [1] "PubTator entity annotations (genes, diseases, chemicals, etc.)"</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="do">## $returns</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="do">## [1] "data.frame"</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="do">## $columns</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="do">## $columns$pmid</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="do">## [1] "PubMed ID (character)"</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="do">## $columns$tiab</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="do">## [1] "Title/abstract text (character)"</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="do">## $columns$id</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="do">## [1] "Annotation ID (character)"</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="do">## $columns$text</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="do">## [1] "Annotated text span (character)"</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="do">## $columns$identifier</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="do">## [1] "Database identifier (character)"</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="do">## $columns$type</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="do">## [1] "Entity type: Gene, Disease, Chemical, Species, Mutation (character)"</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="do">## $columns$start</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="do">## [1] "Start position in text (integer)"</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="do">## $columns$end</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a><span class="do">## [1] "End position in text (integer)"</span></span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a><span class="do">## $parameters</span></span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a><span class="do">## $parameters$cores</span></span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a><span class="do">## [1] "parallel workers"</span></span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a><span class="do">## $rate_limit</span></span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a><span class="do">## [1] "Moderate"</span></span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a><span class="do">## $notes</span></span>
+<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a><span class="do">## [1] "One row per annotation; multiple annotations per article. Provides named entity recognition output."</span></span></code></pre></div>
 </div>
 </div>
 
@@ -325,7 +215,7 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Jason Timm <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Jason Timm <br><small class="roles"> Author, maintainer </small>   </li>
 </ul>
 </div>
 
@@ -348,7 +238,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>
