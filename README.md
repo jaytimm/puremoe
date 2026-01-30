@@ -26,10 +26,10 @@ frames, including Descriptor Terms, Descriptor Tree Structures, and
 Supplementary Concept Terms. Via the
 [mesh-resources](https://github.com/jaytimm/mesh-resources) library.
 
-The package provides a straightforward retrieval interface for
-integrating PubMed literature into LLM applications, enabling
-citation-backed responses and RAG workflows with access to abstracts,
-full-text articles, entity annotations, and bibliometric data.
+The package provides a straightforward retrieval interface for PubMed
+literature, with potential utility in LLM applications and RAG workflows
+requiring access to abstracts, full-text articles, entity annotations,
+and bibliometric data.
 
 ## Installation
 
@@ -88,11 +88,11 @@ pubtations <- pmids |>
 
 ## PMC full text
 
-Get full text for open-access PMC articles from PMIDs on demand — no
-need to download the OA file list first. **`pmid_to_ftp()`** returns
-download URLs based on PMIDs (if they exist); pass `$url` to
-`get_records(endpoint = 'pmc_fulltext')` to fetch sectioned text
-(e.g. for LLMs or summarization). For bulk, use `data_pmc_list()`.
+Full-text articles can be retrieved for PMIDs if available in PMC’s
+open-access collection. Use **`pmid_to_ftp()`** to get download URLs,
+then pass these to `get_records(endpoint = 'pmc_fulltext')` — useful for
+quick retrieval in LLM/chat contexts. For bulk downloads, use
+`data_pmc_list()`.
 
 ``` r
 pmcs <- puremoe::pmid_to_ftp(pmids = pmids, ncbi_key = ncbi_key)
