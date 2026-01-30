@@ -21,15 +21,15 @@ This **unified interface** simplifies the data retrieval process,
 allowing users to interact with multiple PubMed services/APIs/output
 formats through a single R function.
 
-Also included are MeSH thesaurus resources as simple data frames:
+Also included are **MeSH thesaurus resources** as simple data frames:
 Descriptor Terms, Descriptor Tree Structures, and Supplementary Concept
 Terms, via the
 [mesh-resources](https://github.com/jaytimm/mesh-resources) library.
 
 The package provides a straightforward retrieval interface for PubMed
-literature, with **potential utility in LLM applications and RAG
-workflows** requiring access to abstracts, full-text articles, entity
-annotations, and bibliometric data.
+literature, with **utility in LLM applications and RAG workflows**
+requiring access to abstracts, full-text articles, entity annotations,
+and bibliometric data.
 
 ## Installation
 
@@ -105,7 +105,7 @@ pmc_fulltext <- puremoe::get_records(pmcs[1:5]$url, endpoint = 'pmc_fulltext', c
 
 Returns schema, columns, and rate limits for each endpoint.
 
-Potentially useful in **LLM app contexts for tool schemas**.
+Useful in **LLM app contexts for tool schemas**.
 
 `endpoint_info()` lists endpoints; `endpoint_info('endpoint_name')`
 returns details; `format = 'json'` for machine-readable output.
