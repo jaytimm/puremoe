@@ -21,9 +21,9 @@ This unified interface simplifies the data retrieval process, allowing
 users to interact with multiple PubMed services/APIs/output formats
 through a single R function.
 
-The package also includes MeSH thesaurus resources as simple data
-frames, including Descriptor Terms, Descriptor Tree Structures, and
-Supplementary Concept Terms. Via the
+Also included are MeSH thesaurus resources as simple data frames:
+Descriptor Terms, Descriptor Tree Structures, and Supplementary Concept
+Terms, via the
 [mesh-resources](https://github.com/jaytimm/mesh-resources) library.
 
 The package provides a straightforward retrieval interface for PubMed
