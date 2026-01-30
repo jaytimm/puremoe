@@ -48,7 +48,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.0.3" id="puremoe-103-2026-01-17">puremoe 1.0.3 (2026-01-17)<small>2026-01-26</small><a class="anchor" aria-label="anchor" href="#puremoe-103-2026-01-17"></a></h2>
+<h2 class="page-header" data-toc-text="1.0.3" id="puremoe-103">puremoe 1.0.3<small>2026-01-26</small><a class="anchor" aria-label="anchor" href="#puremoe-103"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-1-0-3">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-3"></a></h3>
 <ul><li>Fixed iCite API integration to handle changes in API response structure.</li>
@@ -57,9 +57,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="new-features-1-0-3">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-0-3"></a></h3>
-<ul><li>Added <code><a href="../reference/pmid_to_pmc.html">pmid_to_pmc()</a></code> function to convert PubMed IDs (PMIDs) to PubMed Central (PMC) IDs and DOIs using the NCBI ID Converter API.</li>
-<li>Added <code><a href="../reference/pmid_to_ftp.html">pmid_to_ftp()</a></code> function to convert PMIDs to PMC IDs and full-text URLs, enabling access to open access PMC articles without downloading the PMC file list.</li>
-<li>Added <code><a href="../reference/endpoint_info.html">endpoint_info()</a></code> function to provide detailed information about available endpoints.</li>
+<ul><li>Added <code><a href="../reference/pmid_to_ftp.html">pmid_to_ftp()</a></code> to convert PMIDs to full-text download URLs for open-access PMC articles; pass <code>$url</code> to <code>get_records(endpoint = 'pmc_fulltext')</code>. For bulk, use <code><a href="../reference/data_pmc_list.html">data_pmc_list()</a></code>.</li>
+<li>Added <code><a href="../reference/endpoint_info.html">endpoint_info()</a></code> to provide schema, columns, and rate limits for each endpoint.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="removed-features-1-0-3">Removed Features<a class="anchor" aria-label="anchor" href="#removed-features-1-0-3"></a></h3>
@@ -67,14 +66,14 @@
 </ul><hr></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.0.2" id="puremoe-102-2024-10-14">puremoe 1.0.2 (2024-10-14)<small>2024-10-15</small><a class="anchor" aria-label="anchor" href="#puremoe-102-2024-10-14"></a></h2>
+<h2 class="page-header" data-toc-text="1.0.2" id="puremoe-102">puremoe 1.0.2<small>2024-10-15</small><a class="anchor" aria-label="anchor" href="#puremoe-102"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-1-0-2">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-2"></a></h3>
 <ul><li>Fixed an issue with the internal function responsible for handling Pubtator3 data. This was due to changes in the data structures provided by Pubtator3 API. The function now correctly processes data retrieved via the updated <code>biocjson</code> format from the API endpoint.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.0.1" id="puremoe-101-2024-05-12">puremoe 1.0.1 (2024-05-12)<small>2024-05-13</small><a class="anchor" aria-label="anchor" href="#puremoe-101-2024-05-12"></a></h2>
+<h2 class="page-header" data-toc-text="1.0.1" id="puremoe-101">puremoe 1.0.1<small>2024-05-13</small><a class="anchor" aria-label="anchor" href="#puremoe-101"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-1-0-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-0-1"></a></h3>
 <ul><li>Fixed a typo that caused the full text retrieval to fail in the <code>pmc_fulltext</code> endpoint.</li>
