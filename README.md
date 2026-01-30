@@ -27,9 +27,9 @@ Terms, via the
 [mesh-resources](https://github.com/jaytimm/mesh-resources) library.
 
 The package provides a straightforward retrieval interface for PubMed
-literature, with **utility in LLM applications and RAG workflows**
-requiring access to abstracts, full-text articles, entity annotations,
-and bibliometric data.
+literature, with **utility in agentic LLM applications and RAG
+workflows** requiring access to abstracts, full-text articles, entity
+annotations, and bibliometric data.
 
 ## Installation
 
@@ -89,7 +89,7 @@ pubtations <- pmids |>
 Full-text articles can be retrieved for PMIDs if available in PMC’s
 open-access collection. Use **`pmid_to_ftp()`** to get download URLs,
 then pass these to `get_records(endpoint = 'pmc_fulltext')` Useful for
-quick retrieval in **LLM/chat contexts**.
+quick retrieval in **agentic LLM/chat contexts**.
 
 For bulk downloads, use `data_pmc_list()`.
 
