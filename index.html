@@ -79,7 +79,7 @@
 </ul>
 <p>This <strong>unified interface</strong> simplifies the data retrieval process, allowing users to interact with multiple PubMed services/APIs/output formats through a single R function.</p>
 <p>Also included are <strong>MeSH thesaurus resources</strong> as simple data frames: Descriptor Terms, Descriptor Tree Structures, and Supplementary Concept Terms, via the <a href="https://github.com/jaytimm/mesh-resources" class="external-link">mesh-resources</a> library.</p>
-<p>The package provides a straightforward retrieval interface for PubMed literature, with <strong>utility in agentic LLM applications and RAG workflows</strong> requiring access to abstracts, full-text articles, entity annotations, and bibliometric data.</p>
+<p>The package provides a straightforward retrieval interface for PubMed literature, with <strong>utility in LLM workflows and RAG applications</strong> requiring access to abstracts, full-text articles, entity annotations, and bibliometric data.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -125,7 +125,7 @@
 <div class="section level2">
 <h2 id="pmc-full-text">PMC full text<a class="anchor" aria-label="anchor" href="#pmc-full-text"></a>
 </h2>
-<p>Full-text articles can be retrieved for PMIDs if available in PMC’s open-access collection. Use <strong><code><a href="reference/pmid_to_ftp.html">pmid_to_ftp()</a></code></strong> to get download URLs, then pass these to <code>get_records(endpoint = 'pmc_fulltext')</code> Useful for quick retrieval in <strong>agentic LLM/chat contexts</strong>.</p>
+<p>Full-text articles can be retrieved for PMIDs if available in PMC’s open-access collection. Use <code><a href="reference/pmid_to_ftp.html">pmid_to_ftp()</a></code> to get download URLs, then pass these to <code>get_records(endpoint = 'pmc_fulltext')</code> — useful for quick retrieval in LLM/chat contexts.</p>
 <p>For bulk downloads, use <code><a href="reference/data_pmc_list.html">data_pmc_list()</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pmcs</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/pmid_to_ftp.html">pmid_to_ftp</a></span><span class="op">(</span>pmids <span class="op">=</span> <span class="va">pmids</span>, ncbi_key <span class="op">=</span> <span class="va">ncbi_key</span><span class="op">)</span></span>
@@ -134,7 +134,7 @@
 <div class="section level2">
 <h2 id="endpoint-information">Endpoint information<a class="anchor" aria-label="anchor" href="#endpoint-information"></a>
 </h2>
-<p>Returns schema, columns, and rate limits for each endpoint. Useful in <strong>LLM app contexts for tool schemas</strong>.</p>
+<p>Returns schema, columns, and rate limits for each endpoint. Useful in LLM app contexts for tool schemas.</p>
 <p><code><a href="reference/endpoint_info.html">endpoint_info()</a></code> lists endpoints; <code>endpoint_info('endpoint_name')</code> returns details; <code>format = 'json'</code> for machine-readable output.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/endpoint_info.html">endpoint_info</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
