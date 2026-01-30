@@ -27,9 +27,9 @@ Terms, via the
 [mesh-resources](https://github.com/jaytimm/mesh-resources) library.
 
 The package provides a straightforward retrieval interface for PubMed
-literature, with **utility in agentic LLM applications and RAG
-workflows** requiring access to abstracts, full-text articles, entity
-annotations, and bibliometric data.
+literature, with **utility in LLM workflows and RAG applications**
+requiring access to abstracts, full-text articles, entity annotations,
+and bibliometric data.
 
 ## Installation
 
@@ -87,9 +87,9 @@ pubtations <- pmids |>
 ## PMC full text
 
 Full-text articles can be retrieved for PMIDs if available in PMC’s
-open-access collection. Use **`pmid_to_ftp()`** to get download URLs,
-then pass these to `get_records(endpoint = 'pmc_fulltext')` Useful for
-quick retrieval in **agentic LLM/chat contexts**.
+open-access collection. Use `pmid_to_ftp()` to get download URLs, then
+pass these to `get_records(endpoint = 'pmc_fulltext')` — useful for
+quick retrieval in LLM/chat contexts.
 
 For bulk downloads, use `data_pmc_list()`.
 
@@ -101,7 +101,7 @@ pmc_fulltext <- puremoe::get_records(pmcs[1:5]$url, endpoint = 'pmc_fulltext', c
 ## Endpoint information
 
 Returns schema, columns, and rate limits for each endpoint. Useful in
-**LLM app contexts for tool schemas**.
+LLM app contexts for tool schemas.
 
 `endpoint_info()` lists endpoints; `endpoint_info('endpoint_name')`
 returns details; `format = 'json'` for machine-readable output.
