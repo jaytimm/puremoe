@@ -26,6 +26,11 @@ frames, including Descriptor Terms, Descriptor Tree Structures, and
 Supplementary Concept Terms. Via the
 [mesh-resources](https://github.com/jaytimm/mesh-resources) library.
 
+The package provides a straightforward retrieval interface for
+integrating PubMed literature into LLM applications, enabling
+citation-backed responses and RAG workflows with access to abstracts,
+full-text articles, entity annotations, and bibliometric data.
+
 ## Installation
 
 Get the released version from CRAN:
@@ -83,21 +88,37 @@ pubtations <- pmids |>
 
 ## PMC full text
 
+Get full text for open-access PMC articles from PMIDs on demand — no
+need to download the OA file list first. **`pmid_to_ftp()`** returns
+download URLs based on PMIDs (if they exist); pass `$url` to
+`get_records(endpoint = 'pmc_fulltext')` to fetch sectioned text
+(e.g. for LLMs or summarization). For bulk, use `data_pmc_list()`.
+
 ``` r
 pmcs <- puremoe::pmid_to_ftp(pmids = pmids, ncbi_key = ncbi_key)
-
-pmc_fulltext <- pmcs[1:5]$url |> 
-  puremoe::get_records(endpoint = 'pmc_fulltext', cores = 1)
+pmc_fulltext <- puremoe::get_records(pmcs[1:5]$url, endpoint = 'pmc_fulltext', cores = 1)
 ```
 
 ## Endpoint information
 
+Returns schema, columns, and rate limits for each endpoint. Potentially
+useful in LLM app contexts for tool schemas. `endpoint_info()` lists
+endpoints; `endpoint_info('endpoint_name')` returns details;
+`format = 'json'` for machine-readable output.
+
 ``` r
-puremoe::endpoint_info('pubtations')
+puremoe::endpoint_info()
+```
+
+    ## [1] "pubmed_abstracts"    "pubmed_affiliations" "icites"             
+    ## [4] "pubtations"          "pmc_fulltext"
+
+``` r
+puremoe::endpoint_info('pmc_fulltext')
 ```
 
     ## $description
-    ## [1] "PubTator entity annotations (genes, diseases, chemicals, etc.)"
+    ## [1] "Full-text articles from PubMed Central"
     ## 
     ## $returns
     ## [1] "data.frame"
@@ -106,26 +127,11 @@ puremoe::endpoint_info('pubtations')
     ## $columns$pmid
     ## [1] "PubMed ID (character)"
     ## 
-    ## $columns$tiab
-    ## [1] "Title/abstract text (character)"
-    ## 
-    ## $columns$id
-    ## [1] "Annotation ID (character)"
+    ## $columns$section
+    ## [1] "Section heading (character)"
     ## 
     ## $columns$text
-    ## [1] "Annotated text span (character)"
-    ## 
-    ## $columns$identifier
-    ## [1] "Database identifier (character)"
-    ## 
-    ## $columns$type
-    ## [1] "Entity type: Gene, Disease, Chemical, Species, Mutation (character)"
-    ## 
-    ## $columns$start
-    ## [1] "Start position in text (integer)"
-    ## 
-    ## $columns$end
-    ## [1] "End position in text (integer)"
+    ## [1] "Section text content (character)"
     ## 
     ## 
     ## $parameters
@@ -133,8 +139,11 @@ puremoe::endpoint_info('pubtations')
     ## [1] "parallel workers"
     ## 
     ## 
+    ## $input
+    ## [1] "Requires FTP URLs from pmid_to_ftp()"
+    ## 
     ## $rate_limit
-    ## [1] "Moderate"
+    ## [1] "NCBI FTP: be respectful"
     ## 
     ## $notes
-    ## [1] "One row per annotation; multiple annotations per article. Provides named entity recognition output."
+    ## [1] "One row per section; use after pmid_to_ftp() to get URLs. Not all PMIDs have PMC full text available."
