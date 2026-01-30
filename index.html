@@ -79,7 +79,7 @@
 </ul>
 <p>This unified interface simplifies the data retrieval process, allowing users to interact with multiple PubMed services/APIs/output formats through a single R function.</p>
 <p>The package also includes MeSH thesaurus resources as simple data frames, including Descriptor Terms, Descriptor Tree Structures, and Supplementary Concept Terms. Via the <a href="https://github.com/jaytimm/mesh-resources" class="external-link">mesh-resources</a> library.</p>
-<p>The package provides a straightforward retrieval interface for integrating PubMed literature into LLM applications, enabling citation-backed responses and RAG workflows with access to abstracts, full-text articles, entity annotations, and bibliometric data.</p>
+<p>The package provides a straightforward retrieval interface for PubMed literature, with potential utility in LLM applications and RAG workflows requiring access to abstracts, full-text articles, entity annotations, and bibliometric data.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -129,7 +129,7 @@
 <div class="section level2">
 <h2 id="pmc-full-text">PMC full text<a class="anchor" aria-label="anchor" href="#pmc-full-text"></a>
 </h2>
-<p>Get full text for open-access PMC articles from PMIDs on demand — no need to download the OA file list first. <strong><code><a href="reference/pmid_to_ftp.html">pmid_to_ftp()</a></code></strong> returns download URLs based on PMIDs (if they exist); pass <code>$url</code> to <code>get_records(endpoint = 'pmc_fulltext')</code> to fetch sectioned text (e.g. for LLMs or summarization). For bulk, use <code><a href="reference/data_pmc_list.html">data_pmc_list()</a></code>.</p>
+<p>Full-text articles can be retrieved for PMIDs if available in PMC’s open-access collection. Use <strong><code><a href="reference/pmid_to_ftp.html">pmid_to_ftp()</a></code></strong> to get download URLs, then pass these to <code>get_records(endpoint = 'pmc_fulltext')</code> — useful for quick retrieval in LLM/chat contexts. For bulk downloads, use <code><a href="reference/data_pmc_list.html">data_pmc_list()</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pmcs</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/pmid_to_ftp.html">pmid_to_ftp</a></span><span class="op">(</span>pmids <span class="op">=</span> <span class="va">pmids</span>, ncbi_key <span class="op">=</span> <span class="va">ncbi_key</span><span class="op">)</span></span>
 <span><span class="va">pmc_fulltext</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span><span class="va">pmcs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">$</span><span class="va">url</span>, endpoint <span class="op">=</span> <span class="st">'pmc_fulltext'</span>, cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
