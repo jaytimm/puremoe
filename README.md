@@ -45,8 +45,6 @@ Or the development version from GitHub with:
 remotes::install_github("jaytimm/puremoe")
 ```
 
-## Usage
-
 ## PubMed search
 
 The package has two basic functions: `search_pubmed` and `get_records`.
@@ -90,9 +88,8 @@ pubtations <- pmids |>
 
 Full-text articles can be retrieved for PMIDs if available in PMC’s
 open-access collection. Use **`pmid_to_ftp()`** to get download URLs,
-then pass these to `get_records(endpoint = 'pmc_fulltext')`
-
-Useful for quick retrieval in **LLM/chat contexts**.
+then pass these to `get_records(endpoint = 'pmc_fulltext')` Useful for
+quick retrieval in **LLM/chat contexts**.
 
 For bulk downloads, use `data_pmc_list()`.
 
@@ -103,9 +100,8 @@ pmc_fulltext <- puremoe::get_records(pmcs[1:5]$url, endpoint = 'pmc_fulltext', c
 
 ## Endpoint information
 
-Returns schema, columns, and rate limits for each endpoint.
-
-Useful in **LLM app contexts for tool schemas**.
+Returns schema, columns, and rate limits for each endpoint. Useful in
+**LLM app contexts for tool schemas**.
 
 `endpoint_info()` lists endpoints; `endpoint_info('endpoint_name')`
 returns details; `format = 'json'` for machine-readable output.
@@ -151,3 +147,24 @@ puremoe::endpoint_info('pmc_fulltext')
     ## 
     ## $notes
     ## [1] "One row per section; use after pmid_to_ftp() to get URLs. Not all PMIDs have PMC full text available."
+
+## License
+
+MIT © \[Jason Timm, MA, PhD\]
+
+## Citation
+
+If you use this package in your research, please cite:
+
+``` r
+citation("puremoe")
+```
+
+## Issues
+
+Report bugs or request features at
+<https://github.com/username/puremoe/issues>
+
+## Contributing
+
+Contributions welcome! Please open an issue or submit a pull request.
