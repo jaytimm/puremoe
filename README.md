@@ -17,9 +17,9 @@ accessing a range of **NLM/PubMed databases**, including:
 -   full-text entries from [PubMed
     Central](https://pmc.ncbi.nlm.nih.gov/) (PMC).
 
-This unified interface simplifies the data retrieval process, allowing
-users to interact with multiple PubMed services/APIs/output formats
-through a single R function.
+This **unified interface** simplifies the data retrieval process,
+allowing users to interact with multiple PubMed services/APIs/output
+formats through a single R function.
 
 Also included are MeSH thesaurus resources as simple data frames:
 Descriptor Terms, Descriptor Tree Structures, and Supplementary Concept
@@ -27,9 +27,9 @@ Terms, via the
 [mesh-resources](https://github.com/jaytimm/mesh-resources) library.
 
 The package provides a straightforward retrieval interface for PubMed
-literature, with potential utility in LLM applications and RAG workflows
-requiring access to abstracts, full-text articles, entity annotations,
-and bibliometric data.
+literature, with **potential utility in LLM applications and RAG
+workflows** requiring access to abstracts, full-text articles, entity
+annotations, and bibliometric data.
 
 ## Installation
 
@@ -90,9 +90,11 @@ pubtations <- pmids |>
 
 Full-text articles can be retrieved for PMIDs if available in PMC’s
 open-access collection. Use **`pmid_to_ftp()`** to get download URLs,
-then pass these to `get_records(endpoint = 'pmc_fulltext')` — useful for
-quick retrieval in LLM/chat contexts. For bulk downloads, use
-`data_pmc_list()`.
+then pass these to `get_records(endpoint = 'pmc_fulltext')`
+
+Useful for quick retrieval in **LLM/chat contexts**.
+
+For bulk downloads, use `data_pmc_list()`.
 
 ``` r
 pmcs <- puremoe::pmid_to_ftp(pmids = pmids, ncbi_key = ncbi_key)
@@ -101,10 +103,12 @@ pmc_fulltext <- puremoe::get_records(pmcs[1:5]$url, endpoint = 'pmc_fulltext', c
 
 ## Endpoint information
 
-Returns schema, columns, and rate limits for each endpoint. Potentially
-useful in LLM app contexts for tool schemas. `endpoint_info()` lists
-endpoints; `endpoint_info('endpoint_name')` returns details;
-`format = 'json'` for machine-readable output.
+Returns schema, columns, and rate limits for each endpoint.
+
+Potentially useful in **LLM app contexts for tool schemas**.
+
+`endpoint_info()` lists endpoints; `endpoint_info('endpoint_name')`
+returns details; `format = 'json'` for machine-readable output.
 
 ``` r
 puremoe::endpoint_info()
