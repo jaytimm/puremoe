@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`puremoe` provides a unified interface to PubMed and NLM data. Search with `search_pubmed()`, then retrieve data from any of six endpoints with `get_records()`.
+`puremoe` provides a unified interface to PubMed and NLM data. Search with `search_pubmed()`, then retrieve data from any of five endpoints with `get_records()`.
 
 ```{r libs}
 library(puremoe)
@@ -88,8 +88,8 @@ icites <- puremoe::get_records(
 
 icites[, pmid := as.character(pmid)]
 
-icites[, .(pmid, citation_count, relative_citation_ratio, nih_percentile, is_clinical)] |>
-  DT::datatable(rownames = FALSE)
+icites[, !c("citation_net", "cited_by_clin")] |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
 ## PubTator annotations
@@ -105,19 +105,7 @@ pubtations |>
   DT::datatable(rownames = FALSE)
 ```
 
-## References
 
-```{r references}
-refs <- puremoe::get_records(
-  head(pmids_sub, 15L),
-  endpoint = "pubmed_references",
-  cores    = 1L,
-  sleep    = 0.5
-)
-
-refs[, .(pmid, cited_pmid, cited_doi, citation)] |>
-  DT::datatable(rownames = FALSE)
-```
 
 ## Full text
 
@@ -144,5 +132,5 @@ puremoe::endpoint_info()
 ```
 
 ```{r endpoint-detail}
-puremoe::endpoint_info("pubmed_abstracts")
+puremoe::endpoint_info("icites")
 ```

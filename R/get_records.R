@@ -7,8 +7,8 @@
 #' 
 #' @param pmids A vector of PMIDs for which data is to be retrieved. For 'pmc_fulltext' endpoint, 
 #'   provide full URLs instead (e.g., from \code{pmid_to_pmc()$url}).
-#' @param endpoint A character vector specifying the type of data to retrieve ('pubtations', 'icites', 
-#'   'pubmed_affiliations', 'pubmed_references', 'pubmed_abstracts', 'pmc_fulltext').
+#' @param endpoint A character vector specifying the type of data to retrieve ('pubtations', 'icites',
+#'   'pubmed_affiliations', 'pubmed_abstracts', 'pmc_fulltext').
 #' @param cores Number of cores to use for parallel processing (default is 3).
 #' @param ncbi_key (Optional) NCBI API key for authenticated access.
 #' @param sleep Duration (in seconds) to pause after each batch 
@@ -21,13 +21,12 @@
 #' pmids <- c("38136652")
 #' results <- get_records(pmids, endpoint = "pubmed_abstracts", cores = 1)
 #' 
-get_records <- function(pmids, 
-                        endpoint = c('pubtations', 
-                                     'icites', 
-                                     'pubmed_affiliations', 
-                                     'pubmed_references', 
-                                     'pubmed_abstracts', 
-                                     'pmc_fulltext'), 
+get_records <- function(pmids,
+                        endpoint = c('pubtations',
+                                     'icites',
+                                     'pubmed_affiliations',
+                                     'pubmed_abstracts',
+                                     'pmc_fulltext'),
                         cores = 3, 
                         sleep = 1,
                         ncbi_key = NULL) {
@@ -37,14 +36,13 @@ get_records <- function(pmids,
     stop("pmids must be a non-empty vector of characters or numbers")
   }
   
-  if (!is.character(endpoint) || length(endpoint) != 1 || 
-      !endpoint %in% c('pubtations', 
-                       'icites', 
-                       'pubmed_references',
-                       'pubmed_affiliations', 
-                       'pubmed_abstracts', 
+  if (!is.character(endpoint) || length(endpoint) != 1 ||
+      !endpoint %in% c('pubtations',
+                       'icites',
+                       'pubmed_affiliations',
+                       'pubmed_abstracts',
                        'pmc_fulltext')) {
-    stop("Invalid endpoint. Must be one of 'pubtations', 'icites', 'pubmed_affiliations', 'pubmed_references', 'pubmed_abstracts', 'pmc_fulltext'")
+    stop("Invalid endpoint. Must be one of 'pubtations', 'icites', 'pubmed_affiliations', 'pubmed_abstracts', 'pmc_fulltext'")
   }
   
   if (!is.numeric(cores)) {
@@ -60,7 +58,6 @@ get_records <- function(pmids,
                           "icites" = .get_icites,
                           "pubtations" = .get_pubtations,
                           "pubmed_affiliations" = .get_affiliations,
-                          'pubmed_references' = .get_references,
                           "pubmed_abstracts" = .get_records,
                           "pmc_fulltext" = .get_pmc,
                           ##

@@ -37,7 +37,6 @@ remotes::install_github("jaytimm/puremoe")
 | --- | --- | --- |
 | `pubmed_abstracts` | title, abstract, journal, year, authors, MeSH terms | PubMed E-utilities |
 | `pubmed_affiliations` | author × affiliation rows | PubMed E-utilities |
-| `pubmed_references` | cited references per article | PubMed E-utilities |
 | `icites` | citation count, RCR, NIH percentile, field rate | NIH iCite |
 | `pubtations` | gene, disease, chemical, species, mutation annotations | PubTator3 |
 | `pmc_fulltext` | full-text sections (requires URLs from `pmid_to_ftp()`) | PMC Open Access |

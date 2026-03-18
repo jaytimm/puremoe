@@ -6,8 +6,8 @@
 \usage{
 get_records(
   pmids,
-  endpoint = c("pubtations", "icites", "pubmed_affiliations", "pubmed_references",
-    "pubmed_abstracts", "pmc_fulltext"),
+  endpoint = c("pubtations", "icites", "pubmed_affiliations", "pubmed_abstracts",
+    "pmc_fulltext"),
   cores = 3,
   sleep = 1,
   ncbi_key = NULL
@@ -17,8 +17,8 @@ get_records(
 \item{pmids}{A vector of PMIDs for which data is to be retrieved. For 'pmc_fulltext' endpoint, 
 provide full URLs instead (e.g., from \code{pmid_to_pmc()$url}).}
 
-\item{endpoint}{A character vector specifying the type of data to retrieve ('pubtations', 'icites', 
-'pubmed_affiliations', 'pubmed_references', 'pubmed_abstracts', 'pmc_fulltext').}
+\item{endpoint}{A character vector specifying the type of data to retrieve ('pubtations', 'icites',
+'pubmed_affiliations', 'pubmed_abstracts', 'pmc_fulltext').}
 
 \item{cores}{Number of cores to use for parallel processing (default is 3).}
 
