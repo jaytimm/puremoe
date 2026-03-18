@@ -4,3 +4,6 @@
 .Ruserdata
 README.Rmd
 inst/doc
+docs/
+examples/
+.cursor/

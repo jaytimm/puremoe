@@ -1,0 +1,212 @@
+---
+title: "Getting Started with puremoe"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with puremoe}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+The `puremoe` package provides a unified interface for retrieving data from
+multiple PubMed/NLM databases. Two functions handle most workflows:
+`search_pubmed()` fetches PMIDs matching a query; `get_records()` retrieves
+data from a named endpoint for those PMIDs.
+
+```{r library}
+library(puremoe)
+library(data.table)
+```
+
+---
+
+## Search PubMed
+
+`search_pubmed()` accepts standard PubMed query syntax, including field tags
+such as `[TiAb]` (title/abstract), `[MeSH Terms]`, and `[DP]` (date
+published). It returns a character vector of PMIDs.
+
+```{r search}
+pmids <- puremoe::search_pubmed('("political ideology"[TiAb])')
+length(pmids)
+head(pmids)
+```
+
+For this vignette we work with a manageable subset.
+
+```{r subset}
+pmids_sub <- head(pmids, 60L)
+```
+
+---
+
+## Abstracts and metadata
+
+`endpoint = "pubmed_abstracts"` returns one row per article with bibliographic
+fields: PMID, title, abstract text, journal, year, authors, and MeSH terms.
+
+```{r abstracts}
+abstracts <- puremoe::get_records(
+  pmids_sub,
+  endpoint = "pubmed_abstracts",
+  cores    = 1L,
+  sleep    = 0.5
+)
+
+abstracts[1:3, .(pmid, year, journal, articletitle)]
+```
+
+```{r abstracts-cols}
+names(abstracts)
+```
+
+---
+
+## Bibliometric data via iCite
+
+`endpoint = "icites"` pulls citation metrics from NIH's
+[iCite](https://icite.od.nih.gov/) database: raw citation counts, relative
+citation ratio (RCR), field-citation rate, and open-access status.
+
+```{r icites}
+icites <- puremoe::get_records(
+  pmids_sub,
+  endpoint = "icites",
+  cores    = 1L,
+  sleep    = 0.25
+)
+
+icites[1:3, .(pmid, year, citation_count, relative_citation_ratio, is_oa)]
+```
+
+Merge with abstracts for a single working table:
+
+```{r merge}
+dt <- merge(
+  abstracts[, .(pmid, year, journal, articletitle)],
+  icites[, .(pmid, citation_count, relative_citation_ratio, is_oa)],
+  by  = "pmid",
+  all = TRUE
+)
+
+setorder(dt, -citation_count)
+head(dt[, .(pmid, year, citation_count, relative_citation_ratio)])
+```
+
+---
+
+## Author affiliations
+
+`endpoint = "pubmed_affiliations"` returns one row per author–affiliation
+pair, useful for identifying institutional and geographic patterns.
+
+```{r affiliations}
+affiliations <- puremoe::get_records(
+  head(pmids_sub, 30L),
+  endpoint = "pubmed_affiliations",
+  cores    = 1L,
+  sleep    = 0.5
+)
+
+affiliations[1:5, .(pmid, Author, Affiliation)]
+```
+
+A simple look at country representation:
+
+```{r affiliation-country}
+affiliations[, aff_lower := tolower(Affiliation)]
+
+country_counts <- data.table(
+  country = c("USA", "UK", "Canada", "Germany", "Netherlands", "Australia"),
+  n = c(
+    affiliations[grepl("usa|united states|u\\.s\\.", aff_lower), .N],
+    affiliations[grepl("united kingdom|\\buk\\b|england", aff_lower), .N],
+    affiliations[grepl("canada", aff_lower), .N],
+    affiliations[grepl("germany|deutschland", aff_lower), .N],
+    affiliations[grepl("netherlands", aff_lower), .N],
+    affiliations[grepl("australia", aff_lower), .N]
+  )
+)
+
+country_counts[n > 0][order(-n)]
+```
+
+---
+
+## Named-entity annotations via PubTator3
+
+`endpoint = "pubtations"` queries
+[PubTator3](https://www.ncbi.nlm.nih.gov/research/pubtator3/) and returns
+annotated entities (genes, diseases, chemicals, species, mutations, cell lines)
+found in titles and abstracts.
+
+```{r pubtations}
+pubtations <- puremoe::get_records(
+  head(pmids_sub, 40L),
+  endpoint = "pubtations",
+  cores    = 1L
+)
+
+pubtations[1:8, .(pmid, type, text, identifier)]
+```
+
+Entity-type breakdown:
+
+```{r pubtations-types}
+pubtations[!is.na(type), .N, by = type][order(-N)]
+```
+
+Most frequently mentioned entities:
+
+```{r pubtations-top}
+pubtations[!is.na(type), .N, by = .(type, text)][order(-N)] |> head(12)
+```
+
+---
+
+## References
+
+`endpoint = "pubmed_references"` returns cited references for each article —
+useful for citation network construction or identifying foundational literature.
+
+```{r references}
+refs <- puremoe::get_records(
+  head(pmids_sub, 20L),
+  endpoint = "pubmed_references",
+  cores    = 1L,
+  sleep    = 0.5
+)
+
+refs[1:6, .(pmid, ref_pmid, ref_citation)]
+```
+
+---
+
+## Endpoint metadata
+
+`endpoint_info()` lists available endpoints and their schemas — handy when
+building applications or checking column definitions.
+
+```{r endpoint-info}
+puremoe::endpoint_info()
+```
+
+```{r endpoint-detail}
+puremoe::endpoint_info("pubmed_abstracts")
+```
+
+---
+
+## Session info
+
+```{r session}
+sessionInfo()
+```

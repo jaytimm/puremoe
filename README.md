@@ -148,18 +148,6 @@ puremoe::endpoint_info('pmc_fulltext')
     ## $notes
     ## [1] "One row per section; use after pmid_to_ftp() to get URLs. Not all PMIDs have PMC full text available."
 
-## License
-
-MIT © \[Jason Timm, MA, PhD\]
-
-## Citation
-
-If you use this package in your research, please cite:
-
-``` r
-citation("puremoe")
-```
-
 ## Issues
 
 Report bugs or request features at
