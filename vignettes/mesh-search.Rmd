@@ -1,8 +1,8 @@
 ---
-title: "MeSH-Guided Search"
+title: "MeSH Tables"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MeSH-Guided Search}
+  %\VignetteIndexEntry{MeSH Tables}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,46 +15,26 @@ knitr::opts_chunk$set(
 )
 ```
 
-PubMed indexes articles with Medical Subject Headings (MeSH) -- a controlled vocabulary maintained by NLM. A `[MeSH Terms]` query retrieves articles explicitly tagged with a concept regardless of how the authors phrased it, and triggers *explosion*: all narrower terms in the hierarchy are included automatically. `puremoe` ships two MeSH reference datasets, the thesaurus and the tree, that make it straightforward to identify the right headings before running a search.
-
-Load packages.
+`puremoe` ships two MeSH reference tables: a thesaurus of descriptors and entry terms, and a tree of hierarchical classifications.
 
 ```{r libs}
 library(puremoe)
-library(data.table)
+library(dplyr)
 library(DT)
 ```
 
 ## MeSH thesaurus
 
-`data_mesh_thesaurus()` downloads and combines the MeSH Descriptor Thesaurus and Supplementary Concept Records (SCR). It returns one row per term, including all synonyms and entry terms for each descriptor.
+`data_mesh_thesaurus()` downloads and combines the MeSH Descriptor Thesaurus and Supplementary Concept Records (SCR). One row per term, including synonyms and entry terms for each descriptor.
 
 ```{r thesaurus}
 thesaurus <- puremoe::data_mesh_thesaurus()
-dim(thesaurus)
-names(thesaurus)
 ```
 
-```{r thesaurus-head}
-head(thesaurus, 6) |> DT::datatable(rownames = FALSE)
-```
-
-### Finding terms related to a topic
-
-Search the thesaurus for headings related to *political ideology*.
-
-```{r thesaurus-search}
-hits <- thesaurus[grepl("politi", TermName, ignore.case = TRUE)]
-hits[, .(DescriptorName, TermName)] |>
-  unique() |>
-  DT::datatable(rownames = FALSE)
-```
-
-Pull out the canonical descriptor names -- one row per MeSH heading.
-
-```{r thesaurus-descriptors}
-descriptors <- hits[, .(DescriptorName)] |> unique()
-descriptors
+```{r thesaurus-table}
+thesaurus |>
+  head(20) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
 ## MeSH trees
@@ -63,121 +43,10 @@ descriptors
 
 ```{r trees}
 trees <- puremoe::data_mesh_trees()
-dim(trees)
-names(trees)
 ```
 
-```{r trees-head}
-head(trees, 6) |> DT::datatable(rownames = FALSE)
-```
-
-### Locating descriptors in the hierarchy
-
-Find where our candidate descriptors sit.
-
-```{r trees-politics}
-political_trees <- trees[DescriptorName %in% descriptors$DescriptorName]
-political_trees[, .(DescriptorName, tree_location, cats)] |>
-  unique() |>
-  DT::datatable(rownames = FALSE)
-```
-
-### Exploring a branch
-
-Retrieve everything in the `I01.880` subtree (Political Science and related concepts).
-
-```{r trees-branch}
-branch <- trees[grepl("^I01\\.880", tree_location)]
-branch[, .(DescriptorName, tree_location)][order(tree_location)] |>
-  unique() |>
+```{r trees-table}
+trees |>
   head(20) |>
-  DT::datatable(rownames = FALSE)
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
-
-### Siblings and parent context
-
-Look at all direct children of `I01` (Social Sciences) -- one dot of depth below the parent.
-
-```{r trees-siblings}
-siblings <- trees[grepl("^I01\\.[^.]+$", tree_location)]
-siblings[, .(DescriptorName, tree_location)][order(tree_location)] |>
-  unique() |>
-  DT::datatable(rownames = FALSE)
-```
-
-## Building a MeSH query
-
-Construct a controlled-vocabulary PubMed query from the descriptors identified above. `[MeSH Terms]` triggers explosion; use `[MeSH:noexp]` to suppress it.
-
-```{r query-build}
-mesh_terms <- c("Politics", "Political Systems")
-mesh_query <- paste(sprintf('"%s"[MeSH Terms]', mesh_terms), collapse = " OR ")
-cat(mesh_query)
-```
-
-Combine with a free-text component to capture articles not yet indexed or tagged under a different heading.
-
-```{r query-combined}
-combined_query <- paste0(
-  '(', mesh_query, ')',
-  ' OR ',
-  '("political ideology"[TiAb])'
-)
-cat(combined_query)
-```
-
-## Comparing queries
-
-Run both queries and compare recall.
-
-```{r search-compare}
-pmids_mesh     <- puremoe::search_pubmed(mesh_query)
-pmids_combined <- puremoe::search_pubmed(combined_query)
-
-data.table(
-  query   = c("MeSH only", "Combined (MeSH + free-text)"),
-  n_pmids = c(length(pmids_mesh), length(pmids_combined))
-)
-```
-
-```{r search-overlap}
-cat("Unique to free-text:  ", length(setdiff(pmids_combined, pmids_mesh)), "\n")
-cat("Unique to MeSH:       ", length(setdiff(pmids_mesh, pmids_combined)), "\n")
-cat("In both:              ", length(intersect(pmids_mesh, pmids_combined)), "\n")
-```
-
-## Retrieving records
-
-Fetch abstracts for a subset of the combined result set and inspect which MeSH headings PubMed has assigned.
-
-```{r abstracts}
-pmids_sub <- head(pmids_combined, 40L)
-
-abstracts <- puremoe::get_records(
-  pmids_sub,
-  endpoint = "pubmed_abstracts",
-  cores    = 1L,
-  sleep    = 0.5
-)
-```
-
-```{r mesh-assigned}
-assigned_mesh <- data.table::rbindlist(abstracts$annotations)[type == "MeSH"]
-
-assigned_mesh[, .N, by = DescriptorName][order(-N)] |>
-  head(20) |>
-  DT::datatable(rownames = FALSE)
-```
-
-## Persistent storage
-
-Both datasets are ~10 MB. Download once and cache locally to avoid re-fetching each session.
-
-```{r persistent, eval=FALSE}
-thesaurus <- puremoe::data_mesh_thesaurus(use_persistent_storage = TRUE)
-trees     <- puremoe::data_mesh_trees(use_persistent_storage = TRUE)
-```
-
-## Summary
-
-`data_mesh_thesaurus()` → find descriptors → `data_mesh_trees()` → explore hierarchy → build a `[MeSH Terms]` query → `search_pubmed()` → `get_records()`. MeSH explosion means a single well-chosen heading often retrieves more relevant records than a list of free-text synonyms.
