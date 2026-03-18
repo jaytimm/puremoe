@@ -84,7 +84,7 @@ icites <- puremoe::get_records(
   sleep    = 0.25
 )
 
-icites[1:3, .(pmid, year, citation_count, relative_citation_ratio, is_oa)]
+icites[1:3, .(pmid, citation_count, relative_citation_ratio, nih_percentile, is_clinical)]
 ```
 
 Merge with abstracts for a single working table:
@@ -92,13 +92,13 @@ Merge with abstracts for a single working table:
 ```{r merge}
 dt <- merge(
   abstracts[, .(pmid, year, journal, articletitle)],
-  icites[, .(pmid, citation_count, relative_citation_ratio, is_oa)],
+  icites[, .(pmid, citation_count, relative_citation_ratio, nih_percentile)],
   by  = "pmid",
   all = TRUE
 )
 
 setorder(dt, -citation_count)
-head(dt[, .(pmid, year, citation_count, relative_citation_ratio)])
+head(dt[, .(pmid, year, citation_count, relative_citation_ratio, nih_percentile)])
 ```
 
 ---
