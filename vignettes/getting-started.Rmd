@@ -163,7 +163,7 @@ refs <- puremoe::get_records(
   sleep    = 0.5
 )
 
-refs[1:10, .(pmid, ref_pmid, ref_citation)] |>
+refs[1:10, .(pmid, cited_pmid, cited_doi, citation)] |>
   DT::datatable(rownames = FALSE)
 ```
 
