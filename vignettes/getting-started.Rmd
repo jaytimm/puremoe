@@ -123,7 +123,7 @@ fulltext <- puremoe::get_records(
 )
 
 fulltext |>
-  mutate(text = sapply(strsplit(text, "\\s+"), function(w) paste0(paste(head(w, 5), collapse = " "), "..."))) |>
+  mutate(text = sapply(strsplit(text, "\\s+"), function(w) paste0(paste(head(w, 15), collapse = " "), "..."))) |>
   slice(1:5) |>
   DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```

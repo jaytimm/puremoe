@@ -50,3 +50,12 @@ trees |>
   head(20) |>
   DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
+
+## Persistent storage
+
+Both datasets are ~10 MB and fetched from GitHub on each call by default. To avoid re-downloading every session, set `use_persistent_storage = TRUE` — the files are cached to a system data directory and reused on subsequent calls.
+
+```{r persistent, eval=FALSE}
+thesaurus <- puremoe::data_mesh_thesaurus(use_persistent_storage = TRUE)
+trees     <- puremoe::data_mesh_trees(use_persistent_storage = TRUE)
+```
