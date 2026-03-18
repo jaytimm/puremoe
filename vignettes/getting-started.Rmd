@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ```{r libs}
 library(puremoe)
-library(data.table)
+library(dplyr)
 library(DT)
 ```
 
@@ -46,18 +46,19 @@ abstracts <- puremoe::get_records(
   sleep    = 0.5
 )
 
-abstracts[, pmid := as.character(pmid)]
+abstracts <- abstracts |> mutate(pmid = as.character(pmid))
 ```
 
 ```{r abstracts-table}
-abstracts[, .(pmid, year, journal, articletitle)] |>
+abstracts |>
+  select(pmid, year, journal, articletitle) |>
   DT::datatable(rownames = FALSE)
 ```
 
 The `annotations` column is a list of per-article data frames containing MeSH terms, chemical names, and keywords.
 
 ```{r annotations}
-data.table::rbindlist(abstracts$annotations) |>
+bind_rows(abstracts$annotations) |>
   head(20) |>
   DT::datatable(rownames = FALSE)
 ```
@@ -86,9 +87,9 @@ icites <- puremoe::get_records(
   sleep    = 0.25
 )
 
-icites[, pmid := as.character(pmid)]
-
-icites[, !c("citation_net", "cited_by_clin")] |>
+icites |>
+  mutate(pmid = as.character(pmid)) |>
+  select(-citation_net, -cited_by_clin) |>
   DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
@@ -105,22 +106,26 @@ pubtations |>
   DT::datatable(rownames = FALSE)
 ```
 
-
-
 ## Full text
 
-Full-text retrieval requires open-access PMC articles. First convert PMIDs to FTP URLs, then fetch.
+Full-text retrieval requires open-access PMC articles. `pmid_to_ftp()` converts PMIDs to FTP URLs, filtering to only those with open-access full text available.
 
-```{r fulltext, eval=FALSE}
-ftp <- puremoe::pmid_to_ftp(pmids = head(pmids_sub, 20L))
+```{r ftp}
+ftp <- puremoe::pmid_to_ftp(pmids = pmids_sub)
+ftp |> DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
 
+```{r fulltext}
 fulltext <- puremoe::get_records(
-  ftp$url,
+  head(ftp$url, 2L),
   endpoint = "pmc_fulltext",
   cores    = 1L
 )
 
-fulltext |> DT::datatable(rownames = FALSE)
+fulltext |>
+  mutate(text = sapply(strsplit(text, "\\s+"), function(w) paste0(paste(head(w, 5), collapse = " "), "..."))) |>
+  slice(1:5) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
 ## Endpoint schemas
