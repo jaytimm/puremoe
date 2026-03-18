@@ -42,6 +42,21 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/getting-started.html">Getting Started</a>
+    </li>
+    <li>
+      <a href="articles/mesh-search.html">MeSH-Guided Search</a>
+    </li>
+  </ul>
+</li>
 <li>
   <a href="news/index.html">Changelog</a>
 </li>
@@ -65,138 +80,143 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
-
 <div class="section level1">
 <div class="page-header"><h1 id="puremoe">puremoe<a class="anchor" aria-label="anchor" href="#puremoe"></a>
 </h1></div>
-<p><strong>P</strong>ubMed <strong>U</strong>nified <strong>RE</strong>trieval for <strong>M</strong>ulti-<strong>O</strong>utput <strong>E</strong>xploration. An R package that provides a single interface for accessing a range of <strong>NLM/PubMed databases</strong>, including:</p>
-<ul>
-<li><p><a href="https://pubmed.ncbi.nlm.nih.gov/" class="external-link">PubMed</a> abstract records,</p></li>
-<li><p><a href="https://icite.od.nih.gov/" class="external-link">iCite</a> bibliometric data,</p></li>
-<li><p><a href="https://www.ncbi.nlm.nih.gov/research/pubtator3/" class="external-link">PubTator3</a> named entity annotations, and</p></li>
-<li><p>full-text entries from <a href="https://pmc.ncbi.nlm.nih.gov/" class="external-link">PubMed Central</a> (PMC).</p></li>
-</ul>
-<p>This <strong>unified interface</strong> simplifies the data retrieval process, allowing users to interact with multiple PubMed services/APIs/output formats through a single R function.</p>
-<p>Also included are <strong>MeSH thesaurus resources</strong> as simple data frames: Descriptor Terms, Descriptor Tree Structures, and Supplementary Concept Terms, via the <a href="https://github.com/jaytimm/mesh-resources" class="external-link">mesh-resources</a> library.</p>
-<p>The package provides a straightforward retrieval interface for PubMed literature, with <strong>utility in LLM workflows and RAG applications</strong> requiring access to abstracts, full-text articles, entity annotations, and bibliometric data.</p>
+<p><a href="https://cran.r-project.org/package=puremoe" class="external-link"><img src="https://www.r-pkg.org/badges/version/puremoe" alt="CRAN version"></a> <a href="https://cran.r-project.org/package=puremoe" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/last-month/puremoe" alt="CRAN downloads"></a></p>
+<p><code>puremoe</code> is an R package that unifies access to PubMed and NLM data behind a single retrieval function. Search PubMed, then pull abstracts, citation metrics, named-entity annotations, full-text articles, or MeSH resources – all as plain <code>data.table</code> objects, all pipe-compatible, no juggling separate APIs or output formats.</p>
+<hr>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Get the released version from CRAN:</p>
+<p>From CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'puremoe'</span><span class="op">)</span></span></code></pre></div>
-<p>Or the development version from GitHub with:</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"puremoe"</span><span class="op">)</span></span></code></pre></div>
+<p>Development version:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"jaytimm/puremoe"</span><span class="op">)</span></span></code></pre></div>
+<hr>
 </div>
 <div class="section level2">
-<h2 id="pubmed-search">PubMed search<a class="anchor" aria-label="anchor" href="#pubmed-search"></a>
+<h2 id="the-puremoe-api">The <code>puremoe</code> API<a class="anchor" aria-label="anchor" href="#the-puremoe-api"></a>
 </h2>
-<p>The package has two basic functions: <code>search_pubmed</code> and <code>get_records</code>. The former fetches PMIDs from the PubMed API based on user search; the latter scrapes PMID records from a user-specified PubMed endpoint – <code>pubmed_abstracts</code>, <code>pubmed_affiliations</code>, <code>pubtations</code>, <code>icites</code>, or <code>pmc_fulltext</code>.</p>
-<p>Search syntax is the same as that implemented in standard <a href="https://pubmed.ncbi.nlm.nih.gov/advanced/" class="external-link">PubMed search</a>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pmids</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/search_pubmed.html">search_pubmed</a></span><span class="op">(</span><span class="st">'("political ideology"[TiAb])'</span><span class="op">)</span> </span></code></pre></div>
+<div class="section level3">
+<h3 id="search">Search<a class="anchor" aria-label="anchor" href="#search"></a>
+</h3>
+<ul>
+<li>
+<strong><code>search_pubmed(query, ...)</code></strong> – PubMed query string → character vector of PMIDs. Accepts standard PubMed syntax: field tags (<code>[TiAb]</code>, <code>[MeSH Terms]</code>, <code>[DP]</code>), Boolean operators, wildcards.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="retrieve">Retrieve<a class="anchor" aria-label="anchor" href="#retrieve"></a>
+</h3>
+<p><strong><code>get_records(pmids, endpoint, cores, sleep, ncbi_key)</code></strong> – the single retrieval function. Pass PMIDs and name an endpoint; get back a <code>data.table</code>.</p>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>endpoint</th>
+<th>returns</th>
+<th>source</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>pubmed_abstracts</code></td>
+<td>title, abstract, journal, year, authors, MeSH terms</td>
+<td>PubMed E-utilities</td>
+</tr>
+<tr class="even">
+<td><code>pubmed_affiliations</code></td>
+<td>author × affiliation rows</td>
+<td>PubMed E-utilities</td>
+</tr>
+<tr class="odd">
+<td><code>pubmed_references</code></td>
+<td>cited references per article</td>
+<td>PubMed E-utilities</td>
+</tr>
+<tr class="even">
+<td><code>icites</code></td>
+<td>citation count, RCR, NIH percentile, field rate</td>
+<td>NIH iCite</td>
+</tr>
+<tr class="odd">
+<td><code>pubtations</code></td>
+<td>gene, disease, chemical, species, mutation annotations</td>
+<td>PubTator3</td>
+</tr>
+<tr class="even">
+<td><code>pmc_fulltext</code></td>
+<td>full-text sections (requires URLs from <code><a href="reference/pmid_to_ftp.html">pmid_to_ftp()</a></code>)</td>
+<td>PMC Open Access</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="id-conversion">ID conversion<a class="anchor" aria-label="anchor" href="#id-conversion"></a>
+</h3>
+<ul>
+<li>
+<strong><code>pmid_to_pmc(pmids, ...)</code></strong> – PMID → PMC ID + DOI via the NCBI ID Converter.</li>
+<li>
+<strong><code>pmid_to_ftp(pmids, ...)</code></strong> – PMID → PMC ID + open-access FTP URL; pass URLs to <code>get_records(endpoint = "pmc_fulltext")</code>.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="mesh-reference-data">MeSH reference data<a class="anchor" aria-label="anchor" href="#mesh-reference-data"></a>
+</h3>
+<ul>
+<li>
+<strong><code><a href="reference/data_mesh_thesaurus.html">data_mesh_thesaurus()</a></code></strong> – MeSH descriptor thesaurus + supplementary concept records; one row per term/synonym.</li>
+<li>
+<strong><code><a href="reference/data_mesh_trees.html">data_mesh_trees()</a></code></strong> – MeSH hierarchical tree structure; tree numbers encode the classification path.</li>
+<li>
+<strong><code><a href="reference/data_pmc_list.html">data_pmc_list()</a></code></strong> – PMC open-access file list mapping PMC IDs to file paths and licenses.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="utilities">Utilities<a class="anchor" aria-label="anchor" href="#utilities"></a>
+</h3>
+<ul>
+<li>
+<strong><code>endpoint_info(endpoint)</code></strong> – column definitions, rate limits, and notes for each endpoint. Returns a list or JSON; useful for tool schemas in LLM applications.</li>
+</ul>
+<hr>
+</div>
 </div>
 <div class="section level2">
-<h2 id="get-record-level-data">Get record-level data<a class="anchor" aria-label="anchor" href="#get-record-level-data"></a>
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pubmed</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_abstracts'</span>, </span>
-<span>                       cores <span class="op">=</span> <span class="fl">3</span>, </span>
-<span>                       sleep <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                       ncbi_key <span class="op">=</span> <span class="va">ncbi_key</span><span class="op">)</span> </span>
-<span></span>
-<span><span class="va">affiliations</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubmed_affiliations'</span>, </span>
-<span>                       cores <span class="op">=</span> <span class="fl">1</span>, </span>
-<span>                       sleep <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">icites</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'icites'</span>,</span>
-<span>                       cores <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>                       sleep <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">pubtations</span> <span class="op">&lt;-</span> <span class="va">pmids</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">'pubtations'</span>,</span>
-<span>                       cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="pmc-full-text">PMC full text<a class="anchor" aria-label="anchor" href="#pmc-full-text"></a>
-</h2>
-<p>Full-text articles can be retrieved for PMIDs if available in PMC’s open-access collection. Use <code><a href="reference/pmid_to_ftp.html">pmid_to_ftp()</a></code> to get download URLs, then pass these to <code>get_records(endpoint = 'pmc_fulltext')</code> — useful for quick retrieval in LLM/chat contexts.</p>
-<p>For bulk downloads, use <code><a href="reference/data_pmc_list.html">data_pmc_list()</a></code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pmcs</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/pmid_to_ftp.html">pmid_to_ftp</a></span><span class="op">(</span>pmids <span class="op">=</span> <span class="va">pmids</span>, ncbi_key <span class="op">=</span> <span class="va">ncbi_key</span><span class="op">)</span></span>
-<span><span class="va">pmc_fulltext</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/get_records.html">get_records</a></span><span class="op">(</span><span class="va">pmcs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">$</span><span class="va">url</span>, endpoint <span class="op">=</span> <span class="st">'pmc_fulltext'</span>, cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="endpoint-information">Endpoint information<a class="anchor" aria-label="anchor" href="#endpoint-information"></a>
-</h2>
-<p>Returns schema, columns, and rate limits for each endpoint. Useful in LLM app contexts for tool schemas.</p>
-<p><code><a href="reference/endpoint_info.html">endpoint_info()</a></code> lists endpoints; <code>endpoint_info('endpoint_name')</code> returns details; <code>format = 'json'</code> for machine-readable output.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/endpoint_info.html">endpoint_info</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="do">## [1] "pubmed_abstracts"    "pubmed_affiliations" "icites"             </span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="do">## [4] "pubtations"          "pmc_fulltext"</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="reference/endpoint_info.html">endpoint_info</a></span><span class="op">(</span><span class="st">'pmc_fulltext'</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="do">## $description</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="do">## [1] "Full-text articles from PubMed Central"</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="do">## $returns</span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="do">## [1] "data.frame"</span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="do">## $columns</span></span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="do">## $columns$pmid</span></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="do">## [1] "PubMed ID (character)"</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="do">## $columns$section</span></span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="do">## [1] "Section heading (character)"</span></span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="do">## $columns$text</span></span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="do">## [1] "Section text content (character)"</span></span>
-<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="do">## $parameters</span></span>
-<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="do">## $parameters$cores</span></span>
-<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="do">## [1] "parallel workers"</span></span>
-<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a><span class="do">## $input</span></span>
-<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a><span class="do">## [1] "Requires FTP URLs from pmid_to_ftp()"</span></span>
-<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a><span class="do">## $rate_limit</span></span>
-<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a><span class="do">## [1] "NCBI FTP: be respectful"</span></span>
-<span id="cb9-28"><a href="#cb9-28" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb9-29"><a href="#cb9-29" tabindex="-1"></a><span class="do">## $notes</span></span>
-<span id="cb9-30"><a href="#cb9-30" tabindex="-1"></a><span class="do">## [1] "One row per section; use after pmid_to_ftp() to get URLs. Not all PMIDs have PMC full text available."</span></span></code></pre></div>
+<ul>
+<li>
+<a href="https://jaytimm.github.io/puremoe/articles/getting-started.html" class="external-link">Getting started</a> – <code><a href="reference/search_pubmed.html">search_pubmed()</a></code> + all <code><a href="reference/get_records.html">get_records()</a></code> endpoints end-to-end</li>
+<li>
+<a href="https://jaytimm.github.io/puremoe/articles/mesh-search.html" class="external-link">MeSH-guided search</a> – thesaurus lookup, tree navigation, and controlled-vocabulary queries</li>
+</ul>
+<hr>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
-<p>MIT © [Jason Timm, MA, PhD]</p>
+<p>MIT © <a href="https://github.com/jaytimm" class="external-link">Jason Timm</a></p>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<p>If you use this package in your research, please cite:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"puremoe"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="issues">Issues<a class="anchor" aria-label="anchor" href="#issues"></a>
 </h2>
-<p>Report bugs or request features at <a href="https://github.com/username/puremoe/issues" class="external-link uri">https://github.com/username/puremoe/issues</a></p>
-</div>
-<div class="section level2">
-<h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
-</h2>
-<p>Contributions welcome! Please open an issue or submit a pull request.</p>
+<p>Report bugs or request features at <a href="https://github.com/jaytimm/puremoe/issues" class="external-link uri">https://github.com/jaytimm/puremoe/issues</a></p>
 </div>
 </div>
-
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -232,13 +252,7 @@
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://cran.r-project.org/package=puremoe" class="external-link"><img src="https://www.r-pkg.org/badges/version/puremoe"></a></li>
-<li><a href="https://cran.r-project.org/package=puremoe" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/last-month/puremoe"></a></li>
-</ul>
-</div>
+
 
   </div>
 </div>
