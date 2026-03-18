@@ -162,13 +162,9 @@ abstracts <- puremoe::get_records(
 ```
 
 ```{r mesh-assigned}
-assigned_mesh <- abstracts[
-  !is.na(mesh_terms),
-  .(mesh = unlist(mesh_terms)),
-  by = pmid
-]
+assigned_mesh <- data.table::rbindlist(abstracts$annotations)[type == "MeSH"]
 
-assigned_mesh[, .N, by = mesh][order(-N)] |>
+assigned_mesh[, .N, by = DescriptorName][order(-N)] |>
   head(20) |>
   DT::datatable(rownames = FALSE)
 ```
