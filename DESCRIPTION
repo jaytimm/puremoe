@@ -21,7 +21,8 @@ Imports:
     rappdirs
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    DT
 VignetteBuilder: knitr
 RoxygenNote: 7.3.3
 URL: https://github.com/jaytimm/puremoe, https://jaytimm.github.io/puremoe/

@@ -1,158 +1,81 @@
-[![](https://www.r-pkg.org/badges/version/puremoe)](https://cran.r-project.org/package=puremoe)
-[![](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
-
 # puremoe
 
-**P**ubMed **U**nified **RE**trieval for **M**ulti-**O**utput
-**E**xploration. An R package that provides a single interface for
-accessing a range of **NLM/PubMed databases**, including:
+[![CRAN version](https://www.r-pkg.org/badges/version/puremoe)](https://cran.r-project.org/package=puremoe)
+[![CRAN downloads](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
 
--   [PubMed](https://pubmed.ncbi.nlm.nih.gov/) abstract records,
+`puremoe` is an R package for retrieving biomedical literature data from PubMed and NLM -- abstracts, bibliometrics, named-entity annotations, full text, and MeSH resources -- through a single, pipe-friendly interface.
 
--   [iCite](https://icite.od.nih.gov/) bibliometric data,
-
--   [PubTator3](https://www.ncbi.nlm.nih.gov/research/pubtator3/) named
-    entity annotations, and
-
--   full-text entries from [PubMed
-    Central](https://pmc.ncbi.nlm.nih.gov/) (PMC).
-
-This **unified interface** simplifies the data retrieval process,
-allowing users to interact with multiple PubMed services/APIs/output
-formats through a single R function.
-
-Also included are **MeSH thesaurus resources** as simple data frames:
-Descriptor Terms, Descriptor Tree Structures, and Supplementary Concept
-Terms, via the
-[mesh-resources](https://github.com/jaytimm/mesh-resources) library.
-
-The package provides a straightforward retrieval interface for PubMed
-literature, with **utility in LLM workflows and RAG applications**
-requiring access to abstracts, full-text articles, entity annotations,
-and bibliometric data.
+---
 
 ## Installation
 
-Get the released version from CRAN:
+From CRAN:
 
-``` r
-install.packages('puremoe')
+```r
+install.packages("puremoe")
 ```
 
-Or the development version from GitHub with:
+Development version:
 
-``` r
+```r
 remotes::install_github("jaytimm/puremoe")
 ```
 
-## PubMed search
+---
 
-The package has two basic functions: `search_pubmed` and `get_records`.
-The former fetches PMIDs from the PubMed API based on user search; the
-latter scrapes PMID records from a user-specified PubMed endpoint –
-`pubmed_abstracts`, `pubmed_affiliations`, `pubtations`, `icites`, or
-`pmc_fulltext`.
+## The `puremoe` API
 
-Search syntax is the same as that implemented in standard [PubMed
-search](https://pubmed.ncbi.nlm.nih.gov/advanced/).
+### Search
 
-``` r
-pmids <- puremoe::search_pubmed('("political ideology"[TiAb])') 
+- **`search_pubmed(query, ...)`** -- PubMed query string → character vector of PMIDs. Accepts standard PubMed syntax: field tags (`[TiAb]`, `[MeSH Terms]`, `[DP]`), Boolean operators, wildcards.
+
+### Retrieve
+
+**`get_records(pmids, endpoint, cores, sleep, ncbi_key)`** -- the single retrieval function. Pass PMIDs and name an endpoint; get back a `data.table`.
+
+| endpoint | returns | source |
+| --- | --- | --- |
+| `pubmed_abstracts` | title, abstract, journal, year, authors, MeSH terms | PubMed E-utilities |
+| `pubmed_affiliations` | author × affiliation rows | PubMed E-utilities |
+| `pubmed_references` | cited references per article | PubMed E-utilities |
+| `icites` | citation count, RCR, NIH percentile, field rate | NIH iCite |
+| `pubtations` | gene, disease, chemical, species, mutation annotations | PubTator3 |
+| `pmc_fulltext` | full-text sections (requires URLs from `pmid_to_ftp()`) | PMC Open Access |
+
+### ID conversion
+
+- **`pmid_to_pmc(pmids, ...)`** -- PMID → PMC ID + DOI via the NCBI ID Converter.
+- **`pmid_to_ftp(pmids, ...)`** -- PMID → PMC ID + open-access FTP URL; pass URLs to `get_records(endpoint = "pmc_fulltext")`.
+
+### MeSH reference data
+
+- **`data_mesh_thesaurus()`** -- MeSH descriptor thesaurus + supplementary concept records; one row per term/synonym.
+- **`data_mesh_trees()`** -- MeSH hierarchical tree structure; tree numbers encode the classification path.
+- **`data_pmc_list()`** -- PMC open-access file list mapping PMC IDs to file paths and licenses.
+
+### Utilities
+
+- **`endpoint_info(endpoint)`** -- column definitions, rate limits, and notes for each endpoint. Returns a list or JSON; useful for tool schemas in LLM applications.
+
+---
+
+## Vignettes
+
+- [Getting started](https://jaytimm.github.io/puremoe/articles/getting-started.html) -- `search_pubmed()` + all `get_records()` endpoints end-to-end
+- [MeSH-guided search](https://jaytimm.github.io/puremoe/articles/mesh-search.html) -- thesaurus lookup, tree navigation, and controlled-vocabulary queries
+
+---
+
+## License
+
+MIT © [Jason Timm](https://github.com/jaytimm)
+
+## Citation
+
+```r
+citation("puremoe")
 ```
-
-## Get record-level data
-
-``` r
-pubmed <- pmids |> 
-  puremoe::get_records(endpoint = 'pubmed_abstracts', 
-                       cores = 3, 
-                       sleep = 1,
-                       ncbi_key = ncbi_key) 
-
-affiliations <- pmids |> 
-  puremoe::get_records(endpoint = 'pubmed_affiliations', 
-                       cores = 1, 
-                       sleep = 0.5)
-
-icites <- pmids |>
-  puremoe::get_records(endpoint = 'icites',
-                       cores = 3,
-                       sleep = 0.25)
-
-pubtations <- pmids |> 
-  puremoe::get_records(endpoint = 'pubtations',
-                       cores = 2)
-```
-
-## PMC full text
-
-Full-text articles can be retrieved for PMIDs if available in PMC’s
-open-access collection. Use `pmid_to_ftp()` to get download URLs, then
-pass these to `get_records(endpoint = 'pmc_fulltext')` — useful for
-quick retrieval in LLM/chat contexts.
-
-For bulk downloads, use `data_pmc_list()`.
-
-``` r
-pmcs <- puremoe::pmid_to_ftp(pmids = pmids, ncbi_key = ncbi_key)
-pmc_fulltext <- puremoe::get_records(pmcs[1:5]$url, endpoint = 'pmc_fulltext', cores = 1)
-```
-
-## Endpoint information
-
-Returns schema, columns, and rate limits for each endpoint. Useful in
-LLM app contexts for tool schemas.
-
-`endpoint_info()` lists endpoints; `endpoint_info('endpoint_name')`
-returns details; `format = 'json'` for machine-readable output.
-
-``` r
-puremoe::endpoint_info()
-```
-
-    ## [1] "pubmed_abstracts"    "pubmed_affiliations" "icites"             
-    ## [4] "pubtations"          "pmc_fulltext"
-
-``` r
-puremoe::endpoint_info('pmc_fulltext')
-```
-
-    ## $description
-    ## [1] "Full-text articles from PubMed Central"
-    ## 
-    ## $returns
-    ## [1] "data.frame"
-    ## 
-    ## $columns
-    ## $columns$pmid
-    ## [1] "PubMed ID (character)"
-    ## 
-    ## $columns$section
-    ## [1] "Section heading (character)"
-    ## 
-    ## $columns$text
-    ## [1] "Section text content (character)"
-    ## 
-    ## 
-    ## $parameters
-    ## $parameters$cores
-    ## [1] "parallel workers"
-    ## 
-    ## 
-    ## $input
-    ## [1] "Requires FTP URLs from pmid_to_ftp()"
-    ## 
-    ## $rate_limit
-    ## [1] "NCBI FTP: be respectful"
-    ## 
-    ## $notes
-    ## [1] "One row per section; use after pmid_to_ftp() to get URLs. Not all PMIDs have PMC full text available."
 
 ## Issues
 
-Report bugs or request features at
-<https://github.com/username/puremoe/issues>
-
-## Contributing
-
-Contributions welcome! Please open an issue or submit a pull request.
+Report bugs or request features at <https://github.com/jaytimm/puremoe/issues>
