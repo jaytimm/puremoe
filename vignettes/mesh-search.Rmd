@@ -59,12 +59,16 @@ descriptors
 
 ## MeSH trees
 
-`data_mesh_trees()` provides the hierarchical classification structure. Each descriptor can appear in multiple branches; tree numbers encode the full path (e.g., `I01.880` = Social Sciences > Political Science).
+`data_mesh_trees()` provides the hierarchical classification structure. Each descriptor can appear in multiple branches; `tree_location` encodes the full path (e.g., `I01.880.604` = Social Sciences > Political Science > Political Systems).
 
 ```{r trees}
 trees <- puremoe::data_mesh_trees()
 dim(trees)
 names(trees)
+```
+
+```{r trees-head}
+head(trees, 6) |> DT::datatable(rownames = FALSE)
 ```
 
 ### Locating descriptors in the hierarchy
@@ -73,7 +77,7 @@ Find where our candidate descriptors sit.
 
 ```{r trees-politics}
 political_trees <- trees[DescriptorName %in% descriptors$DescriptorName]
-political_trees[, .(DescriptorName, TreeNumber)] |>
+political_trees[, .(DescriptorName, tree_location, cats)] |>
   unique() |>
   DT::datatable(rownames = FALSE)
 ```
@@ -83,8 +87,8 @@ political_trees[, .(DescriptorName, TreeNumber)] |>
 Retrieve everything in the `I01.880` subtree (Political Science and related concepts).
 
 ```{r trees-branch}
-branch <- trees[grepl("^I01\\.880", TreeNumber)]
-branch[, .(DescriptorName, TreeNumber)][order(TreeNumber)] |>
+branch <- trees[grepl("^I01\\.880", tree_location)]
+branch[, .(DescriptorName, tree_location)][order(tree_location)] |>
   unique() |>
   head(20) |>
   DT::datatable(rownames = FALSE)
@@ -92,11 +96,11 @@ branch[, .(DescriptorName, TreeNumber)][order(TreeNumber)] |>
 
 ### Siblings and parent context
 
-Look one level up to see what else sits under `I01` (Social Sciences).
+Look at all direct children of `I01` (Social Sciences) -- one dot of depth below the parent.
 
 ```{r trees-siblings}
-siblings <- trees[grepl("^I01\\.[0-9]+$", TreeNumber)]
-siblings[, .(DescriptorName, TreeNumber)][order(TreeNumber)] |>
+siblings <- trees[grepl("^I01\\.[^.]+$", tree_location)]
+siblings[, .(DescriptorName, tree_location)][order(tree_location)] |>
   unique() |>
   DT::datatable(rownames = FALSE)
 ```
@@ -106,8 +110,8 @@ siblings[, .(DescriptorName, TreeNumber)][order(TreeNumber)] |>
 Construct a controlled-vocabulary PubMed query from the descriptors identified above. `[MeSH Terms]` triggers explosion; use `[MeSH:noexp]` to suppress it.
 
 ```{r query-build}
-mesh_terms  <- c("Politics", "Political Systems")
-mesh_query  <- paste(sprintf('"%s"[MeSH Terms]', mesh_terms), collapse = " OR ")
+mesh_terms <- c("Politics", "Political Systems")
+mesh_query <- paste(sprintf('"%s"[MeSH Terms]', mesh_terms), collapse = " OR ")
 cat(mesh_query)
 ```
 
@@ -131,8 +135,8 @@ pmids_mesh     <- puremoe::search_pubmed(mesh_query)
 pmids_combined <- puremoe::search_pubmed(combined_query)
 
 data.table(
-  query         = c("MeSH only", "Combined (MeSH + free-text)"),
-  n_pmids       = c(length(pmids_mesh), length(pmids_combined))
+  query   = c("MeSH only", "Combined (MeSH + free-text)"),
+  n_pmids = c(length(pmids_mesh), length(pmids_combined))
 )
 ```
 
