@@ -97,7 +97,8 @@
     
 <p><code>puremoe</code> ships three MeSH reference tables: a thesaurus
 of descriptors and entry terms, a tree of hierarchical classifications,
-and a frequency table of descriptor occurrence across PubMed.</p>
+and a bundled table of MeSH annotation counts per descriptor across
+PubMed.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/puremoe" class="external-link">puremoe</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -140,9 +141,9 @@ Political Systems).</p>
 <p><code>data_mesh_frequencies</code> is a bundled dataset giving the
 annotation frequency of each MeSH descriptor across the full PubMed
 corpus (39.7 M PMIDs, April 2026). Counts reflect the number of records
-indexed with each descriptor by NLM curators — not text co-occurrence —
-making them suitable as a baseline for enrichment analyses against
-arbitrary PubMed subsets.</p>
+indexed with each descriptor by NLM curators, not text frequency, making
+them suitable as a baseline for enrichment analyses against arbitrary
+PubMed subsets.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">puremoe</span><span class="fu">::</span><span class="va"><a href="../reference/data_mesh_frequencies.html">data_mesh_frequencies</a></span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span> <span class="op">|&gt;</span></span>
