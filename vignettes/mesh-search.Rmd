@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`puremoe` ships three MeSH reference tables: a thesaurus of descriptors and entry terms, a tree of hierarchical classifications, and a frequency table of descriptor occurrence across PubMed.
+`puremoe` ships three MeSH reference tables: a thesaurus of descriptors and entry terms, a tree of hierarchical classifications, and a bundled table of MeSH annotation counts per descriptor across PubMed.
 
 ```{r libs}
 library(puremoe)
@@ -55,9 +55,9 @@ trees |>
 
 `data_mesh_frequencies` is a bundled dataset giving the annotation frequency of
 each MeSH descriptor across the full PubMed corpus (39.7 M PMIDs, April 2026).
-Counts reflect the number of records indexed with each descriptor by NLM curators
-— not text co-occurrence — making them suitable as a baseline for enrichment
-analyses against arbitrary PubMed subsets.
+Counts reflect the number of records indexed with each descriptor by NLM curators,
+not text frequency, making them suitable as a baseline for enrichment analyses
+against arbitrary PubMed subsets.
 
 ```{r frequencies}
 puremoe::data_mesh_frequencies |>
