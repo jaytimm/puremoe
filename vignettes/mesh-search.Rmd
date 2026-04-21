@@ -53,14 +53,16 @@ trees |>
 
 ## MeSH descriptor frequencies
 
-`data_mesh_frequencies` is a bundled dataset giving the frequency of each MeSH
-descriptor across the full PubMed corpus (39.7 M PMIDs, April 2026). Proportions
-use the total corpus as denominator, making them suitable as a baseline for
-enrichment analyses against arbitrary PubMed subsets.
+`data_mesh_frequencies` is a bundled dataset giving the annotation frequency of
+each MeSH descriptor across the full PubMed corpus (39.7 M PMIDs, April 2026).
+Counts reflect the number of records indexed with each descriptor by NLM curators
+— not text co-occurrence — making them suitable as a baseline for enrichment
+analyses against arbitrary PubMed subsets.
 
 ```{r frequencies}
 puremoe::data_mesh_frequencies |>
   head(20) |>
+  dplyr::mutate(prop_total = round(prop_total, 4)) |>
   DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
