@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">puremoe</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.4</span>
       </span>
     </div>
 
@@ -95,9 +95,9 @@
 
     
     
-<p><code>puremoe</code> ships two MeSH reference tables: a thesaurus of
-descriptors and entry terms, and a tree of hierarchical
-classifications.</p>
+<p><code>puremoe</code> ships three MeSH reference tables: a thesaurus
+of descriptors and entry terms, a tree of hierarchical classifications,
+and a frequency table of descriptor occurrence across PubMed.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/puremoe" class="external-link">puremoe</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -135,13 +135,28 @@ Political Systems).</p>
 <script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"filter":"none","vertical":false,"data":[["D000001","D000001","D000001","D000001","D000001","D000002","D000002","D000002","D000003","D000003","D000004","D000005","D000006","D000006","D000007","D000008","D000009","D000010","D000011","D000011"],["Calcimycin","Calcimycin","Calcimycin","Calcimycin","Calcimycin","Temefos","Temefos","Temefos","Abattoirs","Abattoirs","Abbreviations as Topic","Abdomen","Abdomen, Acute","Abdomen, Acute","Abdominal Injuries","Abdominal Neoplasms","Abdominal Muscles","Abducens Nerve","Abelson murine leukemia virus","Abelson murine leukemia virus"],["D02.355.291.933.125","D02.540.576.625.125","D03.633.100.221.173","D04.345.241.654.125","D04.345.674.625.125","D02.705.400.625.800","D02.705.539.345.800","D02.886.300.692.800","J01.576.423.200.700.100","J03.540.020","L01.559.598.400.556.131","A01.923.047","C23.888.592.612.054.200","C23.888.821.030.249","C26.017","C04.588.033","A02.633.567.050","A08.800.800.120.030","B04.613.807.375.525.020","B04.820.650.375.525.020"],["D","D","D","D","D","D","D","D","J","J","L","A","C","C","C","C","A","A","B","B"],["Chemicals and Drugs","Chemicals and Drugs","Chemicals and Drugs","Chemicals and Drugs","Chemicals and Drugs","Chemicals and Drugs","Chemicals and Drugs","Chemicals and Drugs","Technology, Industry, and Agriculture","Technology, Industry, and Agriculture","Information Science","Anatomy","Diseases","Diseases","Diseases","Diseases","Anatomy","Anatomy","Organisms","Organisms"],["Organic Chemicals","Organic Chemicals","Heterocyclic Compounds","Polycyclic Compounds","Polycyclic Compounds","Organic Chemicals","Organic Chemicals","Organic Chemicals","Technology, Industry, and Agriculture","Non-Medical Public and Private Facilities","Information Science","Body Regions","Pathological Conditions, Signs and Symptoms","Pathological Conditions, Signs and Symptoms","Wounds and Injuries","Neoplasms","Musculoskeletal System","Nervous System","Viruses","Viruses"],["Ethers","Lactones","Heterocyclic Compounds, Fused-Ring","Macrocyclic Compounds","Macrocyclic Compounds","Organophosphorus Compounds","Organophosphorus Compounds","Sulfur Compounds","Industry","Manufacturing and Industrial Facilities","Language","Torso","Signs and Symptoms","Signs and Symptoms","Abdominal Injuries","Neoplasms by Site","Muscles","Peripheral Nervous System","Oncogenic Viruses","RNA Viruses"],["D02","D02","D03","D04","D04","D02","D02","D02","J01","J03","L01","A01","C23","C23","C26","C04","A02","A08","B04","B04"],["D02.355","D02.540","D03.633","D04.345","D04.345","D02.705","D02.705","D02.886","J01.576","J03.540","L01.559","A01.923","C23.888","C23.888","C26.017","C04.588","A02.633","A08.800","B04.613","B04.820"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>DescriptorUI<\/th>\n      <th>DescriptorName<\/th>\n      <th>tree_location<\/th>\n      <th>code<\/th>\n      <th>cats<\/th>\n      <th>mesh1<\/th>\n      <th>mesh2<\/th>\n      <th>tree1<\/th>\n      <th>tree2<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"columnDefs":[{"name":"DescriptorUI","targets":0},{"name":"DescriptorName","targets":1},{"name":"tree_location","targets":2},{"name":"code","targets":3},{"name":"cats","targets":4},{"name":"mesh1","targets":5},{"name":"mesh2","targets":6},{"name":"tree1","targets":7},{"name":"tree2","targets":8}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
+<h2 id="mesh-descriptor-frequencies">MeSH descriptor frequencies<a class="anchor" aria-label="anchor" href="#mesh-descriptor-frequencies"></a>
+</h2>
+<p><code>data_mesh_frequencies</code> is a bundled dataset giving the
+frequency of each MeSH descriptor across the full PubMed corpus (39.7 M
+PMIDs, April 2026). Proportions use the total corpus as denominator,
+making them suitable as a baseline for enrichment analyses against
+arbitrary PubMed subsets.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">puremoe</span><span class="fu">::</span><span class="va"><a href="../reference/data_mesh_frequencies.html">data_mesh_frequencies</a></span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">FALSE</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>scrollX <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-36aa3d2a04d42bbc2145" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-36aa3d2a04d42bbc2145">{"x":{"filter":"none","vertical":false,"data":[["D006801","D005260","D008297","D000818","D000328","D008875","D000368","D000293","D002648","D051379","D051381","D012189","D013997","D016896","D055815","D000369","D011247","D002675","D012307","D014481"],["Humans","Female","Male","Animals","Adult","Middle Aged","Aged","Adolescent","Child","Mice","Rats","Retrospective Studies","Time Factors","Treatment Outcome","Young Adult","Aged, 80 and over","Pregnancy","Child, Preschool","Risk Factors","United States"],[22560981,10112113,9804169,7613660,5721222,4967680,3599840,2310806,2008850,1831937,1692168,1269373,1247260,1235588,1110629,1065686,1034569,1028105,1021932,1018179],[0.5867442602209995,0.2629860936213789,0.2549773827204879,0.1980087348273648,0.148792030362071,0.1291946359342555,0.09362117089296616,0.06009721638364249,0.05224423561834279,0.04764325273960725,0.0440082752310127,0.03301263016131749,0.0324375365593918,0.0321339824273574,0.02888416913187367,0.02771533488272855,0.02690607392260909,0.02673796443756194,0.02657742300018632,0.02647981859155668]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>DescriptorUI<\/th>\n      <th>DescriptorName<\/th>\n      <th>n_pmids<\/th>\n      <th>prop_total<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"columnDefs":[{"className":"dt-right","targets":[2,3]},{"name":"DescriptorUI","targets":0},{"name":"DescriptorName","targets":1},{"name":"n_pmids","targets":2},{"name":"prop_total","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div class="section level2">
 <h2 id="persistent-storage">Persistent storage<a class="anchor" aria-label="anchor" href="#persistent-storage"></a>
 </h2>
 <p>Both datasets are ~10 MB and fetched from GitHub on each call by
 default. To avoid re-downloading every session, set
 <code>use_persistent_storage = TRUE</code> — the files are cached to a
 system data directory and reused on subsequent calls.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">thesaurus</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="../reference/data_mesh_thesaurus.html">data_mesh_thesaurus</a></span><span class="op">(</span>use_persistent_storage <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">trees</span>     <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="fu"><a href="../reference/data_mesh_trees.html">data_mesh_trees</a></span><span class="op">(</span>use_persistent_storage <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>

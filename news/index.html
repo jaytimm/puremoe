@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">puremoe</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.4</span>
       </span>
     </div>
 
@@ -60,6 +60,18 @@
       <small>Source: <a href="https://github.com/jaytimm/puremoe/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.0.4" id="puremoe-104">puremoe 1.0.4<a class="anchor" aria-label="anchor" href="#puremoe-104"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-0-4">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-0-4"></a></h3>
+<ul><li>Added <code>data_mesh_frequencies</code>, a bundled dataset of MeSH descriptor frequencies across the full PubMed corpus (39.7 M PMIDs, April 2026). Columns <code>DescriptorUI</code>, <code>DescriptorName</code>, <code>n_pmids</code>, and <code>prop_total</code>. Intended as a baseline for MeSH term enrichment analyses.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-1-0-4">Changes<a class="anchor" aria-label="anchor" href="#changes-1-0-4"></a></h3>
+<ul><li>
+<code><a href="../reference/pmid_to_ftp.html">pmid_to_ftp()</a></code> updated to use the PMC Cloud Service on AWS S3 (<code>pmc-oa-opendata.s3.amazonaws.com</code>) in response to NCBI’s migration away from the legacy PMC FTP Service (transition period February–August 2026; FTP decommissioned August 2026). The function interface is unchanged.</li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.0.3" id="puremoe-103">puremoe 1.0.3<small>2026-01-26</small><a class="anchor" aria-label="anchor" href="#puremoe-103"></a></h2>
 <div class="section level3">
