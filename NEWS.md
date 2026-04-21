@@ -1,3 +1,19 @@
+# puremoe 1.0.4
+
+## New Features
+- Added `data_mesh_frequencies`, a bundled dataset of MeSH descriptor frequencies
+  across the full PubMed corpus (39.7 M PMIDs, April 2026). Columns `DescriptorUI`,
+  `DescriptorName`, `n_pmids`, and `prop_total`. Intended as a baseline for
+  MeSH term enrichment analyses.
+
+## Changes
+- `pmid_to_ftp()` updated to use the PMC Cloud Service on AWS S3
+  (`pmc-oa-opendata.s3.amazonaws.com`) in response to NCBI's migration away from
+  the legacy PMC FTP Service (transition period February–August 2026; FTP
+  decommissioned August 2026). The function interface is unchanged.
+
+---
+
 # puremoe 1.0.3
 
 ## Bug Fixes

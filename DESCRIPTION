@@ -1,13 +1,14 @@
 Package: puremoe
 Type: Package
 Title: Pubmed Unified REtrieval for Multi-Output Exploration
-Version: 1.0.3
+Version: 1.0.4
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
 Description: Access a variety of 'PubMed' data through a single, user-friendly interface, including abstracts, bibliometrics from 'iCite', pubtations from 'PubTator3', and full-text records from 'PMC'.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: false
+LazyData: true
+LazyDataCompression: xz
 Depends: 
     R (>= 3.5)
 Imports: 

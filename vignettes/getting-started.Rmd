@@ -108,7 +108,11 @@ pubtations |>
 
 ## Full text
 
-Full-text retrieval requires open-access PMC articles. `pmid_to_ftp()` converts PMIDs to FTP URLs, filtering to only those with open-access full text available.
+Full-text retrieval requires open-access PMC articles. `pmid_to_ftp()` resolves
+PMIDs to XML URLs via the PMC Cloud Service on AWS S3, filtering to only those
+with open-access full text available. In August 2026, NCBI will complete its
+migration from the legacy PMC FTP Service to the Cloud Service; `puremoe` already
+uses the new service.
 
 ```{r ftp}
 ftp <- puremoe::pmid_to_ftp(pmids = pmids_sub)

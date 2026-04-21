@@ -1,5 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.github$
+^\.claude$
+^\.cursor$
 LICENSE.md
+^README\.Rmd$
+^docs$
+^examples$
 ^vignettes/articles$
+^data-raw$

@@ -1,0 +1,37 @@
+---
+title: "Test: PMC Full-Text Retrieval"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = TRUE, warning = TRUE)
+library(puremoe)
+```
+
+## Step 0 -- 
+
+```{r}
+pmids <- puremoe::search_pubmed(x = "'political ideology'[TiAb]")[1:50]
+```
+
+
+## Step 1 — PMIDs to FTP URLs
+
+```{r pmid_to_ftp}
+## pmids <- c("11250746", "11573492", "12345678", "33515445")
+
+ftp <- puremoe::pmid_to_ftp(pmids, verbose = TRUE)
+ftp
+```
+
+## Step 2 — Retrieve Full Text
+
+```{r source_pmc}
+ft <- puremoe::get_records(ftp$url, 
+                           endpoint = "pmc_fulltext", 
+                           cores = 1)
+
+ft
+```
+
+

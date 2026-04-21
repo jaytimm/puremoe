@@ -149,54 +149,51 @@ pmid_to_ftp <- function(pmids, batch_size = 200L, sleep = 0.5, verbose = FALSE, 
   # Combine ID conversion results
   id_dt <- data.table::rbindlist(id_results, fill = TRUE)
   
-  # Step 2: Get URLs for PMC IDs that exist (filter out NAs)
-  if (verbose) message("Step 2: Fetching full-text URLs for PMC IDs...")
-  
+  # Step 2: Get S3 XML URLs for PMC IDs using the PMC Cloud Service on AWS
+  if (verbose) message("Step 2: Fetching full-text URLs from PMC S3 Cloud Service...")
+
   pmc_ids_with_urls <- id_dt[!is.na(pmcid) & pmcid != "", ]
-  
+
   if (nrow(pmc_ids_with_urls) > 0) {
-    # Determine sleep time for OA API calls based on rate limits:
-    # Without API key: 3 requests/second (0.33s between requests)
-    # With API key: 10 requests/second (0.10s between requests)
-    # Use slightly longer to be safe
     oa_sleep <- if (!is.null(ncbi_key)) 0.11 else 0.34
-    
-    # Query OA API for each PMC ID
+
     url_results <- lapply(seq_len(nrow(pmc_ids_with_urls)), function(i) {
       pmcid_val <- pmc_ids_with_urls$pmcid[i]
-      
-      oa_url <- paste0("https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?id=", pmcid_val)
-      
+
+      # Query S3 list API to find available article versions
+      s3_list_url <- paste0("https://pmc-oa-opendata.s3.amazonaws.com/?prefix=",
+                            pmcid_val, ".&delimiter=/")
+
       Sys.sleep(oa_sleep)
-      
-      oa_resp <- tryCatch({
-        httr::GET(oa_url)
+
+      s3_resp <- tryCatch({
+        httr::GET(s3_list_url)
       }, error = function(e) {
         return(NULL)
       })
-      
+
       full_url <- NA_character_
-      
-      if (!is.null(oa_resp) && httr::status_code(oa_resp) == 200) {
-        oa_doc <- tryCatch({
-          xml2::read_xml(oa_resp)
+
+      if (!is.null(s3_resp) && httr::status_code(s3_resp) == 200) {
+        s3_doc <- tryCatch({
+          xml2::read_xml(s3_resp)
         }, error = function(e) {
           return(NULL)
         })
-        
-        if (!is.null(oa_doc)) {
-          # Extract the href from the link element
-          link_node <- xml2::xml_find_first(oa_doc, ".//link[@format='tgz']")
-          if (length(link_node) > 0) {
-            ftp_url <- xml2::xml_attr(link_node, "href")
-            if (!is.na(ftp_url) && ftp_url != "") {
-              # Convert FTP URL to HTTPS URL
-              full_url <- gsub("^ftp://", "https://", ftp_url)
-            }
+
+        if (!is.null(s3_doc)) {
+          xml2::xml_ns_strip(s3_doc)
+          prefixes <- xml2::xml_text(xml2::xml_find_all(s3_doc, ".//CommonPrefixes/Prefix"))
+
+          if (length(prefixes) > 0) {
+            # Take the last prefix (latest version), strip trailing slash
+            latest_prefix <- sub("/$", "", prefixes[length(prefixes)])
+            full_url <- paste0("https://pmc-oa-opendata.s3.amazonaws.com/",
+                               latest_prefix, "/", latest_prefix, ".xml")
           }
         }
       }
-      
+
       list(pmcid = pmcid_val, url = full_url)
     })
     
