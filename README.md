@@ -3,7 +3,7 @@
 [![CRAN version](https://www.r-pkg.org/badges/version/puremoe)](https://cran.r-project.org/package=puremoe)
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
 
-`puremoe` is an R package that unifies access to PubMed and NLM/NIH data behind a single retrieval function. Search PubMed, then pull abstracts, affiliations, citation metrics, named-entity annotations, full-text articles, or MeSH resources -- all as plain `data.table` objects, all pipe-compatible, no juggling separate APIs or output formats.
+`puremoe` unifies access to PubMed and the NLM/NIH data stack behind one consistent, pipe-friendly interface: search PubMed, then pull abstracts, affiliations, citation metrics, entity annotations, full text, or MeSH resources. The same tabular outputs feed a small analysis layer -- citation snowballing, network construction, sentence-mapped entity annotations, and co-occurrence -- with PMIDs as the common currency from search through analysis.
 
 ---
 
