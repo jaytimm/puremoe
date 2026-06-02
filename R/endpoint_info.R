@@ -36,85 +36,113 @@ endpoint_info <- function(endpoint = NULL, format = c("list", "json")) {
   schemas <- list(
     pubmed_abstracts = list(
       description = "PubMed article metadata and abstracts",
-      returns = "data.frame",
+      source = "PubMed E-utilities",
+      input = "PMIDs",
+      returns = "data.table; one row per PMID",
       columns = list(
         pmid = "PubMed ID (character)",
-        doi = "Digital Object Identifier (character)",
-        year = "Publication year (integer)",
-        pubtype = "Publication type(s) (character)",
-        journal = "Journal name (character)",
-        articletitle = "Article title (character)",
-        abstract = "Abstract text (character)",
-        annotations = "MeSH terms and keywords (list-column)"
+        doi = "Digital Object Identifier; NA when unavailable",
+        year = "Publication year parsed from PubDate Year or MedlineDate (integer)",
+        pubtype = "Publication type values collapsed with ' | ' when multiple are present",
+        journal = "Journal title",
+        articletitle = "Article title",
+        abstract = "Abstract text, with simple section-title line breaks when detected; NA when unavailable",
+        annotations = "List-column of PubMed annotations with MeSH descriptors, chemical names, and keywords"
       ),
-      parameters = list(cores = "parallel workers", sleep = "delay between requests (seconds)"),
+      parameters = list(
+        cores = "parallel workers",
+        sleep = "delay between requests, in seconds",
+        ncbi_key = "optional NCBI API key passed through get_records()"
+      ),
       rate_limit = "NCBI E-utilities: 3/sec without key, 10/sec with key",
-      notes = "Use ncbi_key for higher rate limits. Primary source of article metadata."
+      notes = "Primary article-level metadata endpoint. Uses the same PubMed E-utilities source as pubmed_affiliations but returns article-level fields rather than author-affiliation rows."
     ),
     
     pubmed_affiliations = list(
       description = "Author affiliations from PubMed",
-      returns = "data.frame",
+      source = "PubMed E-utilities",
+      input = "PMIDs",
+      returns = "data.table; one row per author-affiliation record",
       columns = list(
         pmid = "PubMed ID (character)",
-        Author = "Author name (character)",
-        Affiliation = "Institutional affiliation (character)"
+        Author = "Author name formatted as 'LastName, ForeName'; NA when unavailable",
+        Affiliation = "Affiliation text from the PubMed author record; NA when unavailable"
       ),
-      parameters = list(cores = "parallel workers", sleep = "delay between requests"),
+      parameters = list(
+        cores = "parallel workers",
+        sleep = "delay between requests, in seconds",
+        ncbi_key = "optional NCBI API key passed through get_records()"
+      ),
       rate_limit = "NCBI E-utilities: 3/sec without key, 10/sec with key",
-      notes = "One row per author; multiple affiliations possible"
+      notes = "Uses the same PubMed E-utilities source as pubmed_abstracts but returns author-affiliation rows instead of article-level metadata."
     ),
     
     icites = list(
-      description = "NIH iCite citation metrics and influence scores",
-      returns = "data.frame",
+      description = "NIH iCite citation metrics, influence scores, and citation links",
+      source = "NIH iCite",
+      input = "PMIDs",
+      returns = "data.table; one row per PMID returned by iCite",
       columns = list(
-        pmid = "PubMed ID - join key to link with pubmed_abstracts (character)",
-        citation_count = "Total citations received (integer)",
-        relative_citation_ratio = "RCR: field-adjusted citation rate comparing to NIH baseline (numeric)",
-        nih_percentile = "Percentile rank vs NIH-funded publications (numeric)",
-        field_citation_rate = "Expected citation rate for article's co-citation field (numeric)",
-        is_research_article = "Flag for primary research articles (logical)",
-        is_clinical = "Flag for clinical articles (logical)",
-        provisional = "Flag indicating RCR is provisional due to recent publication (logical)",
-        citation_net = "Citation network edge list: 'from' and 'to' PMIDs within result set (list-column)",
-        cited_by_clin = "PMIDs of clinical articles citing this paper (character/list)"
+        pmid = "PubMed ID; join key for other puremoe endpoints (character)",
+        citation_count = "Total citations received",
+        relative_citation_ratio = "Relative Citation Ratio (RCR), rounded to three decimals",
+        nih_percentile = "Percentile rank relative to NIH-funded publications",
+        field_citation_rate = "Expected citation rate for the article's co-citation field",
+        is_research_article = "Flag indicating whether iCite classifies the article as research",
+        is_clinical = "Flag indicating whether iCite classifies the article as clinical",
+        provisional = "Flag indicating provisional RCR status for recent publications",
+        citation_net = "List-column of directed citation edges with 'from' and 'to' PMIDs, built from iCite cited-by and reference fields. Covers PubMed-indexed articles only; citations from preprints or sources outside PubMed are not included.",
+        cited_by_clin = "Clinical citing PMIDs as returned by iCite"
       ),
-      parameters = list(cores = "parallel workers", sleep = "delay between requests"),
+      parameters = list(
+        cores = "parallel workers",
+        sleep = "delay between requests, in seconds"
+      ),
       rate_limit = "Relatively permissive",
-      notes = "Join to pubmed_abstracts on pmid for complete metadata (title, journal, authors, etc. not included to avoid redundancy). citation_net enables intra-corpus network analysis."
+      notes = "Title, journal, publication year, authors, and abstracts are intentionally omitted to avoid duplicating pubmed_abstracts metadata. Use citation_net with citation_snowball() or citation_network(). iCite citation links cover PubMed-indexed articles only; citations from preprints or sources outside PubMed are not included."
     ),
     
     pubtations = list(
-      description = "PubTator entity annotations (genes, diseases, chemicals, etc.)",
-      returns = "data.frame",
+      description = "PubTator3 named-entity annotations",
+      source = "PubTator3 BioC JSON export",
+      input = "PMIDs",
+      returns = "data.table; one row per title or abstract annotation, including NA placeholder rows when a passage has no annotations",
       columns = list(
         pmid = "PubMed ID (character)",
-        tiab = "Title/abstract text (character)",
-        id = "Annotation ID (character)",
-        text = "Annotated text span (character)",
-        identifier = "Database identifier (character)",
-        type = "Entity type: Gene, Disease, Chemical, Species, Mutation (character)",
-        start = "Start position in text (integer)",
-        end = "End position in text (integer)"
+        tiab = "Passage containing the annotation: 'title' or 'abstract'",
+        id = "PubTator annotation ID",
+        text = "Annotated text span",
+        identifier = "Database identifier supplied by PubTator3; NA when unavailable",
+        type = "Entity type supplied by PubTator3, such as Gene, Disease, Chemical, Species, or Mutation",
+        start = "Start character offset within the passage",
+        end = "End character offset within the passage",
+        passage_text = "Full PubTator passage text used for annotation, typically title or abstract text",
+        passage_offset = "Start character offset of the PubTator passage within the document"
       ),
-      parameters = list(cores = "parallel workers"),
+      parameters = list(
+        cores = "parallel workers",
+        sleep = "delay between requests, in seconds"
+      ),
       rate_limit = "Moderate",
-      notes = "One row per annotation; multiple annotations per article. Provides named entity recognition output."
+      notes = "Provides machine annotations over title and abstract text. Annotation coverage and identifiers depend on PubTator3 output for each PMID."
     ),
     
     pmc_fulltext = list(
-      description = "Full-text articles from PubMed Central",
-      returns = "data.frame",
+      description = "Section-level full text from open-access PubMed Central articles",
+      source = "PMC Cloud Service XML files",
+      input = "HTTPS XML URLs, usually from pmid_to_ftp()$url",
+      returns = "data.table; one row per parsed top-level body section",
       columns = list(
-        pmid = "PubMed ID (character)",
-        section = "Section heading (character)",
-        text = "Section text content (character)"
+        pmid = "PubMed ID extracted from article metadata (character)",
+        section = "Top-level body section heading; NA when a section has no title",
+        text = "Section text content"
       ),
-      parameters = list(cores = "parallel workers"),
-      input = "Requires FTP URLs from pmid_to_ftp()",
-      rate_limit = "NCBI FTP: be respectful",
-      notes = "One row per section; use after pmid_to_ftp() to get URLs. Not all PMIDs have PMC full text available."
+      parameters = list(
+        cores = "parallel workers",
+        sleep = "delay between XML downloads, in seconds"
+      ),
+      rate_limit = "PMC Cloud Service: be respectful; not all PMIDs have open-access XML",
+      notes = "Call pmid_to_ftp() first to resolve PMIDs to open-access PMC Cloud Service URLs, then pass the url column to get_records(endpoint = 'pmc_fulltext')."
     )
   )
   

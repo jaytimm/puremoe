@@ -1,7 +1,7 @@
 Package: puremoe
 Type: Package
-Title: Pubmed Unified REtrieval for Multi-Output Exploration
-Version: 1.0.4
+Title: Unified Retrieval of 'PubMed' and 'NIH' Literature Data
+Version: 1.1.0
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
 Description: Access a variety of 'PubMed' data through a single, user-friendly interface, including abstracts, bibliometrics from 'iCite', pubtations from 'PubTator3', and full-text records from 'PMC'.
@@ -19,13 +19,16 @@ Imports:
     httr,
     pbapply,
     jsonlite,
-    rappdirs
+    rappdirs,
+    textpress
 Suggests:
     knitr,
     rmarkdown,
     DT,
-    dplyr
+    dplyr,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
-RoxygenNote: 7.3.3
 URL: https://github.com/jaytimm/puremoe, https://jaytimm.github.io/puremoe/
 BugReports: https://github.com/jaytimm/puremoe/issues
+Config/roxygen2/version: 8.0.0
+Config/testthat/edition: 3

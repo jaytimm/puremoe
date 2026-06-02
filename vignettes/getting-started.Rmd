@@ -45,8 +45,6 @@ abstracts <- puremoe::get_records(
   cores    = 1L,
   sleep    = 0.5
 )
-
-abstracts <- abstracts |> mutate(pmid = as.character(pmid))
 ```
 
 ```{r abstracts-table}
@@ -88,7 +86,6 @@ icites <- puremoe::get_records(
 )
 
 icites |>
-  mutate(pmid = as.character(pmid)) |>
   select(-citation_net, -cited_by_clin) |>
   DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```

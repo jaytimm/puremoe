@@ -14,7 +14,8 @@
   url0 <- tryCatch({
     httr::GET(paste0("https://icite.od.nih.gov/api/pubs?pmids=",
                      paste(x, collapse = ","),
-                     "&format=csv"))
+                     "&format=csv"),
+              httr::timeout(30))
   }, error = function(e) {
     message("Unable to connect to iCite API. The resource may be temporarily unavailable.")
     return(NULL)
@@ -60,66 +61,6 @@
 #' @noRd
 #' 
 #' 
-# .get_icites <- function(x, sleep){
-#   
-#   # Fetch data from iCite using the PubMed IDs provided
-#   pmiddf <- .fetch_icites(x, sleep)
-#   
-#   # Extract the PubMed IDs for reference
-#   gots <- pmiddf$pmid
-#   
-#   # Convert pmiddf to a data.table for efficient data manipulation
-#   data.table::setDT(pmiddf)
-#   
-#   # Clean and format the 'ref_count' column
-#   ref_count <- NULL
-#   pmiddf[, ref_count := ifelse(is.null(references)|is.na(references), NULL, references)]
-#   
-#   # Process 'references' and 'cited_by' columns, handling empty or NA values
-#   pmiddf[, references := ifelse(nchar(references) == 0|is.na(references), '99', references)]
-#   pmiddf[, cited_by := ifelse(nchar(cited_by) == 0|is.na(cited_by), '99', cited_by)]
-#   
-#   # Split the 'cited_by' and 'references' columns into lists
-#   cited_by <- strsplit(pmiddf$cited_by, split = " ")
-#   references <- strsplit(pmiddf$references, split = " ")
-#   rs <- strsplit(pmiddf$ref_count, split = " ")
-#   
-#   # Build a data frame for references
-#   doc_id <- NULL
-#   from <- NULL
-#   refs <- data.table::data.table(doc_id = rep(gots, sapply(references, length)),
-#                                  from = rep(gots, sapply(references, length)),
-#                                  to = unlist(references))
-#   # Replace placeholder '99' with NA
-#   refs[refs == 99] <- NA
-#   
-#   # Aggregate reference data and convert to a data.table
-#   refs0 <- refs[, list(references = .N), by = list(from)]
-#   
-#   # Build a data frame for cited_by data
-#   cited <- data.frame(doc_id = rep(gots, sapply(cited_by, length)),
-#                       from = unlist(cited_by),
-#                       to = rep(gots, sapply(cited_by, length)))
-#   # Replace placeholder '99' with NA
-#   cited[cited == 99] <- NA
-#   
-#   # Combine references and cited_by data
-#   f1 <- rbind(refs, cited)
-#   # Aggregate the combined data and format as a list within a data.table
-#   f2 <- data.table::setDT(f1)[, list(references = list(.SD)), by = doc_id]
-#   
-#   # Add citation network data to pmiddf
-#   citation_net <- NULL
-#   pmiddf[, citation_net := f2$references]
-#   # Calculate and add reference count
-#   pmiddf[, ref_count := sapply(rs, length)]
-#   # Remove the original 'cited_by' and 'references' columns
-#   pmiddf[, c('cited_by', 'references') := NULL]
-#   
-#   # Return the processed data table
-#   pmiddf[, c(1, 6:25)]
-# }
-
 .get_icites <- function(x, sleep = 0.25) {
   
   pmiddf <- .fetch_icites(x, sleep)
@@ -146,6 +87,16 @@
   if (!"pmid" %in% names(pmiddf)) {
     message("Warning: No pmid or X_id column found in iCite response.")
     return(NULL)
+  }
+
+  if ("relative_citation_ratio" %in% names(pmiddf)) {
+    pmiddf[, relative_citation_ratio := round(as.numeric(relative_citation_ratio), 3)]
+  }
+
+  logical_cols <- c("is_research_article", "is_clinical", "provisional")
+  logical_cols <- logical_cols[logical_cols %in% names(pmiddf)]
+  for (col in logical_cols) {
+    pmiddf[, (col) := .as_icite_logical(get(col))]
   }
   
   # normalize field names to old expectations
@@ -177,9 +128,9 @@
     pmiddf[, references := ifelse(nchar(references) == 0|is.na(references), '99', references)]
     pmiddf[, cited_by := ifelse(nchar(cited_by) == 0|is.na(cited_by), '99', cited_by)]
     
-    cited_by  <- strsplit(pmiddf$cited_by,  split = " ")
-    references <- strsplit(pmiddf$references, split = " ")
-    rs <- strsplit(pmiddf$ref_count, split = " ")
+    cited_by   <- strsplit(pmiddf$cited_by,   split = "[; ]+")
+    references <- strsplit(pmiddf$references, split = "[; ]+")
+    rs         <- strsplit(pmiddf$ref_count,  split = "[; ]+")
     
     refs <- data.table::data.table(
       doc_id = rep(gots, sapply(references, length)),
@@ -248,4 +199,15 @@
   }
   
   return(pmiddf[])
+}
+
+.as_icite_logical <- function(x) {
+  if (is.logical(x)) {
+    return(x)
+  }
+  x <- trimws(tolower(as.character(x)))
+  out <- rep(NA, length(x))
+  out[x %in% c("true", "t", "1", "yes", "y")] <- TRUE
+  out[x %in% c("false", "f", "0", "no", "n")] <- FALSE
+  out
 }

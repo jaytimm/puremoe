@@ -1,0 +1,121 @@
+---
+title: "PubTator Sentence Mapping"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{PubTator Sentence Mapping}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
+```
+
+`puremoe` retrieves PubTator3 annotations as one row per entity span. `pubtator_sentences()` attaches the sentence each annotation falls in, and `pubtator_cooccurrence()` then counts entity pairs that share a sentence (or fall within a few sentences) -- optionally returning the sentence context so every count traces back to text.
+
+```{r libs}
+library(puremoe)
+library(dplyr)
+library(DT)
+```
+
+## Retrieve PubTator annotations
+
+Search PubMed and retrieve PubTator3 annotations for a small subset of hits.
+
+```{r search}
+pmids <- search_pubmed(
+  '"biomarker"[TiAb] AND "cancer"[TiAb]',
+  start_year    = 2022,
+  end_year      = 2024,
+  use_pub_years = TRUE
+)
+
+pubtations <- get_records(head(pmids, 40L), endpoint = "pubtations",
+                          cores = 1L, sleep = 0.5)
+```
+
+The raw table carries PubTator's passage text and offsets, which `pubtator_sentences()` uses to align spans against the exact annotated text.
+
+```{r pubtations-table}
+pubtations |>
+  select(pmid, tiab, text, type, identifier, start, end) |>
+  head(25) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+## Map annotations to sentences
+
+`pubtator_sentences()` adds `sentence_id`, `sentence`, and the entity's zero-based offsets within that sentence (`sentence_start`, `sentence_end`). Empty placeholder rows -- passages with no annotations -- are kept with missing sentence fields.
+
+```{r mapped}
+mapped <- pubtator_sentences(pubtations)
+
+mapped |>
+  filter(!is.na(text)) |>
+  select(pmid, tiab, sentence_id, text, type, identifier,
+         sentence_start, sentence_end, sentence) |>
+  head(30) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+## Entity co-occurrence
+
+With a `sentence_id` on every annotation, `pubtator_cooccurrence()` counts co-occurring entity pairs directly. `window = 0` counts same-sentence pairs; `by = "type"` aggregates by entity type, reporting co-occurrence instances (`n`) and distinct documents (`n_pmids`).
+
+```{r cooccur-type}
+mapped |>
+  pubtator_cooccurrence(window = 0, by = "type") |>
+  DT::datatable(rownames = FALSE)
+```
+
+`by = "entity"` keeps specific labels and identifiers. Entities are de-duplicated per sentence and same-entity pairs are dropped, so same-type pairs survive only between two distinct entities (e.g. two different genes).
+
+```{r cooccur-entity}
+mapped |>
+  pubtator_cooccurrence(window = 0, by = "entity") |>
+  head(30) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+`window` widens the scope to nearby sentences within a passage (title and abstract are kept separate); `window = 1` reaches one sentence on either side.
+
+```{r cooccur-window}
+mapped |>
+  pubtator_cooccurrence(window = 1, by = "entity") |>
+  DT::datatable(rownames = FALSE)
+```
+
+## Traceable evidence
+
+`evidence = TRUE` returns the supporting sentence `context` for each co-occurring pair (identical contexts de-duplicated), so a count is never a dead end.
+
+```{r evidence}
+evidence <- mapped |>
+  pubtator_cooccurrence(window = 0, evidence = TRUE)
+
+evidence |>
+  head(20) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+Filtering to the top-ranked pair pulls up the sentences behind it.
+
+```{r evidence-examples}
+top_pair <- mapped |>
+  pubtator_cooccurrence(window = 0, by = "entity") |>
+  slice_head(n = 1)
+
+evidence |>
+  semi_join(
+    top_pair,
+    by = c("type_x", "identifier_x", "text_x",
+           "type_y", "identifier_y", "text_y")
+  ) |>
+  select(pmid, tiab, context) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```

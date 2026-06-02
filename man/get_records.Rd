@@ -10,7 +10,8 @@ get_records(
     "pmc_fulltext"),
   cores = 3,
   sleep = 1,
-  ncbi_key = NULL
+  ncbi_key = NULL,
+  icite_timeout = getOption("puremoe.icite_timeout", 15)
 )
 }
 \arguments{
@@ -25,6 +26,10 @@ provide full URLs instead (e.g., from \code{pmid_to_pmc()$url}).}
 \item{sleep}{Duration (in seconds) to pause after each batch}
 
 \item{ncbi_key}{(Optional) NCBI API key for authenticated access.}
+
+\item{icite_timeout}{Maximum elapsed seconds to allow each iCite batch before
+skipping it and returning PMID-only rows. Defaults to the
+\code{puremoe.icite_timeout} option, or 15 seconds if unset.}
 }
 \value{
 A data.table containing combined results from the specified endpoint.

@@ -1,10 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.github$
-^\.claude$
-^\.cursor$
+^paper$
 LICENSE.md
 ^README\.Rmd$
+^CONTRIBUTING\.md$
+^_pkgdown\.yml$
 ^docs$
 ^examples$
 ^vignettes/articles$

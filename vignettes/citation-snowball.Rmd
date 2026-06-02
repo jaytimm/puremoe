@@ -1,0 +1,200 @@
+---
+title: "Citation Snowballing for Literature Discovery"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Citation Snowballing for Literature Discovery}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
+```
+
+A keyword search only finds papers that use your keywords; it misses related work phrased in different terms. *Citation snowballing* follows citation links outward from a set of seed papers to surface those neighbors regardless of vocabulary -- a standard supplementary search step in evidence synthesis.
+
+This vignette expands a seed corpus with `citation_snowball()`, inspects why each paper was admitted, and characterizes the *expansion space* (the citation-adjacent literature the query never returned) with MeSH keyness. It proposes candidates to screen; it does not replace manual review. Note that iCite links cover PubMed-indexed articles only, so snowballing inherits PubMed's coverage.
+
+```{r libs}
+library(puremoe)
+library(dplyr)
+library(DT)
+```
+
+## Seed corpus
+
+Search PubMed, then pull iCite records for the hits. Snowballing uses the `icites` endpoint specifically: each record carries a `citation_net` of that paper's references and citing papers.
+
+```{r search}
+pmids <- search_pubmed('"political ideology"[TiAb]')
+
+length(pmids)
+
+seed_icites <- get_records(pmids, endpoint = "icites", cores = 1L, sleep = 0.25)
+```
+
+## Expand by snowballing
+
+`citation_snowball()` walks the links already in the iCite response (no extra API call). `direction = "both"` looks backward (papers the seeds cite) and forward (papers that cite the seeds); `min_links` admits a candidate only if it connects to at least that many seeds.
+
+```{r snowball}
+snowball <- seed_icites |>
+  citation_snowball(direction = "both", min_links = 2)
+
+snowball |>
+  count(seed)   # seeds vs newly discovered candidates
+```
+
+## The audit trail
+
+Every row carries its provenance: `seed`, `cited_links` (seeds that cite it), `citing_links` (seeds it cites), and `link_count` (the ranking total and `min_links` gate). Candidates are, by construction, papers the keyword query did not return.
+
+```{r audit}
+candidates <- snowball |>
+  filter(!seed) |>
+  arrange(desc(link_count))
+
+candidates |>
+  head(25) |>
+  DT::datatable(rownames = FALSE)
+```
+
+## The expansion space
+
+Fetch metadata -- including MeSH -- once for the whole snowballed corpus (seeds plus candidates) and reuse it below. Joining the candidates back to their titles shows what the snowball surfaced.
+
+```{r corpus-meta}
+corpus_meta <- snowball$pmid |>
+  get_records(endpoint = "pubmed_abstracts", cores = 1L, sleep = 0.25)
+
+corpus_meta |>
+  left_join(snowball, by = "pmid") |>
+  filter(!seed) |>
+  arrange(desc(link_count)) |>
+  select(pmid, year, journal, articletitle,
+         cited_links, citing_links, link_count) |>
+  head(25) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+### Keyness: how the corpus profile shifts
+
+Raw MeSH counts are dominated by terms common everywhere (`Humans`). *Keyness* compares each descriptor's rate in a corpus to its PubMed-wide rate from `data_mesh_frequencies` (log2 ratio; 3 means 8x over-represented), counted per document to match the baseline.
+
+```{r keyness-helpers}
+baseline <- puremoe::data_mesh_frequencies
+i <- which.max(baseline$n_pmids)
+total_pubmed <- round(baseline$n_pmids[i] / baseline$prop_total[i])
+
+# document frequency of each MeSH descriptor within a set of PMIDs
+mesh_df <- function(meta, ids) {
+  ann <- data.table::rbindlist(meta[pmid %in% ids]$annotations, fill = TRUE)
+  if (!"type" %in% names(ann) || nrow(ann) == 0L) {
+    return(data.table::data.table(DescriptorUI = character(),
+                                  DescriptorName = character(), docs = integer()))
+  }
+  ann[type == "MeSH" & !is.na(DescriptorUI)] |>
+    distinct(pmid, DescriptorUI, DescriptorName) |>
+    count(DescriptorUI, DescriptorName, name = "docs")
+}
+
+# log-ratio keyness vs the PubMed baseline, with a document-frequency floor
+keyness <- function(meta, ids, min_docs = 3L) {
+  n_docs <- length(unique(ids))
+  mesh_df(meta, ids) |>
+    filter(docs >= min_docs) |>
+    inner_join(select(baseline, DescriptorUI, n_pmids), by = "DescriptorUI") |>
+    mutate(log_ratio = round(log2((docs / n_docs) / (n_pmids / total_pubmed)), 2))
+}
+```
+
+Pass 1 -- the seed corpus alone -- should surface the obvious topic terms, a sanity check that keyness behaves.
+
+```{r keyness-seed}
+pass1 <- keyness(corpus_meta, pmids)
+
+pass1 |>
+  arrange(desc(log_ratio)) |>
+  select(DescriptorName, docs, log_ratio) |>
+  head(15) |>
+  DT::datatable(rownames = FALSE)
+```
+
+Pass 2 repeats it on the expanded corpus; the `shift` ranks descriptors by how much snowballing amplified them, so concepts barely present in the seeds rise to the top -- the expansion space, quantified.
+
+```{r keyness-shift}
+pass2 <- keyness(corpus_meta, snowball$pmid)
+
+pass1 |>
+  select(DescriptorUI, name1 = DescriptorName, keyness_seed = log_ratio) |>
+  full_join(
+    pass2 |> select(DescriptorUI, name2 = DescriptorName,
+                    keyness_expanded = log_ratio),
+    by = "DescriptorUI"
+  ) |>
+  mutate(
+    DescriptorName   = coalesce(name1, name2),
+    keyness_seed     = coalesce(keyness_seed, 0),
+    keyness_expanded = coalesce(keyness_expanded, 0),
+    shift            = round(keyness_expanded - keyness_seed, 2)
+  ) |>
+  arrange(desc(shift)) |>
+  select(DescriptorName, keyness_seed, keyness_expanded, shift) |>
+  head(20) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+Recent papers may not be MeSH-indexed yet and the baseline is a snapshot; keyness describes the corpus, it does not judge relevance.
+
+## Tuning precision and recall
+
+`min_links` trades recall for precision -- higher thresholds keep only papers tightly woven into the corpus. Sweeping it shows the trade-off directly.
+
+```{r min-links-sweep}
+data.frame(
+  min_links = 1:5,
+  n_candidates = sapply(1:5, function(k) {
+    sum(!citation_snowball(seed_icites, direction = "both", min_links = k)$seed)
+  })
+)
+```
+
+`max_nodes` is a hard ceiling on corpus size: candidates are ranked by `link_count` and truncated to fit, bounding the screening workload.
+
+```{r max-nodes}
+seed_icites |>
+  citation_snowball(direction = "both", min_links = 1, max_nodes = 50) |>
+  nrow()
+```
+
+## Choosing a direction
+
+`direction` matches the search intent: `"cited"` finds shared foundational references, `"citing"` finds later work building on the corpus, and `"both"` casts the widest net.
+
+```{r direction}
+backward <- citation_snowball(seed_icites, direction = "cited",  min_links = 2)
+forward  <- citation_snowball(seed_icites, direction = "citing", min_links = 2)
+
+data.frame(
+  direction    = c("cited (foundational)", "citing (downstream)"),
+  n_candidates = c(sum(!backward$seed), sum(!forward$seed))
+)
+```
+
+## Iterating
+
+Re-seed by feeding the expanded PMIDs back through the iCite endpoint and snowballing again; each hop keeps the same audit columns.
+
+```{r reseed, eval=FALSE}
+hop2 <- snowball$pmid |>
+  get_records(endpoint = "icites", cores = 1L, sleep = 0.25) |>
+  citation_snowball(direction = "both", min_links = 3, max_nodes = 500)
+```
+
+## Summary
+
+`citation_snowball()` turns an iCite response into a ranked, auditable candidate set: it finds citation-adjacent papers a keyword query misses, the audit columns document why each was admitted, and MeSH keyness against `data_mesh_frequencies` characterizes the expansion space. It complements keyword search and manual screening rather than replacing them.

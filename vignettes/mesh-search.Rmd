@@ -68,7 +68,11 @@ puremoe::data_mesh_frequencies |>
 
 ## Persistent storage
 
-Both datasets are ~10 MB and fetched from GitHub on each call by default. To avoid re-downloading every session, set `use_persistent_storage = TRUE` — the files are cached to a system data directory and reused on subsequent calls.
+The downloaded MeSH thesaurus and tree tables are fetched from GitHub on each
+call by default. To avoid re-downloading every session, set
+`use_persistent_storage = TRUE`; the files are cached to a system data directory
+and reused on subsequent calls. `data_mesh_frequencies` is bundled with the
+package and does not need to be downloaded.
 
 ```{r persistent, eval=FALSE}
 thesaurus <- puremoe::data_mesh_thesaurus(use_persistent_storage = TRUE)

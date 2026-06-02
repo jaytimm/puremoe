@@ -14,8 +14,10 @@ NULL
 # Declare global variables for data.table column references to avoid R CMD check NOTES
 utils::globalVariables(c(
   ".", ".SD", ".N",  # data.table special symbols
-  "pmid", "X_id", "ref_count", "references", "cited_by",
-  "citation_net", "doc_id", "from", "to",
+  "pmid", "year", "X_id", "ref_count", "references", "cited_by",
+  "citation_net", "doc_id", "from", "to", "relative_citation_ratio",
   "locations", "start", "end", "tiab",
-  "file_path", "pmcid", "i.url", "url"  # data.table column references
+  "file_path", "pmcid", "i.url", "url",  # data.table column references
+  "abstract", "articletitle", "ent_text", "abs_pos", "abs_offset",
+  "sentence_id", "sentence", "sent_start", "sent_end", "id", "entity_id"
 ))

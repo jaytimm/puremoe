@@ -56,6 +56,8 @@
     if (!is.list(pb1)) next  # Skip if annotations aren't in a list
     
     names(pb1) <- c("title", "abstract")
+    passage_text <- mydata$passages[[i]]$text
+    passage_offset <- mydata$passages[[i]]$offset
     
     # Process title
     if (!is.data.frame(pb1$title) || nrow(pb1$title) == 0) {
@@ -66,6 +68,8 @@
       }
       pb1$title <- cbind(tiab = "title", pb1$title[, c("id", "text", "locations")], identifier = pb1$title$infons$identifier, type = pb1$title$infons$type)
     }
+    pb1$title$passage_text <- if (length(passage_text) >= 1L) passage_text[[1L]] else NA_character_
+    pb1$title$passage_offset <- if (length(passage_offset) >= 1L) passage_offset[[1L]] else NA_integer_
     
     # Process abstract
     if (!is.data.frame(pb1$abstract) || nrow(pb1$abstract) == 0) {
@@ -76,6 +80,8 @@
       }
       pb1$abstract <- cbind(tiab = "abstract", pb1$abstract[, c("id", "text", "locations")], identifier = pb1$abstract$infons$identifier, type = pb1$abstract$infons$type)
     }
+    pb1$abstract$passage_text <- if (length(passage_text) >= 2L) passage_text[[2L]] else NA_character_
+    pb1$abstract$passage_offset <- if (length(passage_offset) >= 2L) passage_offset[[2L]] else NA_integer_
     
     # Merge title and abstract
     jj[[i]] <- rbind(pb1$title, pb1$abstract)
@@ -106,4 +112,3 @@
   
   return(jj0)
 }
-
