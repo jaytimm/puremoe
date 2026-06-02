@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">puremoe</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -32,10 +32,16 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/citation-snowball.html">Citation Snowballing for Literature Discovery</a>
+    </li>
+    <li>
       <a href="../articles/getting-started.html">Getting Started</a>
     </li>
     <li>
       <a href="../articles/mesh-search.html">MeSH Tables</a>
+    </li>
+    <li>
+      <a href="../articles/pubtator-sentences.html">PubTator Sentence Mapping</a>
     </li>
   </ul></li>
 <li>
@@ -64,6 +70,14 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="citation_network.html">citation_network()</a></code> </p>
+        </td>
+        <td><p>Build a Citation Network from an iCite Corpus</p></td>
+      </tr><tr><td>
+          <p><code><a href="citation_snowball.html">citation_snowball()</a></code> </p>
+        </td>
+        <td><p>Expand a PMID Corpus via One-Hop iCite Citation Snowballing</p></td>
+      </tr><tr><td>
           <p><code><a href="data_mesh_frequencies.html">data_mesh_frequencies</a></code> </p>
         </td>
         <td><p>MeSH Descriptor Frequencies Across PubMed</p></td>
@@ -75,10 +89,6 @@
           <p><code><a href="data_mesh_trees.html">data_mesh_trees()</a></code> </p>
         </td>
         <td><p>Download and Load 'MeSH' Trees Data</p></td>
-      </tr><tr><td>
-          <p><code><a href="data_pmc_list.html">data_pmc_list()</a></code> </p>
-        </td>
-        <td><p>Download and Load 'PMC' Open Access File List</p></td>
       </tr><tr><td>
           <p><code><a href="endpoint_info.html">endpoint_info()</a></code> </p>
         </td>
@@ -95,6 +105,14 @@
           <p><code><a href="pmid_to_pmc.html">pmid_to_pmc()</a></code> </p>
         </td>
         <td><p>Convert PubMed IDs (PMIDs) to PMC IDs</p></td>
+      </tr><tr><td>
+          <p><code><a href="pubtator_cooccurrence.html">pubtator_cooccurrence()</a></code> </p>
+        </td>
+        <td><p>Count Entity Co-occurrence from Sentence-Mapped PubTator3 Annotations</p></td>
+      </tr><tr><td>
+          <p><code><a href="pubtator_sentences.html">pubtator_sentences()</a></code> </p>
+        </td>
+        <td><p>Map PubTator3 Annotations to Abstract Sentences</p></td>
       </tr><tr><td>
           <p><code><a href="search_pubmed.html">search_pubmed()</a></code> </p>
         </td>

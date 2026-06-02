@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pubmed Unified REtrieval for Multi-Output Exploration • puremoe</title>
+<title>Unified Retrieval of PubMed and NIH Literature Data • puremoe</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Pubmed Unified REtrieval for Multi-Output Exploration">
+<script src="pkgdown.js"></script><meta property="og:title" content="Unified Retrieval of PubMed and NIH Literature Data">
 <meta property="og:description" content="Access a variety of PubMed data through a single, user-friendly interface, including abstracts, bibliometrics from iCite, pubtations from PubTator3, and full-text records from PMC.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">puremoe</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -50,10 +50,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="articles/citation-snowball.html">Citation Snowballing for Literature Discovery</a>
+    </li>
+    <li>
       <a href="articles/getting-started.html">Getting Started</a>
     </li>
     <li>
       <a href="articles/mesh-search.html">MeSH Tables</a>
+    </li>
+    <li>
+      <a href="articles/pubtator-sentences.html">PubTator Sentence Mapping</a>
     </li>
   </ul>
 </li>
@@ -84,7 +90,7 @@
 <div class="page-header"><h1 id="puremoe">puremoe<a class="anchor" aria-label="anchor" href="#puremoe"></a>
 </h1></div>
 <p><a href="https://cran.r-project.org/package=puremoe" class="external-link"><img src="https://www.r-pkg.org/badges/version/puremoe" alt="CRAN version"></a> <a href="https://cran.r-project.org/package=puremoe" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/last-month/puremoe" alt="CRAN downloads"></a></p>
-<p><code>puremoe</code> is an R package that unifies access to PubMed and NLM data behind a single retrieval function. Search PubMed, then pull abstracts, citation metrics, named-entity annotations, full-text articles, or MeSH resources – all as plain <code>data.table</code> objects, all pipe-compatible, no juggling separate APIs or output formats.</p>
+<p><code>puremoe</code> is an R package that unifies access to PubMed and NLM/NIH data behind a single retrieval function. Search PubMed, then pull abstracts, affiliations, citation metrics, named-entity annotations, full-text articles, or MeSH resources – all as plain <code>data.table</code> objects, all pipe-compatible, no juggling separate APIs or output formats.</p>
 <hr>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -118,39 +124,54 @@
 <col width="33%">
 <col width="33%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>endpoint</th>
 <th>returns</th>
 <th>source</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>pubmed_abstracts</code></td>
-<td>title, abstract, journal, year, authors, MeSH terms</td>
+<td>title, abstract, journal, year, publication type, MeSH terms</td>
 <td>PubMed E-utilities</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>pubmed_affiliations</code></td>
 <td>author × affiliation rows</td>
 <td>PubMed E-utilities</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>icites</code></td>
-<td>citation count, RCR, NIH percentile, field rate</td>
+<td>citation count, RCR, NIH percentile, field rate, clinical flags, citation links</td>
 <td>NIH iCite</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>pubtations</code></td>
 <td>gene, disease, chemical, species, mutation annotations</td>
 <td>PubTator3</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>pmc_fulltext</code></td>
-<td>full-text sections (requires URLs from <code><a href="reference/pmid_to_ftp.html">pmid_to_ftp()</a></code>)</td>
-<td>PMC Open Access</td>
+<td>section-level open-access full text (requires URLs from <code><a href="reference/pmid_to_ftp.html">pmid_to_ftp()</a></code>)</td>
+<td>PMC Cloud Service</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section level3">
+<h3 id="analyze">Analyze<a class="anchor" aria-label="anchor" href="#analyze"></a>
+</h3>
+<p>Functions that transform already-retrieved tables – no additional API calls.</p>
+<ul>
+<li>
+<strong><code>citation_snowball(icites, direction, min_links, max_nodes)</code></strong> – expand a corpus one hop along iCite citation links; returns a ranked candidate table with audit columns (<code>seed</code>, <code>cited_links</code>, <code>citing_links</code>, <code>link_count</code>).</li>
+<li>
+<strong><code>citation_network(icites)</code></strong> – convert an <code>icites</code> table into <code>nodes</code> + <code>edges</code> (within-corpus citations only), carrying RCR and clinical flags as node attributes; ready for <code>igraph</code>/<code>tidygraph</code>.</li>
+<li>
+<strong><code>pubtator_sentences(pubtations)</code></strong> – map each PubTator3 entity annotation to the title/abstract sentence it occurs in, adding <code>sentence_id</code>, <code>sentence</code>, and sentence-relative offsets.</li>
+<li>
+<strong><code>pubtator_cooccurrence(mapped, window, by, evidence)</code></strong> – count entity pairs co-occurring within or across sentences in <code><a href="reference/pubtator_sentences.html">pubtator_sentences()</a></code> output; <code>evidence = TRUE</code> returns the supporting sentence context.</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="id-conversion">ID conversion<a class="anchor" aria-label="anchor" href="#id-conversion"></a>
@@ -159,7 +180,7 @@
 <li>
 <strong><code>pmid_to_pmc(pmids, ...)</code></strong> – PMID → PMC ID + DOI via the NCBI ID Converter.</li>
 <li>
-<strong><code>pmid_to_ftp(pmids, ...)</code></strong> – PMID → PMC ID + open-access FTP URL; pass URLs to <code>get_records(endpoint = "pmc_fulltext")</code>.</li>
+<strong><code>pmid_to_ftp(pmids, ...)</code></strong> – PMID → PMC ID + open-access PMC Cloud Service XML URL; pass URLs to <code>get_records(endpoint = "pmc_fulltext")</code>.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -171,7 +192,7 @@
 <li>
 <strong><code><a href="reference/data_mesh_trees.html">data_mesh_trees()</a></code></strong> – MeSH hierarchical tree structure; tree numbers encode the classification path.</li>
 <li>
-<strong><code><a href="reference/data_pmc_list.html">data_pmc_list()</a></code></strong> – PMC open-access file list mapping PMC IDs to file paths and licenses.</li>
+<strong><code>data_mesh_frequencies</code></strong> – bundled PubMed-wide descriptor frequencies for enrichment-style baselines.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -191,7 +212,11 @@
 <li>
 <a href="https://jaytimm.github.io/puremoe/articles/getting-started.html" class="external-link">Getting started</a> – <code><a href="reference/search_pubmed.html">search_pubmed()</a></code> + all <code><a href="reference/get_records.html">get_records()</a></code> endpoints end-to-end</li>
 <li>
-<a href="https://jaytimm.github.io/puremoe/articles/mesh-search.html" class="external-link">MeSH-guided search</a> – thesaurus lookup, tree navigation, and controlled-vocabulary queries</li>
+<a href="https://jaytimm.github.io/puremoe/articles/mesh-search.html" class="external-link">MeSH tables</a> – thesaurus lookup, tree navigation, and PubMed-wide descriptor frequencies</li>
+<li>
+<a href="https://jaytimm.github.io/puremoe/articles/citation-snowball.html" class="external-link">Citation snowballing</a> – expand a seed corpus along citation links, audit why each paper was admitted, and quantify the expansion space against PubMed-wide MeSH keyness</li>
+<li>
+<a href="https://jaytimm.github.io/puremoe/articles/pubtator-sentences.html" class="external-link">PubTator sentences</a> – map entity annotations to their sentences and count entity co-occurrence</li>
 </ul>
 <hr>
 </div>
@@ -232,6 +257,12 @@
 </ul>
 </div>
 
+<div class="community">
+<h2 data-toc-skip>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+</ul>
+</div>
 
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
