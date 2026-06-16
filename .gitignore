@@ -8,4 +8,8 @@ docs/
 examples/
 .cursor/
 odds/
-paper/
+paper/*.pdf
+paper/*.html
+..Rcheck
+*.tar.gz
+*.Rcheck

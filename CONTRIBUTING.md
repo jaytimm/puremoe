@@ -22,8 +22,8 @@ upstream API response — those are useful to flag explicitly.
 
 For usage questions that aren't bugs, open an issue with the question and the
 code you've tried. The vignettes (`getting-started`, `mesh-search`,
-`pubtator-sentences`, `translational-footprint`) cover the main workflows and
-are a good first stop.
+`citation-snowball`, `pubtator-sentences`) cover the main workflows and are a
+good first stop.
 
 ## Development setup
 
@@ -57,7 +57,7 @@ devtools::check()       # full R CMD check
 - **Naming.** Retrieval functions that call an external service are verb-first
   (`search_pubmed()`, `get_records()`, `pmid_to_*()`); local analysis functions
   that transform already-retrieved tables are source-first
-  (`citation_snowball()`, `citation_network()`, `pubtator_sentences()`,
+  (`citation_snowball()`, `citation_network()`, `pubtator_context()`,
   `pubtator_cooccurrence()`). Please keep new functions consistent with this
   split.
 - **Documentation.** Document exported functions with roxygen2 and regenerate
@@ -65,8 +65,3 @@ devtools::check()       # full R CMD check
 - **Tests.** Prefer testing pure transforms on small synthetic inputs (no
   network). Guard any test that hits a live service with `skip_on_cran()` and
   `skip_if_offline()`.
-
-## Code of Conduct
-
-By participating in this project you agree to abide by the
-[Code of Conduct](CODE_OF_CONDUCT.md).

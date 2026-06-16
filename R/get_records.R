@@ -2,12 +2,12 @@
 #'
 #' This function retrieves different types of data (like 'PubMed' records, affiliations, 'iCites 'data, etc.) from 'PubMed' based on provided PMIDs. It supports parallel processing for efficiency.
 #' 
-#' For the 'pmc_fulltext' endpoint, provide full URLs to PMC tar.gz files. 
-#' Use \code{\link{pmid_to_pmc}} to convert PMIDs to PMC IDs and full URLs first.
+#' For the 'pmc_fulltext' endpoint, provide full URLs to PMC Cloud Service XML files.
+#' Use \code{\link{pmid_to_ftp}} to convert PMIDs to PMC IDs and full-text URLs first.
 #' 
 #' @param pmids A vector of PMIDs for which data is to be retrieved. For 'pmc_fulltext' endpoint, 
-#'   provide full URLs instead (e.g., from \code{pmid_to_pmc()$url}).
-#' @param endpoint A character vector specifying the type of data to retrieve ('pubtations', 'icites',
+#'   provide full URLs instead (e.g., from \code{pmid_to_ftp()$url}).
+#' @param endpoint A character vector specifying the type of data to retrieve ('pubtator', 'pubtations', 'icites',
 #'   'pubmed_affiliations', 'pubmed_abstracts', 'pmc_fulltext').
 #' @param cores Number of cores to use for parallel processing (default is 3).
 #' @param ncbi_key (Optional) NCBI API key for authenticated access.
@@ -15,7 +15,9 @@
 #' @param icite_timeout Maximum elapsed seconds to allow each iCite batch before
 #'   skipping it and returning PMID-only rows. Defaults to the
 #'   \code{puremoe.icite_timeout} option, or 15 seconds if unset.
-#' @return A data.table containing combined results from the specified endpoint.
+#' @return A data.table containing combined results from the specified endpoint, except
+#'   for the PubTator endpoint, which returns a list with entities and
+#'   relations data.tables.
 #' @importFrom parallel makeCluster stopCluster detectCores clusterExport
 #' @importFrom pbapply pblapply
 #' @importFrom data.table rbindlist
@@ -25,7 +27,8 @@
 #' results <- get_records(pmids, endpoint = "pubmed_abstracts", cores = 1)
 #' 
 get_records <- function(pmids,
-                        endpoint = c('pubtations',
+                        endpoint = c('pubtator',
+                                     'pubtations',
                                      'icites',
                                      'pubmed_affiliations',
                                      'pubmed_abstracts',
@@ -40,14 +43,9 @@ get_records <- function(pmids,
     stop("pmids must be a non-empty vector of characters or numbers")
   }
   
-  if (!is.character(endpoint) || length(endpoint) != 1 ||
-      !endpoint %in% c('pubtations',
-                       'icites',
-                       'pubmed_affiliations',
-                       'pubmed_abstracts',
-                       'pmc_fulltext')) {
-    stop("Invalid endpoint. Must be one of 'pubtations', 'icites', 'pubmed_affiliations', 'pubmed_abstracts', 'pmc_fulltext'")
-  }
+  endpoint <- match.arg(endpoint)
+
+  if (endpoint == "pubtations") endpoint <- "pubtator"
   
   if (!is.numeric(cores)) {
     stop("cores must be numeric")
@@ -60,10 +58,10 @@ get_records <- function(pmids,
   if (!is.null(ncbi_key)) rentrez::set_entrez_key(ncbi_key)
   
   # Define batch size and the specific task function based on the chosen endpoint
-  batch_size <- if (endpoint == "pmc_fulltext") {5} else if (endpoint == "pubtations") {99} else {199}
+  batch_size <- if (endpoint == "pmc_fulltext") {5} else if (endpoint == "pubtator") {99} else {199}
   task_function <- switch(endpoint,
                           "icites" = .get_icites,
-                          "pubtations" = .get_pubtations,
+                          "pubtator" = .get_pubtator,
                           "pubmed_affiliations" = .get_affiliations,
                           "pubmed_abstracts" = .get_records,
                           "pmc_fulltext" = .get_pmc,
@@ -102,7 +100,15 @@ get_records <- function(pmids,
                             varlist = c("batches", "task_function", "endpoint",
                                         "sleep", "icite_timeout",
                                         "run_records_batch",
-                                        "run_icites_batch"),
+                                        "run_icites_batch",
+                                        ".combine_pubtator_results",
+                                        ".empty_pubtator_result",
+                                        ".empty_pubtator_entities",
+                                        ".empty_pubtator_relations",
+                                        ".null_or",
+                                        ".parse_pubtator_payload",
+                                        ".pubtator_location",
+                                        ".pubtator_passage_type"),
                             envir = environment())
     
     # Apply the task function to each batch with the sleep parameter, using parallel processing
@@ -134,6 +140,10 @@ get_records <- function(pmids,
         icite_timeout = icite_timeout
       )
     })
+  }
+  
+  if (endpoint == "pubtator") {
+    return(.combine_pubtator_results(results))
   }
   
   df_only_list <- results[sapply(results, is.data.frame)]

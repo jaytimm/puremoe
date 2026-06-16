@@ -1,10 +1,19 @@
 Package: puremoe
 Type: Package
-Title: Unified Retrieval of 'PubMed' and 'NIH' Literature Data
+Title: Integrated Retrieval and Analysis of 'PubMed', 'NIH', and 'NLM' Literature Data
 Version: 1.1.0
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
+Author: Jason Timm [aut, cre]
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
-Description: Access a variety of 'PubMed' data through a single, user-friendly interface, including abstracts, bibliometrics from 'iCite', pubtations from 'PubTator3', and full-text records from 'PMC'.
+Description: Retrieve and analyze biomedical literature from 'PubMed' and the
+    wider 'NIH'/'NLM' data stack through a single, PMID-centered interface.
+    Retrieval spans article metadata and abstracts, author affiliations,
+    'iCite' citation data and links, 'PubTator3' entity and relation
+    annotations, and open-access full text from 'PMC'. A local analysis layer
+    transforms the retrieved tables without further queries, including 'MeSH'
+    descriptor keyness, citation snowballing and within-corpus citation
+    networks, sentence-anchored entity annotations and co-occurrence, and the
+    sentence-level evidence behind extracted relations.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -32,3 +41,4 @@ URL: https://github.com/jaytimm/puremoe, https://jaytimm.github.io/puremoe/
 BugReports: https://github.com/jaytimm/puremoe/issues
 Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
+RoxygenNote: 7.3.3

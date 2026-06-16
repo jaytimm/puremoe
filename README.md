@@ -3,7 +3,7 @@
 [![CRAN version](https://www.r-pkg.org/badges/version/puremoe)](https://cran.r-project.org/package=puremoe)
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
 
-`puremoe` unifies access to PubMed and the NLM/NIH data stack behind one consistent, pipe-friendly interface: search PubMed, then pull abstracts, affiliations, citation metrics, entity annotations, full text, or MeSH resources. The same tabular outputs feed a small analysis layer -- citation snowballing, network construction, sentence-mapped entity annotations, and co-occurrence -- with PMIDs as the common currency from search through analysis.
+`puremoe` provides a consistent R interface for retrieving and analyzing biomedical literature data from public NIH/NLM services. Starting from PubMed identifiers, users can assemble article records, abstracts, affiliations, citation data, PubTator3 annotations and relations, open-access full text, and MeSH resources. The returned data frames feed a small local analysis layer for tasks such as citation expansion, network construction, MeSH keyness, entity co-occurrence, and sentence-level relation evidence.
 
 ---
 
@@ -38,7 +38,7 @@ remotes::install_github("jaytimm/puremoe")
 | `pubmed_abstracts` | title, abstract, journal, year, publication type, MeSH terms | PubMed E-utilities |
 | `pubmed_affiliations` | author × affiliation rows | PubMed E-utilities |
 | `icites` | citation count, RCR, NIH percentile, field rate, clinical flags, citation links | NIH iCite |
-| `pubtations` | gene, disease, chemical, species, mutation annotations | PubTator3 |
+| `pubtator` | gene, disease, chemical, species, mutation, and relation annotations (`pubtations` is accepted as a legacy alias) | PubTator3 |
 | `pmc_fulltext` | section-level open-access full text (requires URLs from `pmid_to_ftp()`) | PMC Cloud Service |
 
 ### Analyze
@@ -47,8 +47,11 @@ Functions that transform already-retrieved tables -- no additional API calls.
 
 - **`citation_snowball(icites, direction, min_links, max_nodes)`** -- expand a corpus one hop along iCite citation links; returns a ranked candidate table with audit columns (`seed`, `cited_links`, `citing_links`, `link_count`).
 - **`citation_network(icites)`** -- convert an `icites` table into `nodes` + `edges` (within-corpus citations only), carrying RCR and clinical flags as node attributes; ready for `igraph`/`tidygraph`.
-- **`pubtator_sentences(pubtations)`** -- map each PubTator3 entity annotation to the title/abstract sentence it occurs in, adding `sentence_id`, `sentence`, and sentence-relative offsets.
-- **`pubtator_cooccurrence(mapped, window, by, evidence)`** -- count entity pairs co-occurring within or across sentences in `pubtator_sentences()` output; `evidence = TRUE` returns the supporting sentence context.
+- **`pubtator_context(pubtator)`** -- add sentence IDs, sentence-relative entity spans, relation entity labels, relation sentence anchors, and a sentence lookup table to PubTator output.
+- **`pubtator_cooccurrence(ctx, window, by)`** -- count entity pairs co-occurring within or across sentences in a `pubtator_context()` result.
+- **`pubtator_network(ctx)`** -- convert PubTator relations into `nodes`, `edges`, and lean `evidence` tables for graph workflows and edge inspection.
+- **`relation_evidence(ctx, relation_type, entity, icites)`** -- return the sentence-level evidence behind PubTator3 relations (the sentence that asserts each relation), optionally ranked by iCite citation count.
+- **`mesh_keyness(records, measure)`** -- score a corpus's MeSH descriptors against PubMed-wide frequencies (log-odds or Dunning G2) to surface over- and under-represented terms.
 
 ### ID conversion
 

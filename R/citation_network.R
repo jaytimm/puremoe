@@ -42,7 +42,7 @@
 #'   get_records(endpoint = "icites") |>
 #'   citation_network()
 #'
-#' # translational footprint: filter to bench -> clinical edges
+#' # filter to clinical citation targets
 #' snowball <- pmids |>
 #'   get_records(endpoint = "icites") |>
 #'   citation_snowball()

@@ -10,3 +10,10 @@ LICENSE.md
 ^examples$
 ^vignettes/articles$
 ^data-raw$
+^\.git$
+^\.Rhistory$
+^R/\.Rhistory$
+^docs/\.Rhistory$
+^docs/\.RData$
+^vignettes/\.Rhistory$
+^\.\.Rcheck$

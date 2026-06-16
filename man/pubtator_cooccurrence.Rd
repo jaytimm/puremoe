@@ -2,81 +2,51 @@
 % Please edit documentation in R/pubtator_cooccurrence.R
 \name{pubtator_cooccurrence}
 \alias{pubtator_cooccurrence}
-\title{Count Entity Co-occurrence from Sentence-Mapped PubTator3 Annotations}
+\title{Count PubTator Entity Co-occurrence from Sentence Context}
 \usage{
-pubtator_cooccurrence(
-  mapped,
-  window = 0L,
-  by = c("type", "entity"),
-  evidence = FALSE
-)
+pubtator_cooccurrence(x, window = 0L, by = c("type", "entity"))
 }
 \arguments{
-\item{mapped}{A \code{data.table} returned by
-\code{\link{pubtator_sentences}}. Must contain \code{pmid}, \code{tiab},
-\code{type}, \code{identifier}, \code{text}, \code{sentence_id}, and
-\code{sentence} columns.}
+\item{x}{A PubTator context list returned by \code{\link{pubtator_context}},
+or a contextualized entity data.frame with \code{pmid}, \code{tiab},
+\code{type}, \code{identifier}, \code{text}, and \code{sentence_id}.}
 
-\item{window}{Non-negative integer sentence distance. \code{0} (default)
-counts entities in the same sentence; \code{n} counts entities whose
-sentences are at most \code{n} apart within the same passage.}
+\item{window}{Non-negative integer sentence distance. \code{0} counts
+entities in the same sentence; \code{n} counts entities whose sentences are
+at most \code{n} apart within the same \code{pmid}/\code{tiab} passage.}
 
 \item{by}{One of \code{"type"} (default) or \code{"entity"}. \code{"type"}
 aggregates counts by entity-type pair; \code{"entity"} aggregates by the
-specific \code{(type, identifier, text)} pair. Ignored when
-\code{evidence = TRUE}.}
-
-\item{evidence}{Logical. When \code{FALSE} (default), returns aggregated
-counts. When \code{TRUE}, returns the supporting sentence \code{context} for
-each co-occurring pair, so counts can be traced back to concrete text.}
+specific \code{(type, identifier, text)} pair.}
 }
 \value{
-A \code{data.table}. With \code{evidence = FALSE} and
-  \code{by = "type"}: \code{type_x}, \code{type_y}, \code{n} (co-occurrence
-  instances), and \code{n_pmids} (distinct documents), ordered by \code{n}.
-  With \code{by = "entity"}: the same plus
-  \code{identifier_x}/\code{text_x}/\code{identifier_y}/\code{text_y}. With
-  \code{evidence = TRUE}: one row per distinct \code{context} string for an
-  entity pair (identical contexts de-duplicated), with \code{pmid},
-  \code{tiab}, the two entities' \code{type}/\code{identifier}/\code{text},
-  and \code{context}.
+A data.table. With \code{by = "type"}: \code{type_x},
+  \code{type_y}, \code{n} (co-occurrence instances), and \code{n_pmids}
+  (distinct documents), ordered by \code{n}. With \code{by = "entity"}: the
+  same plus \code{identifier_x}/\code{text_x}/\code{identifier_y}/
+  \code{text_y}.
 }
 \description{
-Counts pairs of biomedical entities that co-occur within the same sentence
-(\code{window = 0}) or within \code{window} sentences of each other, using the
-sentence-mapped annotation table returned by \code{\link{pubtator_sentences}}.
-Co-occurrence is computed within each \code{pmid}/\code{tiab} passage: title
-and abstract are treated separately because their sentence offsets are
-numbered independently.
+Counts pairs of biomedical entities that co-occur in the same sentence
+(\code{window = 0}) or within \code{window} sentences of each other, using
+the contextualized entity table returned by \code{\link{pubtator_context}}.
+Co-occurrence is computed within each \code{pmid}/\code{tiab} passage; title
+and abstract sentence IDs are not compared to one another.
 }
 \details{
 Entities are de-duplicated to one mention per sentence before pairing, and
-pairs of the \emph{same} entity (identical \code{type}, \code{identifier},
-and \code{text}) are dropped, so same-type pairs between two \emph{distinct}
-entities (e.g. two different genes) are retained.
-
-Counting follows windowed-collocation semantics: a pair contributes one
-instance for each pair of mentions within \code{window} sentences of each
-other. At \code{window = 0} this is simply one instance per shared sentence,
-but for \code{window > 0} a pair recurring across several sentences yields
-multiple instances, so counts scale with mention frequency. \code{n_pmids}
-(distinct documents) is unaffected and is the more conservative signal.
+pairs of the same entity (identical \code{type}, \code{identifier}, and
+\code{text}) are dropped.
 }
 \examples{
 \dontrun{
 pmids <- search_pubmed('"biomarker"[TiAb] AND "cancer"[TiAb]')
 
-mapped <- pmids |>
-  get_records(endpoint = "pubtations") |>
-  pubtator_sentences()
+ctx <- pmids |>
+  get_records(endpoint = "pubtator") |>
+  pubtator_context()
 
-# same-sentence entity-type co-occurrence
-mapped |> pubtator_cooccurrence(window = 0, by = "type")
-
-# specific entity pairs within one sentence on either side
-mapped |> pubtator_cooccurrence(window = 1, by = "entity")
-
-# traceable evidence: every instance with its sentence context
-mapped |> pubtator_cooccurrence(window = 0, evidence = TRUE)
+ctx |> pubtator_cooccurrence(window = 0, by = "type")
+ctx |> pubtator_cooccurrence(window = 1, by = "entity")
 }
 }

@@ -92,14 +92,14 @@ icites |>
 
 ## PubTator annotations
 
-```{r pubtations}
-pubtations <- puremoe::get_records(
+```{r pubtator}
+pubtator <- puremoe::get_records(
   head(pmids_sub, 30L),
-  endpoint = "pubtations",
+  endpoint = "pubtator",
   cores    = 1L
 )
 
-pubtations |>
+pubtator$entities |>
   DT::datatable(rownames = FALSE)
 ```
 

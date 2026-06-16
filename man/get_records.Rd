@@ -6,8 +6,8 @@
 \usage{
 get_records(
   pmids,
-  endpoint = c("pubtations", "icites", "pubmed_affiliations", "pubmed_abstracts",
-    "pmc_fulltext"),
+  endpoint = c("pubtator", "pubtations", "icites", "pubmed_affiliations",
+    "pubmed_abstracts", "pmc_fulltext"),
   cores = 3,
   sleep = 1,
   ncbi_key = NULL,
@@ -16,9 +16,9 @@ get_records(
 }
 \arguments{
 \item{pmids}{A vector of PMIDs for which data is to be retrieved. For 'pmc_fulltext' endpoint, 
-provide full URLs instead (e.g., from \code{pmid_to_pmc()$url}).}
+provide full URLs instead (e.g., from \code{pmid_to_ftp()$url}).}
 
-\item{endpoint}{A character vector specifying the type of data to retrieve ('pubtations', 'icites',
+\item{endpoint}{A character vector specifying the type of data to retrieve ('pubtator', 'pubtations', 'icites',
 'pubmed_affiliations', 'pubmed_abstracts', 'pmc_fulltext').}
 
 \item{cores}{Number of cores to use for parallel processing (default is 3).}
@@ -32,14 +32,16 @@ skipping it and returning PMID-only rows. Defaults to the
 \code{puremoe.icite_timeout} option, or 15 seconds if unset.}
 }
 \value{
-A data.table containing combined results from the specified endpoint.
+A data.table containing combined results from the specified endpoint, except
+  for the PubTator endpoint, which returns a list with entities and
+  relations data.tables.
 }
 \description{
 This function retrieves different types of data (like 'PubMed' records, affiliations, 'iCites 'data, etc.) from 'PubMed' based on provided PMIDs. It supports parallel processing for efficiency.
 }
 \details{
-For the 'pmc_fulltext' endpoint, provide full URLs to PMC tar.gz files. 
-Use \code{\link{pmid_to_pmc}} to convert PMIDs to PMC IDs and full URLs first.
+For the 'pmc_fulltext' endpoint, provide full URLs to PMC Cloud Service XML files.
+Use \code{\link{pmid_to_ftp}} to convert PMIDs to PMC IDs and full-text URLs first.
 }
 \examples{
 pmids <- c("38136652")

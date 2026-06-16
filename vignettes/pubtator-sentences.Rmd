@@ -1,121 +1,95 @@
 ---
-title: "PubTator Sentence Mapping"
+title: "PubTator Context, Co-occurrence, and Networks"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{PubTator Sentence Mapping}
+  %\VignetteIndexEntry{PubTator Context, Co-occurrence, and Networks}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  message = FALSE,
-  warning = FALSE,
-  comment = "#>"
-)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-`puremoe` retrieves PubTator3 annotations as one row per entity span. `pubtator_sentences()` attaches the sentence each annotation falls in, and `pubtator_cooccurrence()` then counts entity pairs that share a sentence (or fall within a few sentences) -- optionally returning the sentence context so every count traces back to text.
+`puremoe` retrieves PubTator3 entity mentions and relation pairs with one call, then reshapes them locally into sentence context, co-occurrence counts, entity networks, and the sentences behind extracted relations. Everything after the initial fetch is a local transform on the retrieved tables and makes no further API calls.
 
-```{r libs}
+We use a biomedical corpus with rich entity and relation annotation throughout.
+
+```{r pubtator-fetch, eval=FALSE}
 library(puremoe)
-library(dplyr)
-library(DT)
+library(data.table)
+
+pmids <- search_pubmed('"doxorubicin"[TiAb] AND "cardiotoxicity"[TiAb]')
+
+pt <- get_records(head(pmids, 25L), endpoint = "pubtator", cores = 1)
+
+names(pt)
+pt$entities
+pt$relations
 ```
 
-## Retrieve PubTator annotations
 
-Search PubMed and retrieve PubTator3 annotations for a small subset of hits.
 
-```{r search}
-pmids <- search_pubmed(
-  '"biomarker"[TiAb] AND "cancer"[TiAb]',
-  start_year    = 2022,
-  end_year      = 2024,
-  use_pub_years = TRUE
-)
+## Sentence context
 
-pubtations <- get_records(head(pmids, 40L), endpoint = "pubtations",
-                          cores = 1L, sleep = 0.5)
+`pubtator_context()` preserves PubTator entity spans, adds sentence IDs and sentence-relative spans to entities, adds readable entity labels and sentence anchors to relations, and returns a sentence lookup table.
+
+```{r pubtator-context, eval=FALSE}
+ctx <- pubtator_context(pt)
+
+ctx$entities
+ctx$relations
+ctx$sentences
 ```
 
-The raw table carries PubTator's passage text and offsets, which `pubtator_sentences()` uses to align spans against the exact annotated text.
+## Co-occurrence counts
 
-```{r pubtations-table}
-pubtations |>
-  select(pmid, tiab, text, type, identifier, start, end) |>
-  head(25) |>
-  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+Use `pubtator_cooccurrence()` for count-only summaries over sentence windows. The function accepts either the full context object or `ctx$entities`. `window = 0` counts entities in the same sentence; larger windows reach across adjacent sentences within the same passage.
+
+```{r cooccurrence, eval=FALSE}
+# entity-type pairs in the same sentence
+pubtator_cooccurrence(ctx, window = 0, by = "type")
+
+# specific entity pairs, within one sentence of each other
+pubtator_cooccurrence(ctx, window = 1, by = "entity")
 ```
 
-## Map annotations to sentences
+## Relation networks
 
-`pubtator_sentences()` adds `sentence_id`, `sentence`, and the entity's zero-based offsets within that sentence (`sentence_start`, `sentence_end`). Empty placeholder rows -- passages with no annotations -- are kept with missing sentence fields.
+`pubtator_network()` turns contextualized PubTator relations into a directed entity network plus a lean evidence table. Nodes are specific entities keyed on their PubTator `identifier` when present, falling back to `type:text`; edges are directed PubTator relation assertions; evidence rows map each edge back to `pmid`, `relation_id`, and the shared sentence when the endpoint mentions occur in the same sentence.
 
-```{r mapped}
-mapped <- pubtator_sentences(pubtations)
+```{r network-relations, eval=FALSE}
+rel_net <- pubtator_network(ctx)
 
-mapped |>
-  filter(!is.na(text)) |>
-  select(pmid, tiab, sentence_id, text, type, identifier,
-         sentence_start, sentence_end, sentence) |>
-  head(30) |>
-  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+rel_net
 ```
 
-## Entity co-occurrence
+`puremoe` takes on no graphing dependency itself, but the graph tables pass straight to a graph package such as igraph:
 
-With a `sentence_id` on every annotation, `pubtator_cooccurrence()` counts co-occurring entity pairs directly. `window = 0` counts same-sentence pairs; `by = "type"` aggregates by entity type, reporting co-occurrence instances (`n`) and distinct documents (`n_pmids`).
-
-```{r cooccur-type}
-mapped |>
-  pubtator_cooccurrence(window = 0, by = "type") |>
-  DT::datatable(rownames = FALSE)
+```{r network-igraph, eval=FALSE}
+igraph::graph_from_data_frame(rel_net, vertices = rel_net)
 ```
 
-`by = "entity"` keeps specific labels and identifiers. Entities are de-duplicated per sentence and same-entity pairs are dropped, so same-type pairs survive only between two distinct entities (e.g. two different genes).
+## Relation evidence
 
-```{r cooccur-entity}
-mapped |>
-  pubtator_cooccurrence(window = 0, by = "entity") |>
-  head(30) |>
-  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+`relation_evidence()` aggregates PubTator3 relations into a per-relation summary: one row per unique relationship, reporting how many documents (`n_pmids`) and sentences (`n_sentences`) assert it, with the supporting sentences kept in a `sentences` list-column for reading. The available relation types depend on the corpus, so inspect them first.
+
+```{r relation-types, eval=FALSE}
+sort(table(ctx$relations$relation_type), decreasing = TRUE)
 ```
 
-`window` widens the scope to nearby sentences within a passage (title and abstract are kept separate); `window = 1` reaches one sentence on either side.
+Supplying an `icites` table adds a `citation_support` column (citation counts summed over the distinct supporting papers) and ranks the relations by it, so the best-attested assertions surface first.
 
-```{r cooccur-window}
-mapped |>
-  pubtator_cooccurrence(window = 1, by = "entity") |>
-  DT::datatable(rownames = FALSE)
+```{r relation-evidence, eval=FALSE}
+icites <- get_records(head(pmids, 25L), endpoint = "icites", cores = 1)
+
+ev <- relation_evidence(ctx, 
+                        relation_type = "positive_correlation", 
+                        icites = icites)
+ev
+
+# read the sentences behind the top-ranked relation
+ev$sentences[[1]]
 ```
 
-## Traceable evidence
-
-`evidence = TRUE` returns the supporting sentence `context` for each co-occurring pair (identical contexts de-duplicated), so a count is never a dead end.
-
-```{r evidence}
-evidence <- mapped |>
-  pubtator_cooccurrence(window = 0, evidence = TRUE)
-
-evidence |>
-  head(20) |>
-  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
-```
-
-Filtering to the top-ranked pair pulls up the sentences behind it.
-
-```{r evidence-examples}
-top_pair <- mapped |>
-  pubtator_cooccurrence(window = 0, by = "entity") |>
-  slice_head(n = 1)
-
-evidence |>
-  semi_join(
-    top_pair,
-    by = c("type_x", "identifier_x", "text_x",
-           "type_y", "identifier_y", "text_y")
-  ) |>
-  select(pmid, tiab, context) |>
-  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
-```
+This turns a flat relation table into a ranked picture of which relationships the corpus actually supports, each row traceable through `sentences` and `pmids` back to its source. Pass `relation_type = NULL` (the default) to summarize every type.

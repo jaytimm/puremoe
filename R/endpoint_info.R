@@ -102,29 +102,21 @@ endpoint_info <- function(endpoint = NULL, format = c("list", "json")) {
       notes = "Title, journal, publication year, authors, and abstracts are intentionally omitted to avoid duplicating pubmed_abstracts metadata. Use citation_net with citation_snowball() or citation_network(). iCite citation links cover PubMed-indexed articles only; citations from preprints or sources outside PubMed are not included."
     ),
     
-    pubtations = list(
-      description = "PubTator3 named-entity annotations",
+    pubtator = list(
+      description = "PubTator3 entity mentions and relation pairs",
       source = "PubTator3 BioC JSON export",
       input = "PMIDs",
-      returns = "data.table; one row per title or abstract annotation, including NA placeholder rows when a passage has no annotations",
+      returns = "list with entities and relations data.tables",
       columns = list(
-        pmid = "PubMed ID (character)",
-        tiab = "Passage containing the annotation: 'title' or 'abstract'",
-        id = "PubTator annotation ID",
-        text = "Annotated text span",
-        identifier = "Database identifier supplied by PubTator3; NA when unavailable",
-        type = "Entity type supplied by PubTator3, such as Gene, Disease, Chemical, Species, or Mutation",
-        start = "Start character offset within the passage",
-        end = "End character offset within the passage",
-        passage_text = "Full PubTator passage text used for annotation, typically title or abstract text",
-        passage_offset = "Start character offset of the PubTator passage within the document"
+        entities = "Entity mention table with pmid, mention_index, id, text, type, identifier, tiab, start, end, passage_text, and passage_offset",
+        relations = "Compact relation-pair table with pmid, relation_id, relation_type, score, ent1_mention_index, ent1_type, ent2_mention_index, and ent2_type"
       ),
       parameters = list(
         cores = "parallel workers",
         sleep = "delay between requests, in seconds"
       ),
       rate_limit = "Moderate",
-      notes = "Provides machine annotations over title and abstract text. Annotation coverage and identifiers depend on PubTator3 output for each PMID."
+      notes = "Provides machine annotations and PubTator relation pairs over title and abstract text. Use pubtator_context() to add sentence IDs, sentence-relative entity spans, sentence lookup rows, and compact relation sentence anchors. The older endpoint spelling 'pubtations' is accepted as an alias."
     ),
     
     pmc_fulltext = list(
@@ -156,6 +148,8 @@ endpoint_info <- function(endpoint = NULL, format = c("list", "json")) {
     return(result)
   }
   
+  if (identical(endpoint, "pubtations")) endpoint <- "pubtator"
+
   # Validate endpoint
   if (!endpoint %in% names(schemas)) {
     stop("Unknown endpoint. Available: ", paste(names(schemas), collapse = ", "))
