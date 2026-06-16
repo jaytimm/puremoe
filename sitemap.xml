@@ -7,7 +7,7 @@
 <url><loc>/articles/getting-started.html</loc></url>
 <url><loc>/articles/index.html</loc></url>
 <url><loc>/articles/mesh-search.html</loc></url>
-<url><loc>/articles/pubtator-sentences.html</loc></url>
+<url><loc>/articles/pubtator-context.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
@@ -19,10 +19,12 @@
 <url><loc>/reference/endpoint_info.html</loc></url>
 <url><loc>/reference/get_records.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/mesh_keyness.html</loc></url>
 <url><loc>/reference/pmid_to_ftp.html</loc></url>
 <url><loc>/reference/pmid_to_pmc.html</loc></url>
+<url><loc>/reference/pubtator_context.html</loc></url>
 <url><loc>/reference/pubtator_cooccurrence.html</loc></url>
-<url><loc>/reference/pubtator_sentences.html</loc></url>
+<url><loc>/reference/pubtator_network.html</loc></url>
 <url><loc>/reference/search_pubmed.html</loc></url>
 </urlset>
 

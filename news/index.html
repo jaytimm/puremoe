@@ -41,7 +41,7 @@
       <a href="../articles/mesh-search.html">MeSH Tables</a>
     </li>
     <li>
-      <a href="../articles/pubtator-sentences.html">PubTator Sentence Mapping</a>
+      <a href="../articles/pubtator-context.html">PubTator Context and Relation Networks</a>
     </li>
   </ul></li>
 <li>
@@ -67,19 +67,23 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.1.0" id="puremoe-110-tentative">puremoe 1.1.0 (tentative)<a class="anchor" aria-label="anchor" href="#puremoe-110-tentative"></a></h2>
+<h2 class="page-header" data-toc-text="1.1.0" id="puremoe-110">puremoe 1.1.0<a class="anchor" aria-label="anchor" href="#puremoe-110"></a></h2>
 <p><em>in development</em></p>
 <div class="section level3">
 <h3 id="new-features-1-1-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-1-0"></a></h3>
-<ul><li>Added <code><a href="../reference/pubtator_sentences.html">pubtator_sentences()</a></code> for mapping PubTator3 entity annotations to the sentence in which they occur. The function uses PubTator’s own passage text and offsets for alignment, preserves empty PubTator title/abstract placeholder rows for transparency, and returns a clean annotation table with <code>sentence_id</code> and <code>sentence</code> columns.</li>
-<li>Added <code><a href="../reference/pubtator_cooccurrence.html">pubtator_cooccurrence()</a></code> for entity co-occurrence counts from the sentence-mapped table returned by <code><a href="../reference/pubtator_sentences.html">pubtator_sentences()</a></code>. Counts unordered entity pairs within the same sentence (<code>window = 0</code>) or within <code>window</code> sentences of each other, aggregated <code>by</code> entity type or by specific entity. De-duplicates entities per sentence and drops same-entity pairs. With <code>evidence = TRUE</code>, returns one row per co-occurrence instance with the joined sentence <code>context</code>, so every count is traceable to concrete text.</li>
-<li>Added <code><a href="../reference/citation_snowball.html">citation_snowball()</a></code> for citation-based corpus expansion. Takes an <code>icites</code> data.table and follows one-hop citation links using the NIH Open Citation Collection data already embedded in every iCite response. Supports <code>max_nodes</code> (hard ceiling on corpus size), <code>direction</code>, and <code>min_links</code>. Returns a candidate table with seed flags and citation-link counts, and does not make a second iCite call; pass <code>snowball$pmid</code> explicitly to <code><a href="../reference/get_records.html">get_records()</a></code> when metadata for the expanded corpus is needed.</li>
-<li>Added <code><a href="../reference/citation_network.html">citation_network()</a></code> for citation network analysis. Takes an <code>icites</code> data.table from <code><a href="../reference/get_records.html">get_records()</a></code> and returns a named list with <code>nodes</code> (full iCite metadata as node attributes, including <code>relative_citation_ratio</code> and <code>is_clinical</code>) and <code>edges</code> (<code>from_pmid</code>, <code>to_pmid</code>), filtered to within-corpus pairs only. Output is ready for <code>igraph</code> or <code>tidygraph</code>.</li>
+<ul><li>Added <code>get_records(endpoint = "pubtator")</code> for PubTator3 output as a list of <code>entities</code> and <code>relations</code> tables. The older endpoint spelling <code>"pubtations"</code> is accepted as an alias.</li>
+<li>Added <code><a href="../reference/pubtator_context.html">pubtator_context()</a></code> to add sentence IDs, sentence-relative entity spans, relation entity labels, relation sentence anchors, and a sentence lookup table to PubTator output.</li>
+<li>Updated <code><a href="../reference/pubtator_cooccurrence.html">pubtator_cooccurrence()</a></code> to count entity co-occurrence directly from a <code><a href="../reference/pubtator_context.html">pubtator_context()</a></code> result or contextualized entity table. It is now a count-only helper over sentence windows; sentence evidence text is handled by joining to <code>ctx$sentences</code> when needed.</li>
+<li>Added <code><a href="../reference/pubtator_network.html">pubtator_network()</a></code> to convert PubTator relations into graph-ready <code>nodes</code> and <code>edges</code> tables plus a lean <code>evidence</code> table that maps edges back to relation rows and same-sentence support.</li>
+<li>Added <code><a href="../reference/citation_snowball.html">citation_snowball()</a></code> and <code><a href="../reference/citation_network.html">citation_network()</a></code> helpers for citation expansion and within-corpus citation-network construction.</li>
+<li>Added <code><a href="../reference/mesh_keyness.html">mesh_keyness()</a></code> to score a corpus’s MeSH descriptors against PubMed-wide frequencies (log-odds or Dunning G2), identifying over- and under-represented terms for corpus characterization and search refinement.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-1-1-0">Changes<a class="anchor" aria-label="anchor" href="#changes-1-1-0"></a></h3>
 <ul><li>
-<code>get_records(endpoint = "pubtations")</code> now includes PubTator passage text and passage offsets in its raw output, allowing downstream sentence mapping to use the same text that PubTator annotated.</li>
+<code>get_records(endpoint = "icites")</code> includes citation-link list-columns where available and guards slow iCite batches with a timeout.</li>
+<li>
+<code>get_records(endpoint = "pubtations")</code> is retained as a legacy alias for <code>endpoint = "pubtator"</code>.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">
@@ -92,7 +96,7 @@
 <div class="section level3">
 <h3 id="changes-1-0-4">Changes<a class="anchor" aria-label="anchor" href="#changes-1-0-4"></a></h3>
 <ul><li>
-<code><a href="../reference/pmid_to_ftp.html">pmid_to_ftp()</a></code> updated to use the PMC Cloud Service on AWS S3 (<code>pmc-oa-opendata.s3.amazonaws.com</code>) in response to NCBI’s migration away from the legacy PMC FTP Service (transition period February–August 2026; FTP decommissioned August 2026). The function interface is unchanged.</li>
+<code><a href="../reference/pmid_to_ftp.html">pmid_to_ftp()</a></code> updated to use the PMC Cloud Service on AWS S3 (<code>pmc-oa-opendata.s3.amazonaws.com</code>) in response to NCBI’s migration away from the legacy PMC FTP Service (transition period February-August 2026; FTP decommissioned August 2026). The function interface is unchanged.</li>
 </ul><hr></div>
 </div>
     <div class="section level2">

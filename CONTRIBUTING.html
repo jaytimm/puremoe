@@ -41,7 +41,7 @@
       <a href="articles/mesh-search.html">MeSH Tables</a>
     </li>
     <li>
-      <a href="articles/pubtator-sentences.html">PubTator Sentence Mapping</a>
+      <a href="articles/pubtator-context.html">PubTator Context and Relation Networks</a>
     </li>
   </ul></li>
 <li>
@@ -79,7 +79,7 @@
 </div>
 <div class="section level2">
 <h2 id="asking-questions">Asking questions<a class="anchor" aria-label="anchor" href="#asking-questions"></a></h2>
-<p>For usage questions that aren’t bugs, open an issue with the question and the code you’ve tried. The vignettes (<code>getting-started</code>, <code>mesh-search</code>, <code>pubtator-sentences</code>, <code>translational-footprint</code>) cover the main workflows and are a good first stop.</p>
+<p>For usage questions that aren’t bugs, open an issue with the question and the code you’ve tried. The vignettes (<code>getting-started</code>, <code>mesh-search</code>, <code>citation-snowball</code>, <code>pubtator-context</code>) cover the main workflows and are a good first stop.</p>
 </div>
 <div class="section level2">
 <h2 id="development-setup">Development setup<a class="anchor" aria-label="anchor" href="#development-setup"></a></h2>
@@ -107,16 +107,12 @@
 <ul><li>
 <strong>Data structures.</strong> Functions return <code>data.table</code> objects; new code should use <code>data.table</code> rather than introducing a <code>dplyr</code>/tidyverse dependency in <code>R/</code> (<code>dplyr</code> is used only in vignettes).</li>
 <li>
-<strong>Naming.</strong> Retrieval functions that call an external service are verb-first (<code><a href="reference/search_pubmed.html">search_pubmed()</a></code>, <code><a href="reference/get_records.html">get_records()</a></code>, <code>pmid_to_*()</code>); local analysis functions that transform already-retrieved tables are source-first (<code><a href="reference/citation_snowball.html">citation_snowball()</a></code>, <code><a href="reference/citation_network.html">citation_network()</a></code>, <code><a href="reference/pubtator_sentences.html">pubtator_sentences()</a></code>, <code><a href="reference/pubtator_cooccurrence.html">pubtator_cooccurrence()</a></code>). Please keep new functions consistent with this split.</li>
+<strong>Naming.</strong> Retrieval functions that call an external service are verb-first (<code><a href="reference/search_pubmed.html">search_pubmed()</a></code>, <code><a href="reference/get_records.html">get_records()</a></code>, <code>pmid_to_*()</code>); local analysis functions that transform already-retrieved tables are source-first (<code><a href="reference/citation_snowball.html">citation_snowball()</a></code>, <code><a href="reference/citation_network.html">citation_network()</a></code>, <code><a href="reference/pubtator_context.html">pubtator_context()</a></code>, <code><a href="reference/pubtator_cooccurrence.html">pubtator_cooccurrence()</a></code>). Please keep new functions consistent with this split.</li>
 <li>
 <strong>Documentation.</strong> Document exported functions with roxygen2 and regenerate <code>man/</code> rather than editing <code>.Rd</code> files by hand.</li>
 <li>
 <strong>Tests.</strong> Prefer testing pure transforms on small synthetic inputs (no network). Guard any test that hits a live service with <code>skip_on_cran()</code> and <code>skip_if_offline()</code>.</li>
 </ul></div>
-<div class="section level2">
-<h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a></h2>
-<p>By participating in this project you agree to abide by the <a href="CODE_OF_CONDUCT.html">Code of Conduct</a>.</p>
-</div>
 </div>
 
   </div>
