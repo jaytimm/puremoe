@@ -71,7 +71,7 @@
 <p><em>in development</em></p>
 <div class="section level3">
 <h3 id="new-features-1-1-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-1-0"></a></h3>
-<ul><li>Added <code>get_records(endpoint = "pubtator")</code> for PubTator3 output as a list of <code>entities</code> and <code>relations</code> tables. The older endpoint spelling <code>"pubtations"</code> is accepted as an alias.</li>
+<ul><li>Added <code>get_records(endpoint = "pubtator")</code> for PubTator3 output as a list of <code>entities</code> and <code>relations</code> tables. <code>"pubtations"</code> is accepted as a legacy alias.</li>
 <li>Added <code><a href="../reference/pubtator_context.html">pubtator_context()</a></code> to add sentence IDs, sentence-relative entity spans, relation entity labels, relation sentence anchors, and a sentence lookup table to PubTator output.</li>
 <li>Updated <code><a href="../reference/pubtator_cooccurrence.html">pubtator_cooccurrence()</a></code> to count entity co-occurrence directly from a <code><a href="../reference/pubtator_context.html">pubtator_context()</a></code> result or contextualized entity table. It is now a count-only helper over sentence windows; sentence evidence text is handled by joining to <code>ctx$sentences</code> when needed.</li>
 <li>Added <code><a href="../reference/pubtator_network.html">pubtator_network()</a></code> to convert PubTator relations into graph-ready <code>nodes</code> and <code>edges</code> tables plus a lean <code>evidence</code> table that maps edges back to relation rows and same-sentence support.</li>
