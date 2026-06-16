@@ -13,15 +13,12 @@
   a `pubtator_context()` result or contextualized entity table. It is now a
   count-only helper over sentence windows; sentence evidence text is handled by
   joining to `ctx$sentences` when needed.
-- Added `pubtator_network()` to convert PubTator co-occurrences or relations
-  into `nodes` + `edges` tables for graph workflows.
+- Added `pubtator_network()` to convert PubTator relations into graph-ready `nodes` and `edges` tables plus a lean `evidence` table that maps edges back to relation rows and same-sentence support.
 - Added `citation_snowball()` and `citation_network()` helpers for citation
   expansion and within-corpus citation-network construction.
 - Added `mesh_keyness()` to score a corpus's MeSH descriptors against
   PubMed-wide frequencies (log-odds or Dunning G2), identifying over- and
   under-represented terms for corpus characterization and search refinement.
-- Added `relation_evidence()` to return the sentence-level evidence behind
-  PubTator3 relations, optionally ranked by iCite citation count.
 
 ## Changes
 - `get_records(endpoint = "icites")` includes citation-link list-columns where

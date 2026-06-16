@@ -22,7 +22,7 @@ upstream API response — those are useful to flag explicitly.
 
 For usage questions that aren't bugs, open an issue with the question and the
 code you've tried. The vignettes (`getting-started`, `mesh-search`,
-`citation-snowball`, `pubtator-sentences`) cover the main workflows and are a
+`citation-snowball`, `pubtator-context`) cover the main workflows and are a
 good first stop.
 
 ## Development setup

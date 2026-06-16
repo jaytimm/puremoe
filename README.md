@@ -3,7 +3,7 @@
 [![CRAN version](https://www.r-pkg.org/badges/version/puremoe)](https://cran.r-project.org/package=puremoe)
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
 
-`puremoe` provides a consistent R interface for retrieving and analyzing biomedical literature data from public NIH/NLM services. Starting from PubMed identifiers, users can assemble article records, abstracts, affiliations, citation data, PubTator3 annotations and relations, open-access full text, and MeSH resources. The returned data frames feed a small local analysis layer for tasks such as citation expansion, network construction, MeSH keyness, entity co-occurrence, and sentence-level relation evidence.
+`puremoe` unifies access to PubMed and the NLM/NIH data stack behind one consistent, pipe-friendly interface: search PubMed, then pull abstracts, affiliations, citation metrics, PubTator entity and relation annotations, open-access full text, or MeSH resources. The returned data frames feed a small local analysis layer: citation snowballing, citation networks, PubTator sentence context, entity co-occurrence, relation networks with edge evidence, and MeSH keyness. PMIDs remain the common currency from search through analysis.
 
 ---
 
@@ -50,7 +50,6 @@ Functions that transform already-retrieved tables -- no additional API calls.
 - **`pubtator_context(pubtator)`** -- add sentence IDs, sentence-relative entity spans, relation entity labels, relation sentence anchors, and a sentence lookup table to PubTator output.
 - **`pubtator_cooccurrence(ctx, window, by)`** -- count entity pairs co-occurring within or across sentences in a `pubtator_context()` result.
 - **`pubtator_network(ctx)`** -- convert PubTator relations into `nodes`, `edges`, and lean `evidence` tables for graph workflows and edge inspection.
-- **`relation_evidence(ctx, relation_type, entity, icites)`** -- return the sentence-level evidence behind PubTator3 relations (the sentence that asserts each relation), optionally ranked by iCite citation count.
 - **`mesh_keyness(records, measure)`** -- score a corpus's MeSH descriptors against PubMed-wide frequencies (log-odds or Dunning G2) to surface over- and under-represented terms.
 
 ### ID conversion
@@ -75,7 +74,7 @@ Functions that transform already-retrieved tables -- no additional API calls.
 - [Getting started](https://jaytimm.github.io/puremoe/articles/getting-started.html) -- `search_pubmed()` + all `get_records()` endpoints end-to-end
 - [MeSH tables](https://jaytimm.github.io/puremoe/articles/mesh-search.html) -- thesaurus lookup, tree navigation, and PubMed-wide descriptor frequencies
 - [Citation snowballing](https://jaytimm.github.io/puremoe/articles/citation-snowball.html) -- expand a seed corpus along citation links, audit why each paper was admitted, and quantify the expansion space against PubMed-wide MeSH keyness
-- [PubTator sentences](https://jaytimm.github.io/puremoe/articles/pubtator-sentences.html) -- map entity annotations to their sentences and count entity co-occurrence
+- [PubTator context and relation networks](https://jaytimm.github.io/puremoe/articles/pubtator-context.html) -- add sentence context to PubTator annotations, count entity co-occurrence, and inspect relation-network evidence
 
 ---
 

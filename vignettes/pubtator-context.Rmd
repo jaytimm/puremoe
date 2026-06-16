@@ -1,8 +1,8 @@
 ---
-title: "PubTator Context, Co-occurrence, and Networks"
+title: "PubTator Context and Relation Networks"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{PubTator Context, Co-occurrence, and Networks}
+  %\VignetteIndexEntry{PubTator Context and Relation Networks}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-`puremoe` retrieves PubTator3 entity mentions and relation pairs with one call, then reshapes them locally into sentence context, co-occurrence counts, entity networks, and the sentences behind extracted relations. Everything after the initial fetch is a local transform on the retrieved tables and makes no further API calls.
+`puremoe` retrieves PubTator3 entity mentions and relation pairs with one call, then reshapes them locally into sentence context, entity co-occurrence counts, relation networks, and edge-level evidence. Everything after the initial fetch is a local transform on the retrieved tables and makes no further API calls.
 
 We use a biomedical corpus with rich entity and relation annotation throughout.
 
@@ -67,29 +67,6 @@ rel_net
 `puremoe` takes on no graphing dependency itself, but the graph tables pass straight to a graph package such as igraph:
 
 ```{r network-igraph, eval=FALSE}
-igraph::graph_from_data_frame(rel_net, vertices = rel_net)
+igraph::graph_from_data_frame(rel_net$edges, vertices = rel_net$nodes)
 ```
 
-## Relation evidence
-
-`relation_evidence()` aggregates PubTator3 relations into a per-relation summary: one row per unique relationship, reporting how many documents (`n_pmids`) and sentences (`n_sentences`) assert it, with the supporting sentences kept in a `sentences` list-column for reading. The available relation types depend on the corpus, so inspect them first.
-
-```{r relation-types, eval=FALSE}
-sort(table(ctx$relations$relation_type), decreasing = TRUE)
-```
-
-Supplying an `icites` table adds a `citation_support` column (citation counts summed over the distinct supporting papers) and ranks the relations by it, so the best-attested assertions surface first.
-
-```{r relation-evidence, eval=FALSE}
-icites <- get_records(head(pmids, 25L), endpoint = "icites", cores = 1)
-
-ev <- relation_evidence(ctx, 
-                        relation_type = "positive_correlation", 
-                        icites = icites)
-ev
-
-# read the sentences behind the top-ranked relation
-ev$sentences[[1]]
-```
-
-This turns a flat relation table into a ranked picture of which relationships the corpus actually supports, each row traceable through `sentences` and `pmids` back to its source. Pass `relation_type = NULL` (the default) to summarize every type.
