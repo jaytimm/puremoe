@@ -116,7 +116,7 @@ endpoint_info <- function(endpoint = NULL, format = c("list", "json")) {
         sleep = "delay between requests, in seconds"
       ),
       rate_limit = "Moderate",
-      notes = "Provides machine annotations and PubTator relation pairs over title and abstract text. Use pubtator_context() to add sentence IDs, sentence-relative entity spans, sentence lookup rows, and compact relation sentence anchors. The older endpoint spelling 'pubtations' is accepted as an alias."
+      notes = "Provides machine annotations and PubTator relation pairs over title and abstract text. Use pubtator_context() to add sentence IDs, sentence-relative entity spans, sentence lookup rows, and compact relation sentence anchors. 'pubtations' is accepted as a legacy alias."
     ),
     
     pmc_fulltext = list(

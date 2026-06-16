@@ -4,8 +4,7 @@
 
 ## New Features
 - Added `get_records(endpoint = "pubtator")` for PubTator3 output as a list of
-  `entities` and `relations` tables. The older endpoint spelling
-  `"pubtations"` is accepted as an alias.
+  `entities` and `relations` tables. `"pubtations"` is accepted as a legacy alias.
 - Added `pubtator_context()` to add sentence IDs, sentence-relative entity
   spans, relation entity labels, relation sentence anchors, and a sentence
   lookup table to PubTator output.
