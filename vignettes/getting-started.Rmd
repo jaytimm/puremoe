@@ -32,61 +32,79 @@ pmids <- puremoe::search_pubmed('("political ideology"[TiAb])')
 length(pmids)
 ```
 
-```{r subset}
-pmids_sub <- head(pmids, 50L)
-```
-
 ## Abstracts
 
 ```{r abstracts}
 abstracts <- puremoe::get_records(
-  pmids_sub,
+  pmids,
   endpoint = "pubmed_abstracts",
   cores    = 1L,
   sleep    = 0.5
 )
 ```
 
+### Abstract records
+
 ```{r abstracts-table}
 abstracts |>
   select(pmid, year, journal, articletitle) |>
-  DT::datatable(rownames = FALSE)
+  head(10) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
+
+## Annotations
 
 The `annotations` column is a list of per-article data frames containing MeSH terms, chemical names, and keywords.
 
+### Annotation terms
+
 ```{r annotations}
 bind_rows(abstracts$annotations) |>
+  filter(!is.na(DescriptorName), nzchar(DescriptorName)) |>
   head(20) |>
-  DT::datatable(rownames = FALSE)
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
 ## Affiliations
 
 ```{r affiliations}
 affiliations <- puremoe::get_records(
-  head(pmids_sub, 25L),
+  pmids,
   endpoint = "pubmed_affiliations",
   cores    = 1L,
   sleep    = 0.5
 )
+```
 
+### Author affiliations
+
+```{r affiliations-display}
 affiliations |>
-  DT::datatable(rownames = FALSE)
+  head(15) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
 ## iCite metrics
 
+iCite lags PubMed indexing; the most recent PMIDs in a search may not yet have citation metrics.
+
 ```{r icites}
 icites <- puremoe::get_records(
-  pmids_sub,
+  pmids,
   endpoint = "icites",
   cores    = 1L,
   sleep    = 0.25
 )
+```
 
+### Indexed records
+
+```{r icites-display}
 icites |>
+  filter(!is.na(citation_count)) |>
+  mutate(field_citation_rate = round(field_citation_rate, 3)) |>
   select(-citation_net, -cited_by_clin) |>
+  head(10) |>
   DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
@@ -94,13 +112,19 @@ icites |>
 
 ```{r pubtator}
 pubtator <- puremoe::get_records(
-  head(pmids_sub, 30L),
+  pmids,
   endpoint = "pubtator",
   cores    = 1L
 )
+```
 
+### Entity mentions
+
+```{r pubtator-display}
 pubtator$entities |>
-  DT::datatable(rownames = FALSE)
+  select(-passage_text, -passage_offset) |>
+  head(15) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
 ## Full text
@@ -112,20 +136,28 @@ migration from the legacy PMC FTP Service to the Cloud Service; `puremoe` alread
 uses the new service.
 
 ```{r ftp}
-ftp <- puremoe::pmid_to_ftp(pmids = pmids_sub)
-ftp |> DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+ftp <- puremoe::pmid_to_ftp(pmids = head(pmids, 25L))
 ```
+
+### Open-access URLs
+
+```{r ftp-display}
+ftp |>
+  head(5L) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+### Section-level text
 
 ```{r fulltext}
 fulltext <- puremoe::get_records(
-  head(ftp$url, 2L),
+  head(ftp$url, 5L),
   endpoint = "pmc_fulltext",
   cores    = 1L
 )
 
 fulltext |>
   mutate(text = sapply(strsplit(text, "\\s+"), function(w) paste0(paste(head(w, 15), collapse = " "), "..."))) |>
-  slice(1:5) |>
   DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 

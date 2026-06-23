@@ -53,6 +53,8 @@ snowball |>
 
 Every row carries its provenance: `seed`, `cited_links` (seeds that cite it), `citing_links` (seeds it cites), and `link_count` (the ranking total and `min_links` gate). Candidates are, by construction, papers the keyword query did not return.
 
+### Ranked candidates
+
 ```{r audit}
 candidates <- snowball |>
   filter(!seed) |>
@@ -60,12 +62,14 @@ candidates <- snowball |>
 
 candidates |>
   head(25) |>
-  DT::datatable(rownames = FALSE)
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
 ## The expansion space
 
 Fetch metadata -- including MeSH -- once for the whole snowballed corpus (seeds plus candidates) and reuse it below. Joining the candidates back to their titles shows what the snowball surfaced.
+
+### Snowballed candidates with metadata
 
 ```{r corpus-meta}
 corpus_meta <- snowball$pmid |>
@@ -85,7 +89,9 @@ corpus_meta |>
 
 Raw MeSH counts are dominated by terms common everywhere (`Humans`). `mesh_keyness()` compares each descriptor's document rate in a corpus to its PubMed-wide rate from `data_mesh_frequencies`, returning log-odds or signed G2 scores. Here we use the default log-odds score and inspect the over-represented descriptors.
 
-Pass 1 -- the seed corpus alone -- should surface the obvious topic terms, a sanity check that keyness behaves.
+The seed corpus alone should surface the obvious topic terms, a sanity check that keyness behaves.
+
+### Over-represented seed descriptors
 
 ```{r keyness-seed}
 pass1 <- corpus_meta |>
@@ -96,32 +102,8 @@ pass1 |>
   filter(direction == "over") |>
   arrange(desc(z)) |>
   select(DescriptorName, corpus_count, corpus_prop, baseline_prop, log_odds, z) |>
+  mutate(across(where(is.numeric), ~ round(.x, 3))) |>
   head(15) |>
-  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
-```
-
-Pass 2 repeats it on the expanded corpus; `shift` ranks descriptors by how much snowballing changed their log-odds, so concepts barely present in the seeds rise to the top -- the expansion space, quantified.
-
-```{r keyness-shift}
-pass2 <- corpus_meta |>
-  mesh_keyness(min_count = 3L)
-
-pass1 |>
-  select(DescriptorUI, name1 = DescriptorName, keyness_seed = log_odds) |>
-  full_join(
-    pass2 |> select(DescriptorUI, name2 = DescriptorName,
-                    keyness_expanded = log_odds),
-    by = "DescriptorUI"
-  ) |>
-  mutate(
-    DescriptorName   = coalesce(name1, name2),
-    keyness_seed     = coalesce(keyness_seed, 0),
-    keyness_expanded = coalesce(keyness_expanded, 0),
-    shift            = round(keyness_expanded - keyness_seed, 2)
-  ) |>
-  arrange(desc(shift)) |>
-  select(DescriptorName, keyness_seed, keyness_expanded, shift) |>
-  head(20) |>
   DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 

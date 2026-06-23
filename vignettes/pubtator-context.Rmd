@@ -17,22 +17,42 @@ knitr::opts_chunk$set(
 
 `puremoe` retrieves PubTator3 entity mentions and relation pairs with one call, then reshapes them locally into sentence context, entity co-occurrence counts, relation networks, and edge-level evidence. Everything after the initial fetch is a local transform on the retrieved tables and makes no further API calls.
 
+```{r libs}
+library(puremoe)
+library(dplyr)
+library(DT)
+```
+
+## Retrieve
+
 We use a biomedical corpus with rich entity and relation annotation throughout.
 
 ```{r pubtator-fetch}
-library(puremoe)
-library(data.table)
-
 pmids <- search_pubmed('"doxorubicin"[TiAb] AND "cardiotoxicity"[TiAb]')
 
-pt <- get_records(head(pmids, 25L), endpoint = "pubtator", cores = 1)
-
-names(pt)
-pt$entities
-pt$relations
+pt <- get_records(head(pmids, 25L), endpoint = "pubtator", cores = 1L)
 ```
 
+`get_records(endpoint = "pubtator")` returns a list with `entities` (one row per mention) and `relations` (one row per typed relation pair).
 
+### Entity mentions
+
+```{r pubtator-entities}
+pt$entities |>
+  select(pmid, mention_index, type, text, tiab) |>
+  head(12) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+### Relation tuples
+
+```{r pubtator-relations}
+pt$relations |>
+  select(pmid, relation_type, ent1_type, ent2_type,
+         ent1_mention_index, ent2_mention_index) |>
+  head(10) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
 
 ## Sentence context
 
@@ -40,37 +60,108 @@ pt$relations
 
 ```{r pubtator-context}
 ctx <- pubtator_context(pt)
+```
 
-ctx$entities
-ctx$relations
-ctx$sentences
+### Entities with sentence spans
+
+```{r context-entities}
+ctx$entities |>
+  select(pmid, type, text, tiab, sentence_id, sentence_start, sentence_end) |>
+  filter(!is.na(sentence_id)) |>
+  head(12) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+### Relations with sentence anchors
+
+```{r context-relations}
+ctx$relations |>
+  select(pmid, relation_type, ent1_text, ent2_text,
+         ent1_sentence_id, ent2_sentence_id,
+         same_sentence, sentence_distance) |>
+  head(10) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+### Sentence lookup
+
+```{r context-sentences}
+ctx$sentences |>
+  mutate(sentence = if_else(
+    nchar(sentence) > 90,
+    paste0(substr(sentence, 1, 87), "..."),
+    sentence
+  )) |>
+  head(10) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
 ## Co-occurrence counts
 
-Use `pubtator_cooccurrence()` for count-only summaries over sentence windows. The function accepts either the full context object or `ctx$entities`. `window = 0` counts entities in the same sentence; larger windows reach across adjacent sentences within the same passage.
+`pubtator_cooccurrence()` counts entity pairs within a sentence window. `window = 0` counts co-mentions in the same sentence; larger windows reach across adjacent sentences within the same passage. Title and abstract sentences are never compared to each other. Set `by = "entity"` to resolve specific mentions; `by = "type"` aggregates by entity-type pair.
 
-```{r cooccurrence}
-# entity-type pairs in the same sentence
-pubtator_cooccurrence(ctx, window = 0, by = "type")
+### Co-occurrence by entity
 
-# specific entity pairs, within one sentence of each other
-pubtator_cooccurrence(ctx, window = 1, by = "entity")
+```{r cooccurrence-entity}
+pubtator_cooccurrence(ctx, window = 1, by = "entity") |>
+  select(type_x, text_x, type_y, text_y, n, n_pmids) |>
+  head(10) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
 ## Relation networks
 
-`pubtator_network()` turns contextualized PubTator relations into a directed entity network plus a lean evidence table. Nodes are specific entities keyed on their PubTator `identifier` when present, falling back to `type:text`; edges are directed PubTator relation assertions; evidence rows map each edge back to `pmid`, `relation_id`, and the shared sentence when the endpoint mentions occur in the same sentence.
+`pubtator_network()` turns contextualized PubTator relations into a directed entity network plus a lean evidence table. Nodes are specific entities keyed on PubTator `identifier` when present, falling back to `type:text`. Edges are directed relation assertions aggregated across the corpus.
 
 ```{r network-relations}
 rel_net <- pubtator_network(ctx)
-
-rel_net
 ```
+
+### Network nodes
+
+```{r network-nodes}
+rel_net$nodes |>
+  head(12) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+### Network edges
+
+```{r network-edges}
+rel_net$edges |>
+  head(12) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+### Relation evidence
+
+```{r network-evidence}
+evidence <- rel_net[["evidence"]]
+if (is.null(evidence)) {
+  evidence <- data.frame(
+    from = character(), to = character(), relation_type = character(),
+    pmid = character(), same_sentence = logical(), sentence = character()
+  )
+}
+
+as.data.frame(evidence) |>
+  dplyr::select(dplyr::any_of(c(
+    "from", "to", "relation_type", "pmid", "same_sentence", "sentence"
+  ))) |>
+  dplyr::filter(.data$same_sentence %in% TRUE, !is.na(.data$sentence)) |>
+  dplyr::mutate(sentence = dplyr::if_else(
+    nchar(.data$sentence) > 90L,
+    paste0(substr(.data$sentence, 1L, 87L), "..."),
+    .data$sentence
+  )) |>
+  dplyr::slice_head(n = 10) |>
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+```
+
+### Export to igraph
 
 `puremoe` takes on no graphing dependency itself, but the graph tables pass straight to a graph package such as igraph:
 
 ```{r network-igraph, eval=FALSE}
 igraph::graph_from_data_frame(rel_net$edges, vertices = rel_net$nodes)
 ```
-
