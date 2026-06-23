@@ -1,6 +1,6 @@
 # puremoe 1.1.0
 
-*in development*
+*2026-06-23*
 
 ## New Features
 - Added `get_records(endpoint = "pubtator")` for PubTator3 output as a list of
@@ -24,6 +24,8 @@
   available and guards slow iCite batches with a timeout.
 - `get_records(endpoint = "pubtations")` is retained as a legacy alias for
   `endpoint = "pubtator"`.
+- Updated vignettes, README, and package description for the retrieval and
+  local analysis workflow.
 
 ---
 

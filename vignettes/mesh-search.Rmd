@@ -60,7 +60,7 @@ trees |>
 `data_mesh_frequencies` is a bundled dataset giving the annotation frequency of
 each MeSH descriptor across the full PubMed corpus (39.7 M PMIDs, April 2026).
 Counts reflect the number of records indexed with each descriptor by NLM curators,
-not text frequency, making them suitable as a baseline for enrichment analyses
+not text frequency, making them suitable as a baseline for MeSH keyness analyses
 against arbitrary PubMed subsets.
 
 ### Top descriptor frequencies

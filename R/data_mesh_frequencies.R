@@ -5,7 +5,7 @@
 #' number of distinct PMIDs indexed with that term; proportions use the full
 #' PubMed corpus of 39,703,112 PMIDs as denominator. Descriptor UI and
 #' canonical name are joined from the NLM MeSH thesaurus.
-#' Intended as a baseline for MeSH term enrichment analyses against arbitrary
+#' Intended as a baseline for \code{\link{mesh_keyness}} against arbitrary
 #' PubMed subsets.
 #'
 #' @format A data.table with 30,521 rows and 4 columns:

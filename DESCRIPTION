@@ -5,15 +5,16 @@ Version: 1.1.0
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Author: Jason Timm [aut, cre]
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>
-Description: Retrieve and analyze biomedical literature from 'PubMed' and the
-    wider 'NIH'/'NLM' data stack through a single, PMID-centered interface.
-    Retrieval spans article metadata and abstracts, author affiliations,
+Description: Retrieve and analyze biomedical literature from 'PubMed' and
+    the wider 'NIH'/'NLM' data stack through a single, PMID-centered
+    interface. A PubMed search resolves to a set of PMIDs, which can be used
+    to retrieve article metadata and abstracts, author affiliations,
     'iCite' citation data and links, 'PubTator3' entity and relation
     annotations, and open-access full text from 'PMC'. A local analysis layer
-    transforms the retrieved tables without further queries, including 'MeSH'
-    descriptor keyness, citation snowballing and within-corpus citation
-    networks, sentence-anchored entity annotations and co-occurrence, and the
-    sentence-level evidence behind extracted relations.
+    operates on the retrieved tables, supporting corpus expansion through
+    citation links, citation network construction, sentence-level entity
+    co-occurrence, inspection of relation evidence, and 'MeSH' descriptor
+    keyness.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

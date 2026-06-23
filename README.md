@@ -4,7 +4,7 @@
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
 [![R-CMD-check](https://github.com/jaytimm/puremoe/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jaytimm/puremoe/actions/workflows/check-standard.yaml)
 
-`puremoe` provides a single, PMID-centered interface to PubMed and the NLM/NIH services built around it — NIH iCite, PubTator3, and PMC. A PubMed search resolves to a set of PMIDs, which one retrieval function uses to assemble data frames of records from each service, whether metadata and abstracts, citation data, entity annotations, or full text. A separate analysis layer then works over these data frames locally, with no further API calls: it expands corpora and builds citation networks from iCite links, anchors PubTator entities to their sentences to derive co-occurrence and relation networks, and scores MeSH descriptors against PubMed-wide frequencies.
+`puremoe` provides a single, PMID-centered interface to PubMed and the wider NIH/NLM data stack — NIH iCite, PubTator3, and PMC. A PubMed search resolves to a set of PMIDs, which one retrieval function uses to assemble data frames from each service: metadata and abstracts, citation data, entity annotations, or full text. A local analysis layer then operates on those tables with no further API calls: corpus expansion and citation networks from iCite links, sentence-anchored PubTator co-occurrence and relation evidence, and MeSH descriptor keyness against PubMed-wide frequencies.
 
 ---
 
@@ -62,7 +62,7 @@ Functions that transform already-retrieved tables -- no additional API calls.
 
 - **`data_mesh_thesaurus()`** -- MeSH descriptor thesaurus + supplementary concept records; one row per term/synonym.
 - **`data_mesh_trees()`** -- MeSH hierarchical tree structure; tree numbers encode the classification path.
-- **`data_mesh_frequencies`** -- bundled PubMed-wide descriptor frequencies for enrichment-style baselines.
+- **`data_mesh_frequencies`** -- bundled PubMed-wide descriptor frequencies for MeSH keyness baselines.
 
 ### Utilities
 

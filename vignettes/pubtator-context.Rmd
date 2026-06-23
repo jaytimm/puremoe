@@ -149,13 +149,11 @@ as.data.frame(evidence) |>
     "from", "to", "relation_type", "pmid", "same_sentence", "sentence"
   ))) |>
   dplyr::filter(.data$same_sentence %in% TRUE, !is.na(.data$sentence)) |>
-  dplyr::mutate(sentence = dplyr::if_else(
-    nchar(.data$sentence) > 90L,
-    paste0(substr(.data$sentence, 1L, 87L), "..."),
-    .data$sentence
-  )) |>
-  dplyr::slice_head(n = 10) |>
-  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
+  dplyr::slice_head(n = 15) |>
+  DT::datatable(
+    rownames = FALSE,
+    options = list(scrollX = TRUE, pageLength = 5)
+  )
 ```
 
 ### Export to igraph
