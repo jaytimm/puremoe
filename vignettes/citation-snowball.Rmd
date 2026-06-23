@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 A keyword search only finds papers that use your keywords; it misses related work phrased in different terms. *Citation snowballing* follows citation links outward from a set of seed papers to surface those neighbors regardless of vocabulary -- a standard supplementary search step in evidence synthesis.
 
-This vignette expands a seed corpus with `citation_snowball()`, inspects why each paper was admitted, and characterizes the *expansion space* (the citation-adjacent literature the query never returned) with MeSH keyness. It proposes candidates to screen; it does not replace manual review. Note that iCite links cover PubMed-indexed articles only, so snowballing inherits PubMed's coverage.
+This vignette expands a seed corpus with `citation_snowball()`, inspects why each paper was admitted, and characterizes the *expansion space* (the citation-adjacent literature the query never returned) with MeSH keyness. Both `citation_snowball()` and `mesh_keyness()` are part of `puremoe`'s local analysis layer: transforms over tables `get_records()` already returned, with no further API calls. It proposes candidates to screen; it does not replace manual review. Note that iCite links cover PubMed-indexed articles only, so snowballing inherits PubMed's coverage.
 
 ```{r libs}
 library(puremoe)
@@ -83,57 +83,34 @@ corpus_meta |>
 
 ### Keyness: how the corpus profile shifts
 
-Raw MeSH counts are dominated by terms common everywhere (`Humans`). *Keyness* compares each descriptor's rate in a corpus to its PubMed-wide rate from `data_mesh_frequencies` (log2 ratio; 3 means 8x over-represented), counted per document to match the baseline.
-
-```{r keyness-helpers}
-baseline <- puremoe::data_mesh_frequencies
-i <- which.max(baseline$n_pmids)
-total_pubmed <- round(baseline$n_pmids[i] / baseline$prop_total[i])
-
-# document frequency of each MeSH descriptor within a set of PMIDs
-mesh_df <- function(meta, ids) {
-  ann <- data.table::rbindlist(meta[pmid %in% ids]$annotations, fill = TRUE)
-  if (!"type" %in% names(ann) || nrow(ann) == 0L) {
-    return(data.table::data.table(DescriptorUI = character(),
-                                  DescriptorName = character(), docs = integer()))
-  }
-  ann[type == "MeSH" & !is.na(DescriptorUI)] |>
-    distinct(pmid, DescriptorUI, DescriptorName) |>
-    count(DescriptorUI, DescriptorName, name = "docs")
-}
-
-# log-ratio keyness vs the PubMed baseline, with a document-frequency floor
-keyness <- function(meta, ids, min_docs = 3L) {
-  n_docs <- length(unique(ids))
-  mesh_df(meta, ids) |>
-    filter(docs >= min_docs) |>
-    inner_join(select(baseline, DescriptorUI, n_pmids), by = "DescriptorUI") |>
-    mutate(log_ratio = round(log2((docs / n_docs) / (n_pmids / total_pubmed)), 2))
-}
-```
+Raw MeSH counts are dominated by terms common everywhere (`Humans`). `mesh_keyness()` compares each descriptor's document rate in a corpus to its PubMed-wide rate from `data_mesh_frequencies`, returning log-odds or signed G2 scores. Here we use the default log-odds score and inspect the over-represented descriptors.
 
 Pass 1 -- the seed corpus alone -- should surface the obvious topic terms, a sanity check that keyness behaves.
 
 ```{r keyness-seed}
-pass1 <- keyness(corpus_meta, pmids)
+pass1 <- corpus_meta |>
+  filter(pmid %in% pmids) |>
+  mesh_keyness(min_count = 3L)
 
 pass1 |>
-  arrange(desc(log_ratio)) |>
-  select(DescriptorName, docs, log_ratio) |>
+  filter(direction == "over") |>
+  arrange(desc(z)) |>
+  select(DescriptorName, corpus_count, corpus_prop, baseline_prop, log_odds, z) |>
   head(15) |>
-  DT::datatable(rownames = FALSE)
+  DT::datatable(rownames = FALSE, options = list(scrollX = TRUE))
 ```
 
-Pass 2 repeats it on the expanded corpus; the `shift` ranks descriptors by how much snowballing amplified them, so concepts barely present in the seeds rise to the top -- the expansion space, quantified.
+Pass 2 repeats it on the expanded corpus; `shift` ranks descriptors by how much snowballing changed their log-odds, so concepts barely present in the seeds rise to the top -- the expansion space, quantified.
 
 ```{r keyness-shift}
-pass2 <- keyness(corpus_meta, snowball$pmid)
+pass2 <- corpus_meta |>
+  mesh_keyness(min_count = 3L)
 
 pass1 |>
-  select(DescriptorUI, name1 = DescriptorName, keyness_seed = log_ratio) |>
+  select(DescriptorUI, name1 = DescriptorName, keyness_seed = log_odds) |>
   full_join(
     pass2 |> select(DescriptorUI, name2 = DescriptorName,
-                    keyness_expanded = log_ratio),
+                    keyness_expanded = log_odds),
     by = "DescriptorUI"
   ) |>
   mutate(
@@ -149,27 +126,6 @@ pass1 |>
 ```
 
 Recent papers may not be MeSH-indexed yet and the baseline is a snapshot; keyness describes the corpus, it does not judge relevance.
-
-## Tuning precision and recall
-
-`min_links` trades recall for precision -- higher thresholds keep only papers tightly woven into the corpus. Sweeping it shows the trade-off directly.
-
-```{r min-links-sweep}
-data.frame(
-  min_links = 1:5,
-  n_candidates = sapply(1:5, function(k) {
-    sum(!citation_snowball(seed_icites, direction = "both", min_links = k)$seed)
-  })
-)
-```
-
-`max_nodes` is a hard ceiling on corpus size: candidates are ranked by `link_count` and truncated to fit, bounding the screening workload.
-
-```{r max-nodes}
-seed_icites |>
-  citation_snowball(direction = "both", min_links = 1, max_nodes = 50) |>
-  nrow()
-```
 
 ## Choosing a direction
 

@@ -9,6 +9,7 @@ LICENSE.md
 ^docs$
 ^examples$
 ^vignettes/articles$
+^vignettes/output/eval$
 ^data-raw$
 ^\.git$
 ^\.Rhistory$

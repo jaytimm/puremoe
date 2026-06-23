@@ -20,7 +20,7 @@ LazyData: true
 LazyDataCompression: xz
 Depends: 
     R (>= 3.5)
-Imports: 
+Imports:
     rentrez,
     textshape,
     xml2,
@@ -29,7 +29,10 @@ Imports:
     pbapply,
     jsonlite,
     rappdirs,
-    textpress
+    textpress,
+    parallel,
+    tools,
+    utils
 Suggests:
     knitr,
     rmarkdown,

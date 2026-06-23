@@ -3,7 +3,7 @@
 [![CRAN version](https://www.r-pkg.org/badges/version/puremoe)](https://cran.r-project.org/package=puremoe)
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
 
-`puremoe` unifies access to PubMed and the NLM/NIH data stack behind one consistent, pipe-friendly interface: search PubMed, then pull abstracts, affiliations, citation metrics, PubTator entity and relation annotations, open-access full text, or MeSH resources. The returned data frames feed a small local analysis layer: citation snowballing, citation networks, PubTator sentence context, entity co-occurrence, relation networks with edge evidence, and MeSH keyness. PMIDs remain the common currency from search through analysis.
+`puremoe` provides a single, PMID-centered interface to PubMed and the NLM/NIH services built around it — NIH iCite, PubTator3, and PMC. A PubMed search resolves to a set of PMIDs, which one retrieval function uses to assemble data frames of records from each service, whether metadata and abstracts, citation data, entity annotations, or full text. A separate analysis layer then works over these data frames locally, with no further API calls: it expands corpora and builds citation networks from iCite links, anchors PubTator entities to their sentences to derive co-occurrence and relation networks, and scores MeSH descriptors against PubMed-wide frequencies.
 
 ---
 

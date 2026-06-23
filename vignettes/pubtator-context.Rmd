@@ -8,14 +8,18 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
 ```
 
 `puremoe` retrieves PubTator3 entity mentions and relation pairs with one call, then reshapes them locally into sentence context, entity co-occurrence counts, relation networks, and edge-level evidence. Everything after the initial fetch is a local transform on the retrieved tables and makes no further API calls.
 
 We use a biomedical corpus with rich entity and relation annotation throughout.
 
-```{r pubtator-fetch, eval=FALSE}
+```{r pubtator-fetch}
 library(puremoe)
 library(data.table)
 
@@ -34,7 +38,7 @@ pt$relations
 
 `pubtator_context()` preserves PubTator entity spans, adds sentence IDs and sentence-relative spans to entities, adds readable entity labels and sentence anchors to relations, and returns a sentence lookup table.
 
-```{r pubtator-context, eval=FALSE}
+```{r pubtator-context}
 ctx <- pubtator_context(pt)
 
 ctx$entities
@@ -46,7 +50,7 @@ ctx$sentences
 
 Use `pubtator_cooccurrence()` for count-only summaries over sentence windows. The function accepts either the full context object or `ctx$entities`. `window = 0` counts entities in the same sentence; larger windows reach across adjacent sentences within the same passage.
 
-```{r cooccurrence, eval=FALSE}
+```{r cooccurrence}
 # entity-type pairs in the same sentence
 pubtator_cooccurrence(ctx, window = 0, by = "type")
 
@@ -58,7 +62,7 @@ pubtator_cooccurrence(ctx, window = 1, by = "entity")
 
 `pubtator_network()` turns contextualized PubTator relations into a directed entity network plus a lean evidence table. Nodes are specific entities keyed on their PubTator `identifier` when present, falling back to `type:text`; edges are directed PubTator relation assertions; evidence rows map each edge back to `pmid`, `relation_id`, and the shared sentence when the endpoint mentions occur in the same sentence.
 
-```{r network-relations, eval=FALSE}
+```{r network-relations}
 rel_net <- pubtator_network(ctx)
 
 rel_net

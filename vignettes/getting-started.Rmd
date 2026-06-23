@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`puremoe` provides a unified interface to PubMed and NLM data. Search with `search_pubmed()`, then retrieve data from any of five endpoints with `get_records()`.
+`puremoe` provides a unified interface to PubMed and the wider NIH/NLM data stack, organized as two layers: **retrieve** records from public services with `search_pubmed()` and `get_records()`, then **analyze** the returned tables locally with no further API calls. PMIDs are the common key throughout. This vignette covers the retrieval layer end-to-end; the analysis layer is covered in the topic vignettes linked at the close.
 
 ```{r libs}
 library(puremoe)
@@ -140,3 +140,15 @@ puremoe::endpoint_info()
 ```{r endpoint-detail}
 puremoe::endpoint_info("icites")
 ```
+
+## Next steps
+
+The tables retrieved here feed `puremoe`'s local analysis layer -- transforms over
+the same data frames, with no further API calls:
+
+- **MeSH tables** -- look up descriptors, navigate the hierarchy, and use the
+  PubMed-wide frequency baseline.
+- **Citation snowballing** -- expand a seed corpus along `icites` citation links
+  and characterize the result with MeSH keyness.
+- **PubTator context and relation networks** -- anchor entity mentions to
+  sentences, count co-occurrence, and build relation networks with evidence.

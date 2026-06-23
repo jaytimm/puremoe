@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`puremoe` ships three MeSH reference tables: a thesaurus of descriptors and entry terms, a tree of hierarchical classifications, and a bundled table of MeSH annotation counts per descriptor across PubMed.
+`puremoe` ships three MeSH reference tables: a thesaurus of descriptors and entry terms, a tree of hierarchical classifications, and a bundled table of MeSH annotation counts per descriptor across PubMed. These sit in the package's local analysis layer -- they need no API calls and underpin transforms such as `mesh_keyness()`, which scores a corpus's descriptors against the PubMed-wide frequency baseline shown below.
 
 ```{r libs}
 library(puremoe)

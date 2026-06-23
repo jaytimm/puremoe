@@ -31,7 +31,9 @@ Performs a 'PubMed' search based on a query, optionally filtered by publication 
 Returns a unique set of 'PubMed' IDs matching the query.
 }
 \examples{
-ethnob1 <- search_pubmed("ethnobotany", 2010, 2012)
-
-
+\donttest{
+if (interactive()) {
+  ethnob1 <- search_pubmed("ethnobotany")
+}
+}
 }

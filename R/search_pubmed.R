@@ -12,10 +12,12 @@
 #' @importFrom rentrez entrez_search
 #' @export
 #' @examples
-#' ethnob1 <- search_pubmed("ethnobotany", 2010, 2012)
-#' 
-#' 
-search_pubmed <- function(x, 
+#' \donttest{
+#' if (interactive()) {
+#'   ethnob1 <- search_pubmed("ethnobotany")
+#' }
+#' }
+search_pubmed <- function(x,
                           start_year = NULL, 
                           end_year = NULL, 
                           retmax = 9999, 

@@ -44,7 +44,10 @@ For the 'pmc_fulltext' endpoint, provide full URLs to PMC Cloud Service XML file
 Use \code{\link{pmid_to_ftp}} to convert PMIDs to PMC IDs and full-text URLs first.
 }
 \examples{
-pmids <- c("38136652")
-results <- get_records(pmids, endpoint = "pubmed_abstracts", cores = 1)
-
+\donttest{
+if (interactive()) {
+  pmids <- c("38136652")
+  results <- get_records(pmids, endpoint = "pubmed_abstracts", cores = 1)
+}
+}
 }
