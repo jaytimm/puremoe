@@ -104,7 +104,10 @@
 <p><code>puremoe</code> ships three MeSH reference tables: a thesaurus
 of descriptors and entry terms, a tree of hierarchical classifications,
 and a bundled table of MeSH annotation counts per descriptor across
-PubMed.</p>
+PubMed. These sit in the package’s local analysis layer – they need no
+API calls and underpin transforms such as <code><a href="../reference/mesh_keyness.html">mesh_keyness()</a></code>,
+which scores a corpus’s descriptors against the PubMed-wide frequency
+baseline shown below.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/puremoe" class="external-link">puremoe</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>

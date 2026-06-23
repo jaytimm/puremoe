@@ -110,10 +110,13 @@ search step in evidence synthesis.</p>
 <p>This vignette expands a seed corpus with
 <code><a href="../reference/citation_snowball.html">citation_snowball()</a></code>, inspects why each paper was admitted,
 and characterizes the <em>expansion space</em> (the citation-adjacent
-literature the query never returned) with MeSH keyness. It proposes
-candidates to screen; it does not replace manual review. Note that iCite
-links cover PubMed-indexed articles only, so snowballing inherits
-PubMed’s coverage.</p>
+literature the query never returned) with MeSH keyness. Both
+<code><a href="../reference/citation_snowball.html">citation_snowball()</a></code> and <code><a href="../reference/mesh_keyness.html">mesh_keyness()</a></code> are
+part of <code>puremoe</code>’s local analysis layer: transforms over
+tables <code><a href="../reference/get_records.html">get_records()</a></code> already returned, with no further API
+calls. It proposes candidates to screen; it does not replace manual
+review. Note that iCite links cover PubMed-indexed articles only, so
+snowballing inherits PubMed’s coverage.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jaytimm/puremoe" class="external-link">puremoe</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -129,7 +132,7 @@ papers.</p>
 <code class="sourceCode R"><span><span class="va">pmids</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/search_pubmed.html">search_pubmed</a></span><span class="op">(</span><span class="st">'"political ideology"[TiAb]'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">pmids</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; [1] 957</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; [1] 963</span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">seed_icites</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_records.html">get_records</a></span><span class="op">(</span><span class="va">pmids</span>, endpoint <span class="op">=</span> <span class="st">"icites"</span>, cores <span class="op">=</span> <span class="fl">1L</span>, sleep <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -194,58 +197,38 @@ candidates back to their titles shows what the snowball surfaced.</p>
 <h3 id="keyness-how-the-corpus-profile-shifts">Keyness: how the corpus profile shifts<a class="anchor" aria-label="anchor" href="#keyness-how-the-corpus-profile-shifts"></a>
 </h3>
 <p>Raw MeSH counts are dominated by terms common everywhere
-(<code>Humans</code>). <em>Keyness</em> compares each descriptor’s rate
-in a corpus to its PubMed-wide rate from
-<code>data_mesh_frequencies</code> (log2 ratio; 3 means 8x
-over-represented), counted per document to match the baseline.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">baseline</span> <span class="op">&lt;-</span> <span class="fu">puremoe</span><span class="fu">::</span><span class="va"><a href="../reference/data_mesh_frequencies.html">data_mesh_frequencies</a></span></span>
-<span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">baseline</span><span class="op">$</span><span class="va">n_pmids</span><span class="op">)</span></span>
-<span><span class="va">total_pubmed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">baseline</span><span class="op">$</span><span class="va">n_pmids</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">/</span> <span class="va">baseline</span><span class="op">$</span><span class="va">prop_total</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># document frequency of each MeSH descriptor within a set of PMIDs</span></span>
-<span><span class="va">mesh_df</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">meta</span>, <span class="va">ids</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">ann</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="va">meta</span><span class="op">[</span><span class="va">pmid</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">ids</span><span class="op">]</span><span class="op">$</span><span class="va">annotations</span>, fill <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="st">"type"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ann</span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ann</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0L</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span>DescriptorUI <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>                                  DescriptorName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>, docs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">}</span></span>
-<span>  <span class="va">ann</span><span class="op">[</span><span class="va">type</span> <span class="op">==</span> <span class="st">"MeSH"</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">DescriptorUI</span><span class="op">)</span><span class="op">]</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">pmid</span>, <span class="va">DescriptorUI</span>, <span class="va">DescriptorName</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">DescriptorUI</span>, <span class="va">DescriptorName</span>, name <span class="op">=</span> <span class="st">"docs"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># log-ratio keyness vs the PubMed baseline, with a document-frequency floor</span></span>
-<span><span class="va">keyness</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">meta</span>, <span class="va">ids</span>, <span class="va">min_docs</span> <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">n_docs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ids</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu">mesh_df</span><span class="op">(</span><span class="va">meta</span>, <span class="va">ids</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">docs</span> <span class="op">&gt;=</span> <span class="va">min_docs</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">baseline</span>, <span class="va">DescriptorUI</span>, <span class="va">n_pmids</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"DescriptorUI"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>log_ratio <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="op">(</span><span class="va">docs</span> <span class="op">/</span> <span class="va">n_docs</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">n_pmids</span> <span class="op">/</span> <span class="va">total_pubmed</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+(<code>Humans</code>). <code><a href="../reference/mesh_keyness.html">mesh_keyness()</a></code> compares each
+descriptor’s document rate in a corpus to its PubMed-wide rate from
+<code>data_mesh_frequencies</code>, returning log-odds or signed G2
+scores. Here we use the default log-odds score and inspect the
+over-represented descriptors.</p>
 <p>Pass 1 – the seed corpus alone – should surface the obvious topic
 terms, a sanity check that keyness behaves.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pass1</span> <span class="op">&lt;-</span> <span class="fu">keyness</span><span class="op">(</span><span class="va">corpus_meta</span>, <span class="va">pmids</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pass1</span> <span class="op">&lt;-</span> <span class="va">corpus_meta</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">pmid</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">pmids</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/mesh_keyness.html">mesh_keyness</a></span><span class="op">(</span>min_count <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">pass1</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">log_ratio</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">DescriptorName</span>, <span class="va">docs</span>, <span class="va">log_ratio</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">direction</span> <span class="op">==</span> <span class="st">"over"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">DescriptorName</span>, <span class="va">corpus_count</span>, <span class="va">corpus_prop</span>, <span class="va">baseline_prop</span>, <span class="va">log_odds</span>, <span class="va">z</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">15</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">FALSE</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>scrollX <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-36aa3d2a04d42bbc2145" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-36aa3d2a04d42bbc2145">{"x":{"filter":"none","vertical":false,"data":[["Vaccination Hesitancy","Authoritarianism","Politics","Disgust","Hate","Religion and Sex","Intuition","Homophobia","Social Cognition","Democracy","Social Dominance","National Socialism","Morals","Political Systems","Negativism"],[19,22,401,4,4,4,7,3,3,6,17,6,58,8,3],[8.76,8.470000000000001,8.24,8.109999999999999,7.99,7.61,7.43,7.39,7.08,7.06,7.01,6.99,6.86,6.78,6.75]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>DescriptorName<\/th>\n      <th>docs<\/th>\n      <th>log_ratio<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2]},{"name":"DescriptorName","targets":0},{"name":"docs","targets":1},{"name":"log_ratio","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><p>Pass 2 repeats it on the expanded corpus; the <code>shift</code>
-ranks descriptors by how much snowballing amplified them, so concepts
+<script type="application/json" data-for="htmlwidget-36aa3d2a04d42bbc2145">{"x":{"filter":"none","vertical":false,"data":[["Politics","Attitude","Morals","COVID-19","Public Opinion","Trust","United States","Authoritarianism","Vaccination Hesitancy","COVID-19 Vaccines","Personality","Pandemics","Individuality","Surveys and Questionnaires","Climate Change"],[402,128,58,126,45,39,201,22,19,40,44,63,29,118,34],[0.4227129337539432,0.1345951629863302,0.06098843322818086,0.1324921135646688,0.0473186119873817,0.04100946372239748,0.2113564668769716,0.0231335436382755,0.01997896950578339,0.04206098843322818,0.046267087276551,0.06624605678233439,0.03049421661409043,0.1240799158780231,0.03575184016824395],[0.001382169970964704,0.001439333437569536,0.0005225073737751076,0.007493173412943994,0.0005306475762534117,0.0003780122780260409,0.02647981859155668,6.501759167974561e-05,4.58504056525566e-05,0.0007325922160107016,0.00112919952525715,0.003584029723754297,0.000436788180904531,0.01597346990980656,0.000850820204721151],[6.271394374064573,4.684491126242536,4.830204364001419,3.010492818798952,4.548978470926125,4.740283997904871,2.289584927695785,5.91945619880367,6.122342420237728,4.104381115294688,3.769900564879516,2.989178665877099,4.292898438786087,2.170002100309539,3.787750018384179],[95.38145622268691,49.33907445511073,35.74203966322916,31.52387846707186,29.91053494158421,29.12968468059951,28.85468649180326,27.62356635042758,26.61346801658281,25.54089577170982,24.54157660806931,23.00675036408449,22.93279054708857,22.10122697750068,21.83004595228814]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>DescriptorName<\/th>\n      <th>corpus_count<\/th>\n      <th>corpus_prop<\/th>\n      <th>baseline_prop<\/th>\n      <th>log_odds<\/th>\n      <th>z<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5]},{"name":"DescriptorName","targets":0},{"name":"corpus_count","targets":1},{"name":"corpus_prop","targets":2},{"name":"baseline_prop","targets":3},{"name":"log_odds","targets":4},{"name":"z","targets":5}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><p>Pass 2 repeats it on the expanded corpus; <code>shift</code> ranks
+descriptors by how much snowballing changed their log-odds, so concepts
 barely present in the seeds rise to the top – the expansion space,
 quantified.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pass2</span> <span class="op">&lt;-</span> <span class="fu">keyness</span><span class="op">(</span><span class="va">corpus_meta</span>, <span class="va">snowball</span><span class="op">$</span><span class="va">pmid</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pass2</span> <span class="op">&lt;-</span> <span class="va">corpus_meta</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/mesh_keyness.html">mesh_keyness</a></span><span class="op">(</span>min_count <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">pass1</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">DescriptorUI</span>, name1 <span class="op">=</span> <span class="va">DescriptorName</span>, keyness_seed <span class="op">=</span> <span class="va">log_ratio</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">DescriptorUI</span>, name1 <span class="op">=</span> <span class="va">DescriptorName</span>, keyness_seed <span class="op">=</span> <span class="va">log_odds</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">full_join</a></span><span class="op">(</span></span>
 <span>    <span class="va">pass2</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">DescriptorUI</span>, name2 <span class="op">=</span> <span class="va">DescriptorName</span>,</span>
-<span>                    keyness_expanded <span class="op">=</span> <span class="va">log_ratio</span><span class="op">)</span>,</span>
+<span>                    keyness_expanded <span class="op">=</span> <span class="va">log_odds</span><span class="op">)</span>,</span>
 <span>    by <span class="op">=</span> <span class="st">"DescriptorUI"</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -259,37 +242,9 @@ quantified.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">DT</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html" class="external-link">datatable</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="cn">FALSE</span>, options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>scrollX <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="datatables html-widget html-fill-item" id="htmlwidget-febe03efa1a2d8d52a86" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-febe03efa1a2d8d52a86">{"x":{"filter":"none","vertical":false,"data":[["Disinformation","Vaccination Refusal","Social Factors","Social Conformity","Crowdsourcing","Diet, Vegan","Hierarchy, Social","Rationalization","Cognitive Dissonance","Social Mobility","Dehumanization","Literacy","Genetics, Behavioral","Rejection, Psychology","Epidemiologic Factors","Effect Modifier, Epidemiologic","Food, Genetically Modified","Extraversion, Psychological","Optimism","Capital Punishment"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[10,8.140000000000001,6.94,6.67,6.6,6.58,6.58,6.54,6.49,6.34,6.32,6.1,5.9,5.86,5.8,5.77,5.73,5.57,5.55,5.48],[10,8.140000000000001,6.94,6.67,6.6,6.58,6.58,6.54,6.49,6.34,6.32,6.1,5.9,5.86,5.8,5.77,5.73,5.57,5.55,5.48]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>DescriptorName<\/th>\n      <th>keyness_seed<\/th>\n      <th>keyness_expanded<\/th>\n      <th>shift<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"name":"DescriptorName","targets":0},{"name":"keyness_seed","targets":1},{"name":"keyness_expanded","targets":2},{"name":"shift","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><p>Recent papers may not be MeSH-indexed yet and the baseline is a
+<script type="application/json" data-for="htmlwidget-febe03efa1a2d8d52a86">{"x":{"filter":"none","vertical":false,"data":[["Disinformation","Vaccination Refusal","Social Factors","Diet, Vegan","Rationalization","Social Conformity","Crowdsourcing","Cognitive Dissonance","Hierarchy, Social","Dehumanization","Social Mobility","Literacy","Epidemiologic Factors","Rejection, Psychology","Genetics, Behavioral","Effect Modifier, Epidemiologic","Food, Genetically Modified","Optimism","Capital Punishment","Extraversion, Psychological"],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[6.977165476435804,5.69044335260148,4.964201815766044,4.715248275269797,4.689081198618993,4.659281819382943,4.646859643008591,4.620457451108764,4.607424542539292,4.532509407140949,4.492202954371352,4.300129084275467,4.176309609350517,4.15668209730385,4.143067754908797,4.118088976555681,4.066833480328537,3.998746853538907,3.955966649220116,3.933872304941032],[6.98,5.69,4.96,4.72,4.69,4.66,4.65,4.62,4.61,4.53,4.49,4.3,4.18,4.16,4.14,4.12,4.07,4,3.96,3.93]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>DescriptorName<\/th>\n      <th>keyness_seed<\/th>\n      <th>keyness_expanded<\/th>\n      <th>shift<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"name":"DescriptorName","targets":0},{"name":"keyness_seed","targets":1},{"name":"keyness_expanded","targets":2},{"name":"shift","targets":3}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script><p>Recent papers may not be MeSH-indexed yet and the baseline is a
 snapshot; keyness describes the corpus, it does not judge relevance.</p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="tuning-precision-and-recall">Tuning precision and recall<a class="anchor" aria-label="anchor" href="#tuning-precision-and-recall"></a>
-</h2>
-<p><code>min_links</code> trades recall for precision – higher
-thresholds keep only papers tightly woven into the corpus. Sweeping it
-shows the trade-off directly.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  min_links <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
-<span>  n_candidates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="../reference/citation_snowball.html">citation_snowball</a></span><span class="op">(</span><span class="va">seed_icites</span>, direction <span class="op">=</span> <span class="st">"both"</span>, min_links <span class="op">=</span> <span class="va">k</span><span class="op">)</span><span class="op">$</span><span class="va">seed</span><span class="op">)</span></span>
-<span>  <span class="op">}</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;   min_links n_candidates</span></span>
-<span><span class="co">#&gt; 1         1         1049</span></span>
-<span><span class="co">#&gt; 2         2         1049</span></span>
-<span><span class="co">#&gt; 3         3         1049</span></span>
-<span><span class="co">#&gt; 4         4          652</span></span>
-<span><span class="co">#&gt; 5         5          420</span></span></code></pre>
-<p><code>max_nodes</code> is a hard ceiling on corpus size: candidates
-are ranked by <code>link_count</code> and truncated to fit, bounding the
-screening workload.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">seed_icites</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/citation_snowball.html">citation_snowball</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="st">"both"</span>, min_links <span class="op">=</span> <span class="fl">1</span>, max_nodes <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; [1] 951</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="choosing-a-direction">Choosing a direction<a class="anchor" aria-label="anchor" href="#choosing-a-direction"></a>
@@ -298,7 +253,7 @@ screening workload.</p>
 <code>"cited"</code> finds shared foundational references,
 <code>"citing"</code> finds later work building on the corpus, and
 <code>"both"</code> casts the widest net.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">backward</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/citation_snowball.html">citation_snowball</a></span><span class="op">(</span><span class="va">seed_icites</span>, direction <span class="op">=</span> <span class="st">"cited"</span>,  min_links <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">forward</span>  <span class="op">&lt;-</span> <span class="fu"><a href="../reference/citation_snowball.html">citation_snowball</a></span><span class="op">(</span><span class="va">seed_icites</span>, direction <span class="op">=</span> <span class="st">"citing"</span>, min_links <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
@@ -315,7 +270,7 @@ screening workload.</p>
 </h2>
 <p>Re-seed by feeding the expanded PMIDs back through the iCite endpoint
 and snowballing again; each hop keeps the same audit columns.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hop2</span> <span class="op">&lt;-</span> <span class="va">snowball</span><span class="op">$</span><span class="va">pmid</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/get_records.html">get_records</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="st">"icites"</span>, cores <span class="op">=</span> <span class="fl">1L</span>, sleep <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/citation_snowball.html">citation_snowball</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="st">"both"</span>, min_links <span class="op">=</span> <span class="fl">3</span>, max_nodes <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></code></pre></div>
