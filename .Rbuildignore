@@ -8,8 +8,7 @@ LICENSE.md
 ^_pkgdown\.yml$
 ^docs$
 ^examples$
-^vignettes/articles$
-^vignettes/output/eval$
+^vignettes$
 ^data-raw$
 ^\.git$
 ^\.Rhistory$

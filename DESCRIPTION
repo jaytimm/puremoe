@@ -40,7 +40,6 @@ Suggests:
     DT,
     dplyr,
     testthat (>= 3.0.0)
-VignetteBuilder: knitr
 URL: https://github.com/jaytimm/puremoe, https://jaytimm.github.io/puremoe/
 BugReports: https://github.com/jaytimm/puremoe/issues
 Config/roxygen2/version: 8.0.0
