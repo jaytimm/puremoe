@@ -114,20 +114,16 @@ library(puremoe)
 pmids <- search_pubmed('"doxorubicin"[TiAb] AND "cardiotoxicity"[TiAb]')
 
 # 2. Retrieve records for the same PMIDs (one endpoint per call)
-records <- get_records(pmids, endpoint = "pubmed_abstracts")
-icites  <- get_records(pmids, endpoint = "icites")
-pt      <- get_records(pmids, endpoint = "pubtator")  # entities + relations
+article_metadata   <- get_records(pmids, endpoint = "pubmed_abstracts")
+citation_metrics   <- get_records(pmids, endpoint = "icites")
+entity_annotations <- get_records(pmids, endpoint = "pubtator")
 
-# 3. Local analysis reuses the retrieved tables -- no new API calls
-# MeSH keyness vs. PubMed
-mesh_keyness(records)
-# within-corpus citation graph
-network <- citation_network(icites)
-
-# anchor mentions to sentences; count co-occurrence; build relation network
-ctx <- pubtator_context(pt)
-pubtator_cooccurrence(ctx, window = 0)
-entity_net <- pubtator_network(ctx)
+# 3. Local analysis -- no new API calls
+descriptor_keyness  <- mesh_keyness(article_metadata)
+article_network     <- citation_network(citation_metrics)
+sentence_context    <- pubtator_context(entity_annotations)
+entity_cooccurrence <- pubtator_cooccurrence(sentence_context, window = 0)
+relation_network    <- pubtator_network(sentence_context)
 ```
 
 Retrieval is batched and optionally parallelized, with endpoint-specific batch
