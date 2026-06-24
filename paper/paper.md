@@ -104,6 +104,10 @@ the local analysis functions then build on the retrieved tables (Table 1).
 
 : `puremoe` workflow stages and outputs.
 
+
+
+
+
 A typical workflow resolves a query to PMIDs, pulls records across one or more
 services, and analyzes those tables locally:
 
