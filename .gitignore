@@ -8,7 +8,6 @@ docs/
 examples/
 .cursor/
 odds/
-paper/
 vignettes/output/eval/
 ..Rcheck
 *.tar.gz
