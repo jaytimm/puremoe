@@ -119,12 +119,15 @@ icites  <- get_records(pmids, endpoint = "icites")
 pt      <- get_records(pmids, endpoint = "pubtator")  # entities + relations
 
 # 3. Local analysis reuses the retrieved tables -- no new API calls
-mesh_keyness(records)                                  # MeSH terms over-represented vs. PubMed
-network <- citation_network(icites)                    # within-corpus citation network
+# MeSH keyness vs. PubMed
+mesh_keyness(records)
+# within-corpus citation graph
+network <- citation_network(icites)
 
-ctx <- pubtator_context(pt)                            # anchor mentions to sentences
-pubtator_cooccurrence(ctx, window = 0, by = "type")    # entity-type co-occurrence
-entity_net <- pubtator_network(ctx)                    # relation network + edge evidence
+# anchor mentions to sentences; count co-occurrence; build relation network
+ctx <- pubtator_context(pt)
+pubtator_cooccurrence(ctx, window = 0)
+entity_net <- pubtator_network(ctx)
 ```
 
 Retrieval is batched and optionally parallelized, with endpoint-specific batch
