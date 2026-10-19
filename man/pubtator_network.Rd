@@ -15,8 +15,9 @@ A named list with three \code{data.table}s:
   \describe{
     \item{\code{nodes}}{One row per normalized relation endpoint. Columns:
       \code{id}, \code{type}, \code{label}, \code{n_mentions}, and
-      \code{n_pmids}. Entity identifiers are used when present; otherwise
-      nodes fall back to \code{type:text}.}
+      \code{n_pmids}. Entity identifiers are used when present; otherwise,
+      including PubTator's \code{"-"} placeholder for unnormalized
+      mentions, nodes fall back to \code{type:text}.}
     \item{\code{edges}}{One row per directed PubTator relation edge. Columns:
       \code{from}, \code{to}, \code{relation_type}, \code{weight},
       \code{n_pmids}, and \code{n_sentences}.}

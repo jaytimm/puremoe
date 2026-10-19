@@ -110,6 +110,23 @@ test_that("nodes key on identifiers with type:text fallback", {
   expect_true("Gene:p53" %in% net$nodes$id)
 })
 
+test_that("PubTator '-' placeholders fall back to type:text", {
+  ctx <- make_context()
+  ctx$entities[pmid == "2" & type == "Gene", identifier := "-"]
+  ctx$entities <- rbind(ctx$entities, data.table::data.table(
+    pmid = "2", tiab = "abstract", sentence_id = 1L, type = "Chemical",
+    identifier = "-", text = "XR-NTX"
+  ))
+  ctx$relations[relation_id == "R3", ent2_identifier := "-"]
+
+  net <- pubtator_network(ctx)
+
+  expect_false("-" %in% net$nodes$id)
+  expect_false("-" %in% c(net$edges$from, net$edges$to))
+  expect_true("Gene:p53" %in% net$nodes$id)
+  expect_true("Chemical:XR-NTX" %in% net$nodes$id)
+})
+
 test_that("empty relation corpus yields zero-row outputs with the right columns", {
   empty <- list(
     entities  = make_context_entities()[type == "nope"],

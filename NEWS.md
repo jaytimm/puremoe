@@ -5,6 +5,9 @@
 ## Changes
 - PMC section text no longer repeats the separately returned section heading,
   and XML text nodes are joined with explicit whitespace.
+- `pubtator_network()` no longer treats PubTator3's `"-"` placeholder as a
+  concept identifier. Unnormalized mentions now fall back to `type:text` nodes
+  instead of merging into a single node.
 
 ---
 

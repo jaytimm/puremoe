@@ -12,8 +12,9 @@
 #'   \describe{
 #'     \item{\code{nodes}}{One row per normalized relation endpoint. Columns:
 #'       \code{id}, \code{type}, \code{label}, \code{n_mentions}, and
-#'       \code{n_pmids}. Entity identifiers are used when present; otherwise
-#'       nodes fall back to \code{type:text}.}
+#'       \code{n_pmids}. Entity identifiers are used when present; otherwise,
+#'       including PubTator's \code{"-"} placeholder for unnormalized
+#'       mentions, nodes fall back to \code{type:text}.}
 #'     \item{\code{edges}}{One row per directed PubTator relation edge. Columns:
 #'       \code{from}, \code{to}, \code{relation_type}, \code{weight},
 #'       \code{n_pmids}, and \code{n_sentences}.}
@@ -52,11 +53,13 @@ pubtator_network <- function(x) {
 
 # Node id: identifier when present, else a type-scoped surface form so that
 # distinct entity types sharing a text string do not collapse into one node.
+# PubTator3 marks unnormalized mentions with "-", which is not an identifier.
 #' @noRd
 .pn_node_id <- function(type, identifier, text) {
+  identifier <- trimws(as.character(identifier))
   data.table::fifelse(
-    !is.na(identifier) & nzchar(as.character(identifier)),
-    as.character(identifier),
+    !is.na(identifier) & nzchar(identifier) & identifier != "-",
+    identifier,
     paste(as.character(type), as.character(text), sep = ":")
   )
 }
