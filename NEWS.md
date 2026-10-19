@@ -1,3 +1,13 @@
+# puremoe 1.1.1
+
+*2026-08-25*
+
+## Changes
+- PMC section text no longer repeats the separately returned section heading,
+  and XML text nodes are joined with explicit whitespace.
+
+---
+
 # puremoe 1.1.0
 
 *2026-06-23*

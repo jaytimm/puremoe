@@ -1,7 +1,7 @@
 Package: puremoe
 Type: Package
 Title: Integrated Retrieval and Analysis of 'PubMed', 'NIH', and 'NLM' Literature Data
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(person("Jason", "Timm", role = c("aut", "cre"), email = "JaTimm@salud.unm.edu"))
 Author: Jason Timm [aut, cre]
 Maintainer: Jason Timm <JaTimm@salud.unm.edu>

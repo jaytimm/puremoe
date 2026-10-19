@@ -4,7 +4,7 @@
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/last-month/puremoe)](https://cran.r-project.org/package=puremoe)
 [![R-CMD-check](https://github.com/jaytimm/puremoe/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jaytimm/puremoe/actions/workflows/check-standard.yaml)
 
-`puremoe` provides a single, PMID-centered interface to PubMed and the wider NIH/NLM data stack — NIH iCite, PubTator3, and PMC. A PubMed search resolves to a set of PMIDs, which one retrieval function uses to assemble data frames from each service: metadata and abstracts, citation data, entity annotations, or full text. A local analysis layer then operates on those tables with no further API calls: corpus expansion and citation networks from iCite links, sentence-anchored PubTator co-occurrence and relation evidence, and MeSH descriptor keyness against PubMed-wide frequencies.
+`puremoe` provides a single interface to PubMed and the wider NIH/NLM data stack — NIH iCite, PubTator3, and PMC. A PubMed search resolves to a set of PMIDs, which one retrieval function uses to assemble data frames from each service: metadata and abstracts, citation data, entity annotations, or full text. A local analysis layer then operates on those tables with no further API calls: corpus expansion and citation networks from iCite links, sentence-anchored PubTator co-occurrence and relation evidence, and MeSH descriptor keyness against PubMed-wide frequencies.
 
 ---
 

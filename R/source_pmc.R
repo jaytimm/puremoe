@@ -42,14 +42,26 @@
             else NA_character_
           })
 
-          text <- lapply(secs, xml2::xml_text)
+          text <- lapply(secs, function(sec) {
+            # The title is returned separately in the section column; remove
+            # that direct child before collecting the remaining XML text.
+            title_node <- xml2::xml_find_first(sec, "./title")
+            if (length(title_node) > 0) {
+              xml2::xml_remove(title_node)
+            }
+
+            text_parts <- xml2::xml_text(
+              xml2::xml_find_all(sec, ".//text()")
+            )
+            text_parts <- trimws(gsub("[[:space:]]+", " ", text_parts))
+            text_parts <- text_parts[nzchar(text_parts)]
+            paste(text_parts, collapse = " ")
+          })
 
           df <- data.frame(pmid,
                            section = unlist(header_titles),
                            text = unlist(text),
                            row.names = NULL)
-
-          df$text <- gsub("([a-z]+)([A-Z])", "\\1\n\\2", df$text)
 
           flist[[q]] <- df
         }
