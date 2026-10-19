@@ -20,7 +20,7 @@ endpoint mentions share a sentence, the supporting sentence."><!-- mathjax --><s
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">puremoe</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
       </span>
     </div>
 
@@ -95,8 +95,9 @@ endpoint mentions share a sentence, the supporting sentence.</p>
     <p>A named list with three <code>data.table</code>s:</p><dl><dt><code>nodes</code></dt>
 <dd><p>One row per normalized relation endpoint. Columns:
       <code>id</code>, <code>type</code>, <code>label</code>, <code>n_mentions</code>, and
-      <code>n_pmids</code>. Entity identifiers are used when present; otherwise
-      nodes fall back to <code>type:text</code>.</p></dd>
+      <code>n_pmids</code>. Entity identifiers are used when present; otherwise,
+      including PubTator's <code>"-"</code> placeholder for unnormalized
+      mentions, nodes fall back to <code>type:text</code>.</p></dd>
 
     <dt><code>edges</code></dt>
 <dd><p>One row per directed PubTator relation edge. Columns:
@@ -145,7 +146,7 @@ endpoint mentions share a sentence, the supporting sentence.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>
