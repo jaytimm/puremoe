@@ -1,6 +1,6 @@
 # puremoe 1.1.1
 
-*2026-08-25*
+*2026-10-19*
 
 ## Changes
 - PMC section text no longer repeats the separately returned section heading,
