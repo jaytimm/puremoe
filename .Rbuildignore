@@ -1,7 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.github$
-^paper$
 LICENSE.md
 ^README\.Rmd$
 ^CONTRIBUTING\.md$
