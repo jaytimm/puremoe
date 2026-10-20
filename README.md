@@ -89,6 +89,8 @@ MIT © [Jason Timm](https://github.com/jaytimm)
 citation("puremoe")
 ```
 
+Paper and reproduction materials: <https://github.com/jaytimm/puremoe-paper>
+
 ## Issues
 
 Report bugs or request features at <https://github.com/jaytimm/puremoe/issues>
